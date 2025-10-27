@@ -77,7 +77,7 @@ const Header = ({ onRegister }) => {
 
       
       {menuOpen && (
-        <div className="nav md:hidden bg-black border-t border-gray-200 mobilebg">
+        <div className="nav md:hidden bg-white border-t border-gray-200 mobilebg">
           <nav className="flex flex-col p-4 space-y-2">
             <a href="/">Home</a>
             <a href="#">About Us</a>

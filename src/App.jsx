@@ -174,7 +174,7 @@ function App() {
       </h1> */}
       <main className="w-full relative bg-gradient-to-b from-[#0a0125] via-[#120038] to-[#0a0125] py-12">
         <div className="container mx-auto px-6">
-          <div className="bg-[#120038] rounded-xl p-4 mb-8 flex items-center justify-between">
+          <div className="bg-[#120038] rounded-xl p-4 mb-8 flex items-center justify-between mobcstmbtns">
             <div>
               <h2 className="text-xl font-bold text-white">Contract Info</h2>
               <p className="text-gray-300">
@@ -271,9 +271,9 @@ function App() {
       <MintModal isOpen={isOpen} onClose={() => setIsOpen(false)} /> */}
 
 
-      <section className="bg-[#0a0125] py-0 text-white">
+      <section className="bg-[#0a0125] py-0 text-white  mobmrginss">
         <div className="container mx-auto px-6">
-          <div className="flex items-center gap-10 mb-10">
+          <div className="flex items-center gap-10 mb-10 mobmrgin">
             <h2 className="text-3xl font-extrabold text-white">Top Sellers</h2>
             <div className="relative">
               <select className="bg-[#120038] text-white px-4 py-2 pr-10 rounded-lg appearance-none cursor-pointer selectdays">

@@ -223,12 +223,12 @@ export default function MagicverseDashboard() {
                                     </div>
 
 
-                                    <div className="bg-[#0b0830] p-6 rounded-2xl shadow border border-[#2c2750]">
-                                        <h3 className="text-lg font-bold mb-4">Recent Income</h3>
+                                    <div className="bg-[#0b0830] p-5 mobpdingtble rounded-2xl shadow border border-[#2c2750] w-full">
+                                        <h3 className="text-lg sm:text-xl font-bold mb-4 text-white">Recent Income</h3>
 
-                                        <div className="overflow-hidden rounded-2xl shadow-lg border border-gray-200 bg-white">
-                                            <table className="w-full text-left border-collapse">
-                                                <thead className="bg-gray-50 text-gray-600 text-sm uppercase tracking-wide">
+                                        <div className="overflow-x-auto rounded-2xl shadow-lg border border-gray-200 bg-white">
+                                            <table className="w-full text-left border-collapse min-w-[600px]">
+                                                <thead className="bg-gray-50 text-gray-600 text-xs sm:text-sm uppercase tracking-wide">
                                                     <tr>
                                                         <th className="py-3 px-4">#</th>
                                                         <th className="py-3 px-4">Amount</th>
@@ -240,15 +240,12 @@ export default function MagicverseDashboard() {
                                                     {incomeItems.map((it, i) => (
                                                         <tr
                                                             key={i}
-                                                            className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                                                                } hover:bg-indigo-50 transition-all duration-200`}
+                                                            className={`${i % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-indigo-50 transition-all duration-200`}
                                                         >
                                                             <td className="py-3 px-4 text-gray-900 font-medium">{it.sr}</td>
                                                             <td className="py-3 px-4 text-gray-900">{it.amount}</td>
                                                             <td
-                                                                className={`py-3 px-4 font-semibold ${it.status === 'Completed'
-                                                                    ? 'text-green-600'
-                                                                    : 'text-yellow-600'
+                                                                className={`py-3 px-4 font-semibold ${it.status === "Completed" ? "text-green-600" : "text-yellow-600"
                                                                     }`}
                                                             >
                                                                 {it.status}
@@ -259,31 +256,34 @@ export default function MagicverseDashboard() {
                                                 </tbody>
                                             </table>
                                         </div>
-
                                     </div>
+
                                 </div>
 
 
                                 <div className="space-y-6">
 
-                                    <div className="bg-white text-gray-900 p-5 rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                                        <div className="text-sm font-semibold text-indigo-600 mb-3">Referral Link</div>
+                                    <div className="bg-white text-gray-900 p-5 sm:p-6 md:p-7 rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 w-full">
+                                        <div className="text-sm md:text-base font-semibold text-indigo-600 mb-3">
+                                            Referral Link
+                                        </div>
 
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                                             <input
                                                 type="text"
                                                 readOnly
                                                 value={user.referralLink}
-                                                className="flex-1 px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                className="flex-1 px-3 py-2 md:py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-800 text-sm md:text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                             />
                                             <button
                                                 onClick={() => navigator.clipboard?.writeText(user.referralLink)}
-                                                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all duration-300"
+                                                className="px-4 py-2 md:px-5 md:py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all duration-300 w-full sm:w-auto"
                                             >
                                                 Copy
                                             </button>
                                         </div>
                                     </div>
+
 
 
                                     <div className="bg-white text-gray-900 p-4 rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
@@ -310,23 +310,23 @@ export default function MagicverseDashboard() {
                                     </div>
 
 
-                                            <div className="bg-white text-gray-900 p-5 rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                                                <div className="text-sm font-semibold text-indigo-600 mb-3">Recent Referrals</div>
-                                                <div className="space-y-3">
-                                                    {referrals.map((r) => (
-                                                        <div
-                                                            key={r.id}
-                                                            className="flex items-center justify-between text-sm bg-gray-50 rounded-lg px-3 py-2 border border-gray-100 hover:border-indigo-200 transition-all duration-200"
-                                                        >
-                                                            <div>
-                                                                <div className="font-semibold text-gray-900">#{r.id}</div>
-                                                                <div className="text-xs text-gray-500">{r.address}</div>
-                                                            </div>
-                                                            <div className="text-xs text-gray-500">{r.date}</div>
-                                                        </div>
-                                                    ))}
+                                    <div className="bg-white text-gray-900 p-5 rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                                        <div className="text-sm font-semibold text-indigo-600 mb-3">Recent Referrals</div>
+                                        <div className="space-y-3">
+                                            {referrals.map((r) => (
+                                                <div
+                                                    key={r.id}
+                                                    className="flex items-center justify-between text-sm bg-gray-50 rounded-lg px-3 py-2 border border-gray-100 hover:border-indigo-200 transition-all duration-200"
+                                                >
+                                                    <div>
+                                                        <div className="font-semibold text-gray-900">#{r.id}</div>
+                                                        <div className="text-xs text-gray-500">{r.address}</div>
+                                                    </div>
+                                                    <div className="text-xs text-gray-500">{r.date}</div>
                                                 </div>
-                                            </div>
+                                            ))}
+                                        </div>
+                                    </div>
 
                                 </div>
                             </div>
