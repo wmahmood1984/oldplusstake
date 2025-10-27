@@ -9,8 +9,8 @@ nav.nav {
 }
 
 .header {
-  background: #0d0226;
-  color: white;
+  background: #ffffff;
+  color: #0d0226;
   width: 100%;
   position: relative;
   z-index: 50;
@@ -124,16 +124,22 @@ img.socialicons {
 .logo-purple {
   color: #8b5cf6;
 }
-
-
+.header-container button {
+    color: #000;
+}
+.header-container:hover button {
+    color: #000;
+}
 .nav {
   display: flex;
   align-items: center;
   gap: 28px;
 }
-
+.btnhdrs{
+  color:#222 !important;
+}
 .nav a {
-  color: #cbd5e1;
+  color: #0d0226;
   font-weight: 500;
   text-decoration: none;
   transition: color 0.3s ease;
@@ -808,6 +814,12 @@ h2.pckagehdings {
     padding: 20px 0 !important;
     color: #fff;
 }
+.cstmsmodaldata {
+    width: 100%;
+    overflow: scroll;
+    scrollbar-width: none;
+    height: 600px;
+}
 .pckagebtnss {
     border-radius: 50px;
     color: #fff;
@@ -826,8 +838,11 @@ h2.pckagehdings {
     padding: 15px;
     border-radius: 20px;
 }
+.paddingcstm {
+    padding: 48px 30px;
+}
 .btnclicknfts button {
-    width: 40%;
+    width: 60%;
     margin: 10px auto 20px;
     background: #7815ff;
     border-radius: 50px;
@@ -841,7 +856,9 @@ h2.pckagehdings {
     font-size: 17px;
     margin: 0px;
 }
-
+.cstmsmodaldata {
+    width: 100%;
+}
 
 
 .bgactivebox {

@@ -3,13 +3,13 @@ import "../../App.css";
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
 import Sidebar from "../Sidebar/Sidebar.jsx";
-import { init, readName } from "../../slices/contractSlice";
+import { init, readName } from "../../slices/contractSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { ethers } from "ethers";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
-import ProfileSection from "../../ProfileSection";
+import ProfileSection from "../../ProfileSection.jsx";
 
 Modal.setAppElement("#root");
 
@@ -30,6 +30,7 @@ export default function MagicverseDashboard() {
             dispatch(readName({ address })).finally(() => setLoading(false));
         }
     }, [dispatch, address]);
+
 
     const user = {
         id: 816461,
@@ -58,7 +59,6 @@ export default function MagicverseDashboard() {
         right: { id: "771275", children: ["773001", "773002", "773003"] },
     };
 
-   
     const packages = [
         { id: 0, price: ethers.parseEther("2"), limit: ethers.parseEther("100"), team: 0 },
         { id: 1, price: ethers.parseEther("15"), limit: ethers.parseEther("300"), team: 5 },
@@ -68,274 +68,291 @@ export default function MagicverseDashboard() {
         { id: 5, price: ethers.parseEther("165"), limit: ethers.parseEther("5500"), team: 25 },
     ];
 
-    const Package = packages[user.rank] || packages[0]; // current user package
+    const Package = packages[user.rank] || packages[0];
     const downlines = {
         direct: ["A1", "A2", "A3", "A4", "A5", "A6"],
         indirect: ["B1", "B2", "B3", "B4"],
     };
 
     const handleUpdate = (nextPackage) => {
-        alert(
-            `Upgrading to Package #${nextPackage.id} (${ethers.formatEther(
-                nextPackage.price
-            )} ETH)`
-        );
-       
+
+        alert(`Upgrading to Package #${nextPackage.id} (${ethers.formatEther(nextPackage.price)} ETH)`);
     };
 
+
+    const teamCount = () => downlines.direct.length + downlines.indirect.length;
+
     return (
-        <>
+        <div className="min-h-screen bg-gradient-to-b from-[#040213] via-[#070427] to-[#07031a] text-slate-100">
             <Header onRegister={() => setIsProfileOpen(true)} />
-            <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white text-slate-900 flex">
-                <Sidebar active={active} setActive={setActive} user={user} />
+            <div className="container">
+
 
                 <main className="flex-1 p-6 md:p-10">
                     {!address ? (
-                        <div className="text-center py-10 text-slate-600 text-lg">
+                        <div className="text-center py-20 text-slate-400 text-lg">
                             ⚠️ Please connect your wallet to view the dashboard.
                         </div>
                     ) : loading ? (
-                        <div className="text-center py-10 text-slate-500 text-lg">
-                            Loading data...
-                        </div>
+                        <div className="text-center py-20 text-slate-400 text-lg">Loading data...</div>
                     ) : (
-                        <div className="flex flex-col md:flex-row gap-6">
-                            <div className="flex-1">
-                                <section className="space-y-6">
+                        <div className="space-y-6">
+
+                            <div className="rounded-2xl bg-gradient-to-r from-indigo-800 via-purple-700 to-pink-700 p-6 shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                <div>
+                                    <h2 className="text-2xl font-extrabold">Welcome back,</h2>
+                                    <p className="text-sm text-indigo-200 mt-1">Manage your account, view earnings and upgrade packages.</p>
+                                </div>
+
+                                <div className="flex items-center gap-6">
+                                    <div className="text-right">
+                                        <div className="text-xs text-indigo-200">User ID</div>
+                                        <div className="text-lg font-bold">#{user.id}</div>
+                                    </div>
+
+                                    <div className="text-right hidden sm:block">
+                                        <div className="text-xs text-indigo-200">Wallet Balance</div>
+                                        <div className="text-lg font-bold">{user.walletFund} USDT</div>
+                                    </div>
+
                                     <button
-                                        onClick={() => navigate("/")}
-                                        className="mb-6 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg bckbtnscstm"
+                                        onClick={() => setIsProfileOpen(true)}
+                                        className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10"
                                     >
-                                        ← Back to Home
+                                        View Profile
                                     </button>
-                                  
-                                    {active === "dashboard" && (
-                                        <div className="bg-[#0a0125] text-white p-6 rounded-2xl shadow-lg">
-                                            <h1 className="text-2xl font-extrabold mb-4">Dashboard</h1>
-                                            <ProfileSection />
+                                </div>
+                            </div>
+
+
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                                <div className="lg:col-span-2 space-y-6">
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                                        <div className="bg-white text-gray-900 paddingcstm rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                                            <div className="text-sm font-semibold text-indigo-600">Total Income</div>
+                                            <div className="mt-2 text-2xl font-extrabold text-gray-900">{user.totalIncome} USDT</div>
+                                            <div className="text-xs text-gray-500 mt-1">All-time earnings</div>
                                         </div>
-                                    )}
 
-                                   
-                                    {active === "packages" && (
-                                        <div className="bg-[#0a0125] text-white p-6 rounded-2xl shadow-lg">
-                                            <h1 className="text-2xl font-extrabold mb-4">Packages</h1>
 
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="bg-white text-gray-900 paddingcstm rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                                            <div className="text-sm font-semibold text-blue-600">Wallet Fund</div>
+                                            <div className="mt-2 text-2xl font-extrabold text-gray-900">{user.walletFund} USDT</div>
+                                            <div className="text-xs text-gray-500 mt-1">Available to withdraw</div>
+                                        </div>
+
+
+                                        <div className="bg-white text-gray-900 paddingcstm rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                                            <div className="text-sm font-semibold text-pink-600">Team Members</div>
+                                            <div className="mt-2 text-2xl font-extrabold text-gray-900">{teamCount()}</div>
+                                            <div className="text-xs text-gray-500 mt-1">Direct & indirect</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-[#0b0830]/80 p-6 rounded-2xl shadow border border-[#2c2750]">
+                                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                            <div>
+                                                <div className="text-sm text-indigo-300">Active Package</div>
+                                                <div className="text-2xl font-bold mt-1">Package #{Package.id} — {ethers.formatEther(Package.price)} ETH</div>
+                                                <div className="text-xs text-slate-400 mt-1">Limit: {ethers.formatEther(Package.limit)} ETH • Team required: {Package.team}</div>
+                                            </div>
+
+                                            <div className="flex gap-3">
+                                                <button
+                                                    onClick={() => navigate("/contract")}
+                                                    className="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 font-semibold"
+                                                >
+                                                    Contract
+                                                </button>
+
+                                                <button
+                                                    onClick={() => alert('Feature: Withdraw (implement)')}
+                                                    className="px-4 py-2 rounded-md bg-transparent border border-white/10"
+                                                >
+                                                    Withdraw
+                                                </button>
+                                            </div>
+                                        </div>
+
+
+                                        <div className="mt-6">
+                                            <h3 className="text-sm font-semibold text-gray-700 mb-3">Upgrade Options</h3>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                                 {packages.map((pkg) => (
                                                     <div
                                                         key={pkg.id}
-                                                        className={`border rounded-xl p-4 ${pkg.id === Package.id
-                                                            ? "border-indigo-600 bg-indigo-50 bgactivebox"
-                                                            : "border-gray-200"
+                                                        className={`p-4 rounded-2xl border shadow-sm transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl ${pkg.id === Package.id
+                                                            ? "border-indigo-500 bg-indigo-50"
+                                                            : "border-gray-200 bg-white"
                                                             }`}
                                                     >
-                                                        <h2 className="text-lg font-semibold mb-2">
-                                                            Package #{pkg.id}
-                                                        </h2>
-                                                        <p>💰 Price: {ethers.formatEther(pkg.price)} ETH</p>
-                                                        <p>🎯 Limit: {ethers.formatEther(pkg.limit)} ETH</p>
-                                                        <p>👥 Team Required: {pkg.team}</p>
+                                                        <div className="flex items-center justify-between">
+                                                            <div>
+                                                                <div className="text-xs text-gray-500">Package #{pkg.id}</div>
+                                                                <div className="font-bold text-gray-900 mt-1">
+                                                                    {ethers.formatEther(pkg.price)} ETH
+                                                                </div>
+                                                            </div>
+                                                            <div className="text-sm text-gray-600">Team: {pkg.team}</div>
+                                                        </div>
 
                                                         {pkg.id === Package.id ? (
                                                             <button
                                                                 disabled
-                                                                className="mt-4 w-full py-3 rounded-lg activebtns"
+                                                                className="mt-4 w-full py-2 rounded-lg bg-gray-200 text-gray-600 font-semibold"
                                                             >
-                                                                Active Package
+                                                                Active
                                                             </button>
                                                         ) : (
                                                             <button
                                                                 onClick={() => handleUpdate(pkg)}
-                                                                className="mt-4 w-full py-3 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors upgradebtns"
+                                                                className="mt-4 w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all duration-300"
                                                             >
-                                                                View / Upgrade Option
+                                                                Upgrade
                                                             </button>
                                                         )}
                                                     </div>
                                                 ))}
                                             </div>
-
-                                            <div className="mt-8">
-                                                {(() => {
-                                                    const currentId = Number(Package.id);
-                                                    const nextPackage = packages[currentId + 1];
-
-                                                    if (!nextPackage) {
-                                                        return (
-                                                            <button
-                                                                disabled
-                                                                className="w-full py-3 rounded-lg font-semibold bg-gray-300 text-gray-500 cursor-not-allowed pckagebtnss"
-                                                            >
-                                                                🎉 You are at the highest package
-                                                            </button>
-                                                        );
-                                                    }
-
-                                                    const teamRequired = nextPackage.team || 0;
-                                                    const teamHas = downlines.direct.length + downlines.indirect.length;
-                                                    const canUpgrade = teamHas >= teamRequired;
-
-                                                    return (
-                                                        <button
-                                                            disabled={!canUpgrade}
-                                                            onClick={() => handleUpdate(nextPackage)}
-                                                            className={`w-full py-3 rounded-lg font-semibold transition-colors pckagebtnss ${canUpgrade
-                                                                ? "bg-indigo-600 hover:bg-indigo-700 text-white"
-                                                                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                                                }`}
-                                                        >
-                                                            {canUpgrade
-                                                                ? `⬆️ Upgrade to ${ethers.formatEther(
-                                                                    nextPackage.price
-                                                                )} ETH (Limit ${ethers.formatEther(nextPackage.limit)} ETH)`
-                                                                : `🔒 Need ${teamRequired} total downlines (You have ${teamHas}) to upgrade`}
-                                                        </button>
-                                                    );
-                                                })()}
-                                            </div>
                                         </div>
-                                    )}
 
-                                    {active === "income" && (
-                                        <div className="bg-[#0a0125]/95 backdrop-blur-lg text-white p-6 rounded-2xl shadow-lg border border-[#1e1b4b]">
-                                            <h1 className="text-2xl font-extrabold mb-4">Income Overview</h1>
-                                            <div className="overflow-x-auto rounded-xl">
-                                                <table className="w-full border-collapse">
-                                                    <thead className="bg-[#1e1b4b] text-indigo-200">
-                                                        <tr>
-                                                            <th className="py-3 px-4 text-left">Sr.No</th>
-                                                            <th className="py-3 px-4 text-left">Amount</th>
-                                                            <th className="py-3 px-4 text-left">Status</th>
-                                                            <th className="py-3 px-4 text-left">Time</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {incomeItems.map((it, i) => (
-                                                            <tr
-                                                                key={i}
-                                                                className={`transition-all ${i % 2 === 0 ? "bg-[#120038]" : "bg-[#0f0030]"
-                                                                    } hover:bg-indigo-900/30`}
-                                                            >
-                                                                <td className="py-3 px-4">{it.sr}</td>
-                                                                <td className="py-3 px-4">{it.amount}</td>
-                                                                <td
-                                                                    className={`py-3 px-4 font-semibold ${it.status === "Completed"
-                                                                        ? "text-green-400"
-                                                                        : "text-yellow-400"
-                                                                        }`}
-                                                                >
-                                                                    {it.status}
-                                                                </td>
-                                                                <td className="py-3 px-4 text-indigo-200">{it.time}</td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {active === "referrals" && (
-                                        <div className="bg-[#0a0125]/95 backdrop-blur-lg text-white p-6 rounded-2xl shadow-lg border border-[#1e1b4b]">
-                                            <h1 className="text-2xl font-extrabold mb-4"> My Referrals</h1>
-                                            <div className="overflow-x-auto rounded-xl">
-                                                <table className="w-full border-collapse">
-                                                    <thead className="bg-[#1e1b4b] text-indigo-200">
-                                                        <tr>
-                                                            <th className="py-3 px-4 text-left">Sr.No</th>
-                                                            <th className="py-3 px-4 text-left">User ID</th>
-                                                            <th className="py-3 px-4 text-left">Wallet Address</th>
-                                                            <th className="py-3 px-4 text-left">Date</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {referrals.map((r, idx) => (
-                                                            <tr
-                                                                key={r.id}
-                                                                className={`transition-all ${idx % 2 === 0 ? "bg-[#120038]" : "bg-[#0f0030]"
-                                                                    } hover:bg-indigo-900/30`}
-                                                            >
-                                                                <td className="py-3 px-4">{idx + 1}</td>
-                                                                <td className="py-3 px-4 text-indigo-300">{r.id}</td>
-                                                                <td className="py-3 px-4 text-indigo-200">{r.address}</td>
-                                                                <td className="py-3 px-4 text-indigo-300">{r.date}</td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {active === "community" && (
-                                        <div className="bg-[#0a0125]/95 backdrop-blur-lg text-white p-6 rounded-2xl shadow-lg border border-[#1e1b4b]">
-                                            <h1 className="text-2xl font-extrabold mb-4">Community Tree</h1>
-
-                                            <div className="flex flex-col items-center">
-
-                                                <div className="bg-gradient-to-r from-indigo-600 to-purple-700 text-white px-6 py-3 rounded-full shadow-lg mb-4 font-semibold">
-                                                    ID: {communityTree.root}
-                                                </div>
-
-                                                <div className="w-px h-8 bg-indigo-400" />
+                                    </div>
 
 
-                                                <div className="flex gap-16 mt-8 flex-wrap justify-center">
-                                                    {[communityTree.left, communityTree.right].map((branch, i) => (
-                                                        <div
+                                    <div className="bg-[#0b0830] p-6 rounded-2xl shadow border border-[#2c2750]">
+                                        <h3 className="text-lg font-bold mb-4">Recent Income</h3>
+
+                                        <div className="overflow-hidden rounded-2xl shadow-lg border border-gray-200 bg-white">
+                                            <table className="w-full text-left border-collapse">
+                                                <thead className="bg-gray-50 text-gray-600 text-sm uppercase tracking-wide">
+                                                    <tr>
+                                                        <th className="py-3 px-4">#</th>
+                                                        <th className="py-3 px-4">Amount</th>
+                                                        <th className="py-3 px-4">Status</th>
+                                                        <th className="py-3 px-4">Time</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {incomeItems.map((it, i) => (
+                                                        <tr
                                                             key={i}
-                                                            className="flex flex-col items-center bg-[#120038]/70 rounded-xl px-6 py-4 shadow-lg border border-[#292060] min-w-[220px]"
+                                                            className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                                                                } hover:bg-indigo-50 transition-all duration-200`}
                                                         >
-                                                            <div className="font-bold text-indigo-400 mb-2">
-                                                                Branch ID: {branch.id}
-                                                            </div>
-                                                            <div className="text-sm text-gray-300 mb-4">Direct Members:</div>
+                                                            <td className="py-3 px-4 text-gray-900 font-medium">{it.sr}</td>
+                                                            <td className="py-3 px-4 text-gray-900">{it.amount}</td>
+                                                            <td
+                                                                className={`py-3 px-4 font-semibold ${it.status === 'Completed'
+                                                                    ? 'text-green-600'
+                                                                    : 'text-yellow-600'
+                                                                    }`}
+                                                            >
+                                                                {it.status}
+                                                            </td>
+                                                            <td className="py-3 px-4 text-gray-600">{it.time}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
 
-                                                            <div className="grid grid-cols-3 gap-3">
-                                                                {branch.children.map((child) => (
-                                                                    <div
-                                                                        key={child}
-                                                                        className="bg-[#1a0c50] hover:bg-indigo-700/40 transition-all px-3 py-2 rounded-lg text-sm text-center"
-                                                                    >
-                                                                        <div className="font-semibold text-indigo-300">{child}</div>
-                                                                        <div className="text-xs text-gray-400 mt-1">Member</div>
-                                                                    </div>
-                                                                ))}
+                                    </div>
+                                </div>
+
+
+                                <div className="space-y-6">
+
+                                    <div className="bg-white text-gray-900 p-5 rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                                        <div className="text-sm font-semibold text-indigo-600 mb-3">Referral Link</div>
+
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="text"
+                                                readOnly
+                                                value={user.referralLink}
+                                                className="flex-1 px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            />
+                                            <button
+                                                onClick={() => navigator.clipboard?.writeText(user.referralLink)}
+                                                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all duration-300"
+                                            >
+                                                Copy
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+                                    <div className="bg-white text-gray-900 p-4 rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                                        <div className="text-sm font-semibold text-indigo-600">Referred By</div>
+                                        <div className="mt-2 text-xl font-extrabold text-gray-900">#{user.referredBy}</div>
+                                        <div className="text-xs text-gray-500 mt-1">Joined on 2025-09-15</div>
+                                    </div>
+
+
+                                    <div className="bg-white text-gray-900 p-4 rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                                        <div className="text-sm font-semibold text-indigo-600 mb-3">Community Preview</div>
+                                        <div className="flex flex-col gap-2 text-sm text-gray-700">
+                                            <div>Root: <span className="font-semibold text-gray-900">#{communityTree.root}</span></div>
+                                            <div>Left: <span className="font-semibold text-gray-900">#{communityTree.left.id}</span> ({communityTree.left.children.length})</div>
+                                            <div>Right: <span className="font-semibold text-gray-900">#{communityTree.right.id}</span> ({communityTree.right.children.length})</div>
+                                        </div>
+
+                                        <button
+                                            onClick={() => setActive("community")}
+                                            className="mt-4 w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all duration-300"
+                                        >
+                                            Open Tree
+                                        </button>
+                                    </div>
+
+
+                                            <div className="bg-white text-gray-900 p-5 rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                                                <div className="text-sm font-semibold text-indigo-600 mb-3">Recent Referrals</div>
+                                                <div className="space-y-3">
+                                                    {referrals.map((r) => (
+                                                        <div
+                                                            key={r.id}
+                                                            className="flex items-center justify-between text-sm bg-gray-50 rounded-lg px-3 py-2 border border-gray-100 hover:border-indigo-200 transition-all duration-200"
+                                                        >
+                                                            <div>
+                                                                <div className="font-semibold text-gray-900">#{r.id}</div>
+                                                                <div className="text-xs text-gray-500">{r.address}</div>
                                                             </div>
+                                                            <div className="text-xs text-gray-500">{r.date}</div>
                                                         </div>
                                                     ))}
                                                 </div>
                                             </div>
-                                        </div>
-                                    )}
-                                </section>
+
+                                </div>
                             </div>
+
+
+
                         </div>
                     )}
                 </main>
             </div>
 
-           
+
             <Modal
                 isOpen={isProfileOpen}
                 onRequestClose={() => setIsProfileOpen(false)}
-                className="max-w-3xl mx-auto mt-20 bg-[#120038] rounded-xl p-6 text-white outline-none"
+                className="max-w-4xl mx-auto mt-20 bg-[#0b0830] rounded-xl p-6 text-white outline-none cstmsmodaldata"
                 overlayClassName="fixed inset-0 bg-black/50 flex justify-center items-start z-50"
             >
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-4 dataprofiles">
                     <h2 className="text-2xl font-bold">Profile</h2>
-                    <button
-                        onClick={() => setIsProfileOpen(false)}
-                        className="text-gray-300 hover:text-white font-bold text-xl"
-                    >
-                        ×
-                    </button>
+                    <button onClick={() => setIsProfileOpen(false)} className="text-gray-300 hover:text-white font-bold text-xl">×</button>
                 </div>
                 <ProfileSection />
             </Modal>
 
             <Footer />
-        </>
+        </div>
     );
 }

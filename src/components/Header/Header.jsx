@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ConnectButton from "../../ConnectButton";
 import { useAppKitAccount } from "@reown/appkit/react";
-import srchicon from "../../images/searchicon.png";
+import srchicon from "../../images/searchicon-icon.png";
 import mainlogo from "../../images/mainlogo.png";
 
 const Header = ({ onRegister }) => {
@@ -29,17 +29,18 @@ const Header = ({ onRegister }) => {
         </nav>
 
        
-        <div className="wallet flex items-center gap-2 hidden md:flex">
-          <ConnectButton />
-          {!address && (
-            <button
-              onClick={onRegister}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
-            >
-              Register
-            </button>
-          )}
-        </div>
+       <div className="wallet flex items-center gap-2 hidden md:flex text-black">
+  <ConnectButton />
+  {!address && (
+    <button
+      onClick={onRegister}
+      className="px-4 py-2 bg-white hover:bg-gray-100 text-black rounded-lg border border-gray-300"
+    >
+      Register
+    </button>
+  )}
+</div>
+
 
      
         <div className="md:hidden flex items-center">
