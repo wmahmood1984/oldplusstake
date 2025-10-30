@@ -176,7 +176,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 
         sendConditional(_referrer, amount / 2, 1);
 
-        //userTradingTime[_user] = block.timestamp;
+        userTradingTime[_user] = block.timestamp;
         //userLevelIncomeBlockTime[_user] = block.timestamp;
     }
 
@@ -314,6 +314,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
             _burn = false;
         } else {
             _burn = true;
+            burn(index);
             NFTMayBeCreated = true;
         }
         // NFTQue handling if threshold reached
@@ -650,8 +651,8 @@ contract MyNFT is
 
     /// @notice Burn an existing NFT (only token owner or approved)
     function burn(uint256 tokenId, uint index) public {
-        helper.burn(index);
-        _burn(tokenId);
+    
+
     }
 
     function register(address _referrer) public {
@@ -672,10 +673,10 @@ contract MyNFT is
         // (, address _owner) = helper.buyNFT(id);
         //_transfer(_owner, msg.sender, id);
 
-        (bool _burn, ) = helper.buyNFT(id, msg.sender);
+        (bool yes, ) = helper.buyNFT(id, msg.sender);
 
-        if (_burn) {
-            burn(id, id - 1);
+        if (yes) {
+            _burn(id);
         }
     }
 
