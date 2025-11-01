@@ -55,7 +55,8 @@ export const NFT = ({ nft, index, toggle, setToggle }) => {
             },
             onError: (err) => {
                 setLoading(false)
-                toast.error("Transaction failed", err)},
+                toast.error("Transaction failed", err)
+            },
         });
     }
 
@@ -75,7 +76,8 @@ export const NFT = ({ nft, index, toggle, setToggle }) => {
             onSuccess: () => handleBuy2(id, address),
             onError: (err) => {
                 setLoading(false)
-                toast.error("Transaction failed", err)},
+                toast.error("Transaction failed", err)
+            },
             contract: usdtContract
         });
         //        }
@@ -114,16 +116,16 @@ export const NFT = ({ nft, index, toggle, setToggle }) => {
                 <div class="text-2xl font-bold text-blue-600 mb-3">
                     ${Number(formatEther(nft.price) * 1.07).toFixed(2)}
                 </div>
-                <button 
-                
-                 onClick={() => handleBuy(nft.id)}
-                class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                <button
+
+                    onClick={() => handleBuy(nft.id)}
+                    class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
                     {loading ? (
-                                        <>
-                                            <Spinner size={20} color="#fff" />
-                                            <span>Processing...</span>
-                                        </>
-                                    ) :"Buy Now"}</button>
+                        <>
+                            <Spinner size={20} color="#fff" />
+                            <span>Processing...</span>
+                        </>
+                    ) : "Buy Now"}</button>
             </div>
         </div>
 

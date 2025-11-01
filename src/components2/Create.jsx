@@ -6,7 +6,7 @@ import { helperAbi, helperAddress, mlmcontractaddress, usdtContract, web3 } from
 import { executeContract } from '../utils/contractExecutor';
 import { readName } from '../slices/contractSlice';
 import { useNavigate } from 'react-router-dom';
-import { parseEther } from 'ethers';
+import { formatEther, parseEther } from 'ethers';
 import Spinner from './Spinner';
 
 export default function Create() {
@@ -151,7 +151,7 @@ export default function Create() {
         // if (allowance >= (nftused.price+nftused.premium)) {
         //     handleMint()
         // } else {
-        const value = 30.2890738239215
+        const value = formatEther(nftused[0].price)*.07
         console.log("value", value.toString())
         await executeContract({
             config,

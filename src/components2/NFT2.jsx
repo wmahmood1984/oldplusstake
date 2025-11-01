@@ -75,7 +75,7 @@ export const NFT = ({ nft }) => {
                             Listed Price
                         </div>
                         <div class="font-bold text-indigo-600 text-sm sm:text-base">
-                            {formatEther(nft.price)} $
+                            {Number(formatEther(nft.price))+Number(formatEther(nft.premium))} $
                         </div>
                     </div>
                     <div class="text-right">
@@ -83,7 +83,7 @@ export const NFT = ({ nft }) => {
                             Last Sale
                         </div>
                         <div class="font-bold text-gray-900 text-sm sm:text-base">
-                            {formatEther(nft.price)} $
+                            {Number(formatEther(nft.price))+Number(formatEther(nft.premium))} $
                         </div>
                     </div>
                 </div>

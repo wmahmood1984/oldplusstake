@@ -196,7 +196,7 @@ export default function Tree() {
         </div>
 
         {/* --- Team Summary --- */}
-        <div className="mt-8 pt-8 border-t border-gray-200">
+        {/* <div className="mt-8 pt-8 border-t border-gray-200">
           <h4 className="text-lg font-semibold text-center mb-6 text-gray-800">
             Team Performance Summary
           </h4>
@@ -220,7 +220,7 @@ export default function Tree() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
