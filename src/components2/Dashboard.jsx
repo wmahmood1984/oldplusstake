@@ -375,8 +375,8 @@ export default function Dashboard() {
                             </div>
                         </div> */}
 
-                        {Number(Package.id) == 0 &&
-                            <CountdownTimer durationInSeconds={Number(Package.purchaseTime) + 60 * 60 * 24 * 60 - now / 1000} />
+                        {
+                            <CountdownTimer durationInSeconds={Number(Package.purchaseTime) + 60 * 60 * 24 * 30 - now / 1000} />
                         }
                     </div>
                     <div class="bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8">
