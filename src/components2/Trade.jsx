@@ -1,6 +1,54 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux';
+import { formatWithCommas } from '../utils/contractExecutor';
+import { formatEther } from 'ethers';
+import { helperAbi, helperAddress, web3 } from '../config';
+import { NFT } from './NFT';
 
 export default function Trade() {
+
+        const { Package, myNFTs, packages, downlines, registered, admin, allowance, NFTQueBalance, limitUtilized, NFTque
+
+        , levelIncome,
+        referralIncome,
+        tradingIncome, walletBalance,
+        status, error
+    } = useSelector((state) => state.contract);
+
+
+          const [nfts,setNFTs]= useState()
+            const [toggle,setToggle]= useState(false)  
+          const helperContract = new web3.eth.Contract(helperAbi,helperAddress)
+        
+          useEffect(()=>{
+        
+        
+            const abc = async ()=>{
+              const _nftUsed = await helperContract.methods.getNFTs().call()
+              setNFTs(_nftUsed)
+            }
+        
+            abc()
+        
+        
+          },[toggle])
+
+
+               const isLoading = !nfts;
+
+  if (isLoading) {
+    // show a waiting/loading screen
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mb-4"></div>
+        <p className="text-gray-600 text-lg font-medium">Loading your data...</p>
+      </div>
+    );
+  }
+
+  console.log("NFT",nfts);
+
+
     return (
         <div>
 
@@ -22,7 +70,7 @@ export default function Trade() {
                                     Wallet Balance
                                 </div>
                                 <div class="text-2xl font-bold text-green-600" id="trade-wallet-balance">
-                                    $2,847.50
+                                    ${formatWithCommas(walletBalance) }
                                 </div>
                             </div>
                             <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
@@ -34,7 +82,7 @@ export default function Trade() {
                                     Trading Limit
                                 </div>
                                 <div class="text-2xl font-bold text-blue-600" id="trade-limit-total">
-                                    $5,500
+                                    ${formatWithCommas(formatEther(Package.limit))}
                                 </div>
                             </div>
                             <div class="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl border border-orange-200">
@@ -46,7 +94,7 @@ export default function Trade() {
                                     Limit Used
                                 </div>
                                 <div class="text-2xl font-bold text-orange-600" id="trade-limit-used">
-                                    $2,652.50
+                                    ${formatWithCommas(limitUtilized)}
                                 </div>
                             </div>
                             <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200">
@@ -58,39 +106,49 @@ export default function Trade() {
                                     Remaining Limit
                                 </div>
                                 <div class="text-2xl font-bold text-purple-600" id="trade-limit-remaining">
-                                    $2,847.50
+                                    ${formatWithCommas(Number(formatEther(Package.limit))-Number(limitUtilized))}
                                 </div>
                             </div>
                         </div>
                         <div class="mt-6">
-                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-gray-700">Trading Limit Usage</span> <span class="text-sm text-gray-600" id="trade-usage-percentage">48.2%</span>
+                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-gray-700">Trading Limit Usage</span> <span class="text-sm text-gray-600" id="trade-usage-percentage">{`${Number(Number(limitUtilized)/Number(formatEther(Package.limit))*100).toFixed(2)}%`}</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-3">
-                                <div id="trade-progress-bar" class="bg-gradient-to-r from-orange-500 to-red-500 h-3 rounded-full transition-all duration-300" style={{ width: "48.2%" }}></div>
+                                <div id="trade-progress-bar" class="bg-gradient-to-r from-orange-500 to-red-500 h-3 rounded-full transition-all duration-300" 
+                                
+                                style={{ width: `${Number(limitUtilized)/Number(formatEther(Package.limit))*100}%` }}></div>
                             </div>
-                            <div class="flex justify-between text-xs text-gray-500 mt-1"><span>$2651</span> <span id="trade-limit-display">$5,500</span>
+                            <div class="flex justify-between text-xs text-gray-500 mt-1"><span>${limitUtilized}</span> <span id="trade-limit-display">${formatWithCommas(formatEther(Package.limit))}</span>
                             </div>
                         </div>
                     </div>
                     <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
-                        <div class="nft-card bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl shadow-lg overflow-hidden">
-                            <div class="h-48 bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                    <div class="w-20 h-24 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-full opacity-80"></div>
-                                    <div class="absolute top-4 left-4 w-2 h-2 bg-cyan-300 rounded-full animate-pulse"></div>
-                                    <div class="absolute top-6 right-4 w-2 h-2 bg-pink-400 rounded-full animate-pulse"></div>
-                                    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-cyan-400"></div>
-                                </div>
-                            </div>
-                            <div class="p-4">
-                                <h3 class="font-semibold text-gray-900 mb-2">Cyber Genesis #001</h3>
-                                <div class="text-2xl font-bold text-blue-600 mb-3">
-                                    $53.5
-                                </div><button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Buy Now</button>
-                            </div>
-                        </div>
-                        <div class="nft-card bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl shadow-lg overflow-hidden">
+                        {nfts.map((v,e)=>{
+                            return (
+                                <NFT nft={v} index={e} toggle={toggle} setToggle={setToggle}/>
+                                //     <div class="nft-card bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl shadow-lg overflow-hidden">
+                        //     <div class="h-48 bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
+                        //         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        //         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        //             <div class="w-20 h-24 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-full opacity-80"></div>
+                        //             <div class="absolute top-4 left-4 w-2 h-2 bg-cyan-300 rounded-full animate-pulse"></div>
+                        //             <div class="absolute top-6 right-4 w-2 h-2 bg-pink-400 rounded-full animate-pulse"></div>
+                        //             <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-cyan-400"></div>
+                        //         </div>
+                        //     </div>
+                        //     <div class="p-4">
+                        //         <h3 class="font-semibold text-gray-900 mb-2">Cyber Genesis #001</h3>
+                        //         <div class="text-2xl font-bold text-blue-600 mb-3">
+                        //             $53.5
+                        //         </div><button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Buy Now</button>
+                        //     </div>
+                        // </div>
+                            )
+                        })
+                            
+                            
+}
+                        {/* <div class="nft-card bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl shadow-lg overflow-hidden">
                             <div class="h-48 bg-gradient-to-br from-orange-400 via-red-500 to-pink-600 relative">
                                 <div class="absolute inset-0">
                                     <div class="absolute top-8 left-8 w-12 h-12 bg-yellow-300 rounded-full opacity-70 blur-sm"></div>
@@ -257,7 +315,7 @@ export default function Trade() {
                                     $156.8
                                 </div><button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Buy Now</button>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
