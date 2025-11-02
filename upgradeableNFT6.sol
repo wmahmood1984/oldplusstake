@@ -98,6 +98,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     Package[] public packages;
 
     mapping(address => Package) public userPackage;
+    mapping(address => uint[]) public userMint;
     mapping(address => uint) public tradingReferralBonus;
     mapping(address => uint) public packageReferralBonus;
     mapping(address => uint) public tradingLevelBonus;
@@ -383,8 +384,8 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
             0,
             _nft.id
         );
-        emit Trades(block.timestamp, amount, 0, oldOwner, _nft.id);
-        emit Trades(block.timestamp, amount, 1, _user, _nft.id);
+        emit Trades(block.timestamp, amount+_nft.premium, 0, oldOwner, _nft.id);
+        emit Trades(block.timestamp, amount+_nft.premium, 1, _user, _nft.id);
         paymentToken.transfer(
             owner(),
             ((amount * percentageAtBuyToAdmin) / percentageAtBuy)
@@ -567,6 +568,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
             tx1.premium = 0;
             tx1.price = 50 ether;
             removeFirst2();
+            userMint[_user].push(_nextTokenId);
             emit Trades(block.timestamp, tx1.price, 2, _user, tx1.id);
         } else {
             tx1 = NFT(_nextTokenId, 50 ether, _user, _uri, 0, 1);
@@ -635,6 +637,10 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 
     function getNFTused() public view returns (NFT[] memory) {
         return nftused;
+    }
+
+    function getNFTListed(address _user) public view returns (uint[] memory) {
+        return userMint[_user];
     }
 
     function withdrawUSDT() public onlyOwner {
