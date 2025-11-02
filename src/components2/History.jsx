@@ -93,6 +93,7 @@ export default function History() {
                     details: v.returnValues._type == '3' ? `Level ${v.returnValues.level} Commission` : 
                         v.returnValues._type == '2'? `Level ${v.returnValues.level} Commission for Toke id# ${v.returnValues.id}`
                          :v.returnValues._type == '4'? `Self Trading profit for Token id# ${v.returnValues.id}`
+                         :v.returnValues._type == '0'? `For Token id# ${v.returnValues.id}`
                         :`Package Upgrade Bonus`,
                     svg: incomeKeys[v.returnValues._type].svg,
                     class: incomeKeys[v.returnValues._type].class,
