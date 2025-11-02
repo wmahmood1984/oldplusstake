@@ -21,10 +21,10 @@ const metadata = {
 
 // 3. Set the networks
 const networks = [
-  mainnet
-  , arbitrum , 
+  // mainnet
+  // , arbitrum , 
   bscTestnet, 
-  opBNBTestnet
+  // opBNBTestnet
 ]
 
 // 4. Create Wagmi Adapter
