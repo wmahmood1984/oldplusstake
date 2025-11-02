@@ -188,9 +188,9 @@ export default function Dashboard() {
                                             disabled={Package.id >= 0}
                                             style={Number(Package.id) + 1 > 0 ? { backgroundColor: "grey", color: "white" } : {}}
                                             class="w-full bg-blue-600 text-white py-2 sm:py-3 rounded-lg hover:bg-blue-700 text-sm sm:text-base transition-colors font-medium">
-                                                {Package.id ==0? `Active`:`Upgrade`}
-                                                
-                                                </button>
+                                            {Package.id == 0 ? `Active` : `Upgrade`}
+
+                                        </button>
                                     </div>
                                     <div class="package-card bg-gradient-to-br from-green-50 to-green-100 p-4 sm:p-6 rounded-xl text-center border-2 border-transparent hover:border-green-300 transition-all">
                                         <h4 class="font-bold text-base sm:text-xl text-green-800 mb-2">DI</h4>
@@ -213,7 +213,7 @@ export default function Dashboard() {
                                                     </>
                                                 ) :
 
-                                                    Package.id ==1? `Active`:downlines.indirect.length >= packages[1].team ? `Upgrade` : `Need ${packages[1].team - downlines.indirect.length} team members`}
+                                                    Package.id == 1 ? `Active` : downlines.indirect.length >= packages[1].team ? `Upgrade` : `Need ${packages[1].team - downlines.indirect.length} team members`}
                                         </button>
                                     </div>
                                     <div class="package-card bg-gradient-to-br from-purple-50 to-purple-100 p-4 sm:p-6 rounded-xl text-center border-2 border-transparent hover:border-purple-300 transition-all">
@@ -234,7 +234,7 @@ export default function Dashboard() {
                                                         <Spinner size={20} color="#fff" />
                                                         <span>Processing...</span>
                                                     </>
-                                                ) : Package.id ==2? `Active`: downlines.indirect.length >= packages[2].team ? `Upgrade` : `Need ${packages[2].team - downlines.indirect.length} team members`}
+                                                ) : Package.id == 2 ? `Active` : downlines.indirect.length >= packages[2].team ? `Upgrade` : `Need ${packages[2].team - downlines.indirect.length} team members`}
                                         </button>
                                     </div>
                                     <div class="package-card bg-gradient-to-br from-yellow-50 to-yellow-100 p-4 sm:p-6 rounded-xl text-center border-2 border-transparent hover:border-yellow-300 transition-all">
@@ -254,7 +254,7 @@ export default function Dashboard() {
                                                     <Spinner size={20} color="#fff" />
                                                     <span>Processing...</span>
                                                 </>
-                                            ) : Package.id ==3? `Active`: downlines.indirect.length >= packages[3].team ? `Upgrade` : `Need ${packages[3].team - downlines.indirect.length} team members`}
+                                            ) : Package.id == 3 ? `Active` : downlines.indirect.length >= packages[3].team ? `Upgrade` : `Need ${packages[3].team - downlines.indirect.length} team members`}
                                         </button>
                                     </div>
                                     <div class="package-card bg-gradient-to-br from-red-50 to-red-100 p-4 sm:p-6 rounded-xl text-center border-2 border-transparent hover:border-red-300 transition-all">
@@ -274,7 +274,7 @@ export default function Dashboard() {
                                                     <Spinner size={20} color="#fff" />
                                                     <span>Processing...</span>
                                                 </>
-                                            ) : Package.id ==4? `Active`: downlines.indirect.length >= packages[4].team ? `Upgrade` : `Need ${packages[4].team - downlines.indirect.length} team members`}
+                                            ) : Package.id == 4 ? `Active` : downlines.indirect.length >= packages[4].team ? `Upgrade` : `Need ${packages[4].team - downlines.indirect.length} team members`}
                                         </button>
                                     </div>
                                     <div class="package-card bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 sm:p-6 rounded-xl text-center border-2 border-transparent hover:border-indigo-300 transition-all">
@@ -294,7 +294,7 @@ export default function Dashboard() {
                                                     <Spinner size={20} color="#fff" />
                                                     <span>Processing...</span>
                                                 </>
-                                            ) : Package.id ==5? `Active`: downlines.indirect.length >= packages[5].team ? `Upgrade` : `Need ${packages[5].team - downlines.indirect.length} team members`}
+                                            ) : Package.id == 5 ? `Active` : downlines.indirect.length >= packages[5].team ? `Upgrade` : `Need ${packages[5].team - downlines.indirect.length} team members`}
                                         </button>
                                     </div>
                                 </div>
@@ -328,8 +328,12 @@ export default function Dashboard() {
                                     </div>
                                 </div>
                                 <div class="bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl p-4 sm:p-6 text-center">
-                                    <div class="text-2xl sm:text-3xl mb-2">
-                                        📈
+                                    <div class="flex justify-center mb-2">
+                                        <img
+                                            src="SelfTrading.jpeg"
+                                            alt="Self Trading"
+                                            class="w-24 sm:w-28"
+                                        />
                                     </div>
                                     <h4 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">Self Trading Profit</h4>
                                     <div id="referral-income" class="text-xl sm:text-2xl font-bold text-purple-600">
@@ -337,8 +341,12 @@ export default function Dashboard() {
                                     </div>
                                 </div>
                                 <div class="bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl p-4 sm:p-6 text-center">
-                                    <div class="text-2xl sm:text-3xl mb-2">
-                                        📈
+                                    <div class="flex justify-center mb-2">
+                                        <img
+                                            src="NFTCreation.jpeg"
+                                            alt="Self Trading"
+                                            class="w-24 sm:w-28"
+                                        />
                                     </div>
                                     <h4 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">NFT Creation Earning</h4>
                                     <div id="referral-income" class="text-xl sm:text-2xl font-bold text-purple-600">
@@ -346,8 +354,12 @@ export default function Dashboard() {
                                     </div>
                                 </div>
                                 <div class="bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl p-4 sm:p-6 text-center">
-                                    <div class="text-2xl sm:text-3xl mb-2">
-                                        📈
+                                    <div class="flex justify-center mb-2">
+                                        <img
+                                            src="TotalIncome.jpeg"
+                                            alt="Self Trading"
+                                            class="w-24 sm:w-28"
+                                        />
                                     </div>
                                     <h4 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">Total Earnings</h4>
                                     <div id="referral-income" class="text-xl sm:text-2xl font-bold text-purple-600">
@@ -413,11 +425,11 @@ export default function Dashboard() {
                         <div class="p-4 sm:p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl sm:rounded-2xl border border-purple-200">
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
                                 <h3 class="text-base sm:text-lg font-semibold text-purple-800 mb-2 sm:mb-0">🎨 NFTque Status</h3>
-                                <span id="nftque-status-badge" 
-                                class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs sm:text-sm font-medium self-start">
-                                    {NFTQueStatus=="Not in the Que"?
-                                    `Inactive`:`Active`}
-                                    </span>
+                                <span id="nftque-status-badge"
+                                    class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs sm:text-sm font-medium self-start">
+                                    {NFTQueStatus == "Not in the Que" ?
+                                        `Inactive` : `Active`}
+                                </span>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="text-center p-3 bg-white/50 rounded-lg">
