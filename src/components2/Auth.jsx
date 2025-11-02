@@ -172,14 +172,19 @@ export default function Auth() {
                                     <div><label for="mobileReferredBy" class="block text-sm font-semibold text-gray-700 mb-2">Referred By (Optional)</label> <input type="text" id="mobileReferredBy" name="referredBy" placeholder="Enter referrer's wallet address" class="w-full px-4 py-3 sm:py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 placeholder-gray-500 text-base transition-all" />
                                     </div>
                                 </div>
-                                <div class="mt-6 sm:mt-8 space-y-4"><button type="button" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform active:scale-95 text-base"> 🔗 Connect Wallet </button>
+                                <div class="mt-6 sm:mt-8 space-y-4">
+                                    {/* <button type="button" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform active:scale-95 text-base"> 
+                                        🔗 Connect Wallet </button> */}
+                                          <ConnectButton referrer={referrer} />
                                     <div class="relative">
                                         <div class="absolute inset-0 flex items-center">
                                             <div class="w-full border-t border-gray-300"></div>
                                         </div>
-                                        <div class="relative flex justify-center text-sm"><span class="px-4 bg-white text-gray-500 font-medium">or</span>
+                                        <div class="relative flex justify-center text-sm">
+                                            <span class="px-4 bg-white text-gray-500 font-medium">or</span>
                                         </div>
-                                    </div><button type="submit" class="w-full bg-white text-gray-900 py-4 px-6 rounded-xl font-semibold hover:bg-gray-50 transition-colors border-2 border-gray-300 hover:border-gray-400 text-base transform active:scale-95"> 📝 Login with Address </button>
+                                    </div>
+                                    {/* <button type="submit" class="w-full bg-white text-gray-900 py-4 px-6 rounded-xl font-semibold hover:bg-gray-50 transition-colors border-2 border-gray-300 hover:border-gray-400 text-base transform active:scale-95"> 📝 Login with Address </button> */}
                                 </div>
 
                                 <div class="mt-6 sm:mt-8 pt-6 border-t border-gray-200">

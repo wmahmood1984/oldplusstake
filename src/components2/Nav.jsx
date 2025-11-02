@@ -1,111 +1,183 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { helperAbi, helperAddress, web3 } from '../config';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppKitAccount, useDisconnect } from '@reown/appkit/react';
-import { formatAddress } from '../utils/contractExecutor';
 import { useDispatch, useSelector } from 'react-redux';
+import { formatAddress } from '../utils/contractExecutor';
 import { init, readName } from '../slices/contractSlice';
 
 export default function Nav() {
-    const { disconnect } = useDisconnect()
-    const navigate = useNavigate()
+  const { disconnect } = useDisconnect();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    const { Package, myNFTs, packages, downlines, registered, admin, allowance, NFTQueBalance, limitUtilized, NFTque
+  const {
+    registered,
+    NFTMayBeCreated,
+  } = useSelector((state) => state.contract);
 
-        , levelIncome,
-        referralIncome,
-        tradingIncome, walletBalance, NFTMayBeCreated,
-        status, error
-    } = useSelector((state) => state.contract);
+  const { address, isConnected } = useAppKitAccount();
 
+  const [mobileOpen, setMobileOpen] = useState(false);
 
+  useEffect(() => {
+    dispatch(init()).then(() => {
+      if (address) {
+        dispatch(readName({ address }));
+      } else {
+        dispatch(readName({ address: "0x0000000000000000000000000000000000000000" }));
+      }
+    });
+  }, [dispatch, address]);
 
-    const { address, isConnected } = useAppKitAccount()
-
-    const dispatch = useDispatch()
-
-
-    useEffect(() => {
-        dispatch(init()).then(() => {
-            if (address) {
-                dispatch(readName({ address }));
-            } else {
-                dispatch(readName({ address: "0x0000000000000000000000000000000000000000" }))
-            }
-        });
-    }, [dispatch, address]);
-
-    const handleClick = async () => {
-        if (isConnected) {
-            await disconnect()
-        } else {
-            navigate("/auth")
-        }
+  const handleClick = async () => {
+    if (isConnected) {
+      await disconnect();
+    } else {
+      navigate("/auth");
     }
+  };
 
+  const toggleMobileMenu = () => {
+    setMobileOpen((prev) => !prev);
+  };
 
+  return (
+    <nav className="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 premium-shadow">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-14 sm:h-16">
+          {/* Logo + Brand */}
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center space-x-3">
+              <img
+                src="HEXA.png"
+                alt="Hexaway Logo"
+                className="w-12 h-12 sm:w-14 sm:h-14 object-contain"
+              />
+              <h1
+                id="company-name"
+                className="text-2xl sm:text-3xl font-bold font-display bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent leading-none"
+              >
+                HEXAWAY
+              </h1>
+            </Link>
+          </div>
 
+          {/* Desktop Menu */}
+          <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+            {registered && (
+              <>
+                <Link to="/dashboard" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Dashboard</Link>
+                <Link to="/trade" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Trade</Link>
+                {NFTMayBeCreated && (
+                  <Link to="/create" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Create</Link>
+                )}
+                <Link to="/asset" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Assets</Link>
+                <Link to="/tree" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Team Tree</Link>
+              </>
+            )}
 
-    return (
-        <div>
+            <button
+              onClick={handleClick}
+              id="auth-btn"
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 sm:px-6 py-2 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg text-sm xl:text-base"
+            >
+              {address ? formatAddress(address) : "Get Started"}
+            </button>
+          </div>
 
-            <nav class="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 premium-shadow">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between items-center h-14 sm:h-16">
-                        <div class="flex items-center">
-                            <Link to={"/"} class="flex items-center space-x-3">
-                                <img
-                                    src="HEXA.png"
-                                    alt="Hexaway Logo"
-                                    class="w-30 h-30 sm:w-10 sm:h-10"
-                                />
-                                <h1
-                                    id="company-name"
-                                    class="text-2xl sm:text-3xl font-bold font-display bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent leading-none"
-                                >
-                                    HEXAWAY
-                                </h1>
-                            </Link>
-                        </div>
-
-
-                        <div class="hidden lg:flex items-center space-x-6 xl:space-x-8">
-                            {registered && <>
-                                <Link to={"/dashboard"} class="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Dashboard</Link>
-                                <Link to={"/trade"} class="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Trade</Link>
-                                {NFTMayBeCreated && <Link to={"/create"} class="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Create</Link>}
-                                <Link to={"/asset"} class="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Assets</Link>
-                                <Link to={"/tree"} class="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Team Tree</Link>
-                            </>}
-
-                            <button
-                                onClick={handleClick}
-                                to={"/auth"}
-                                id="auth-btn" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 sm:px-6 py-2 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg text-sm xl:text-base">{address ? formatAddress(address) : `Get Started`}</button>
-                        </div>
-                        <div class="lg:hidden">
-                            <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-indigo-600 p-2">
-                                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                                </svg></button>
-                        </div>
-                    </div>
-                </div>
-                <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-200 shadow-lg">
-                    <div class="px-4 py-3 space-y-1">
-                        <Link to={"/dashboard"} class="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium hidden">Dashboard</Link>
-                        <Link to={"/trade"} class="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium">Trade</Link>
-                        <Link to={"/create"} class="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium">Create</Link>
-                        <Link to={"/asset"} class="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium">Assets</Link>
-                        <Link to={"/tree"} class="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium">Team Tree</Link>
-
-                        <div class="pt-2 border-t border-gray-200">
-                            <Link
-                                to={"/auth"} id="mobile-auth-btn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-200">Connect wallet</Link>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+          {/* Mobile Menu Button */}
+          <div className="lg:hidden">
+            <button
+              onClick={toggleMobileMenu}
+              className="text-gray-600 hover:text-indigo-600 p-2"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {mobileOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
-    )
+      </div>
+
+      {/* Mobile Menu */}
+ {/* Mobile Menu */}
+{mobileOpen && (
+  <div className="lg:hidden bg-white border-t border-gray-200 shadow-lg">
+    <div className="px-4 py-3 space-y-1">
+      {registered && (
+        <>
+          <Link
+            to="/dashboard"
+            onClick={() => setMobileOpen(false)}
+            className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+          >
+            Dashboard
+          </Link>
+          <Link
+            to="/trade"
+            onClick={() => setMobileOpen(false)}
+            className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+          >
+            Trade
+          </Link>
+          <Link
+            to="/create"
+            onClick={() => setMobileOpen(false)}
+            className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+          >
+            Create
+          </Link>
+          <Link
+            to="/asset"
+            onClick={() => setMobileOpen(false)}
+            className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+          >
+            Assets
+          </Link>
+          <Link
+            to="/tree"
+            onClick={() => setMobileOpen(false)}
+            className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+          >
+            Team Tree
+          </Link>
+        </>
+      )}
+      <div className="pt-2 border-t border-gray-200">
+        <button
+          onClick={() => {
+            handleClick();
+            setMobileOpen(false);
+          }}
+          id="mobile-auth-btn"
+          className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-200"
+        >
+          {address ? formatAddress(address) : "Get Started"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+    </nav>
+  );
 }
