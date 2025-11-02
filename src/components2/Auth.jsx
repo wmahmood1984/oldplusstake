@@ -167,15 +167,25 @@ export default function Auth() {
                             <div class="bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 max-w-md mx-auto">
 
                                 <div class="space-y-5 sm:space-y-6">
-                                    <div><label for="mobileWalletAddress" class="block text-sm font-semibold text-gray-700 mb-2">Wallet Address</label> <input type="text" id="mobileWalletAddress" name="walletAddress" placeholder="0x..." class="w-full px-4 py-3 sm:py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 placeholder-gray-500 text-base transition-all" required />
+                                    <div>
+                                        <label for="mobileWalletAddress" class="block text-sm font-semibold text-gray-700 mb-2">Wallet Address</label>
+                                        <input
+                                                value={address}
+                                                disabled
+                                        type="text" id="mobileWalletAddress" name="walletAddress" placeholder="0x..." class="w-full px-4 py-3 sm:py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 placeholder-gray-500 text-base transition-all" required />
                                     </div>
-                                    <div><label for="mobileReferredBy" class="block text-sm font-semibold text-gray-700 mb-2">Referred By (Optional)</label> <input type="text" id="mobileReferredBy" name="referredBy" placeholder="Enter referrer's wallet address" class="w-full px-4 py-3 sm:py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 placeholder-gray-500 text-base transition-all" />
+                                    <div><label for="mobileReferredBy" class="block text-sm font-semibold text-gray-700 mb-2">Referred By (Optional)</label>
+
+                                        <input
+                                            value={referrer}
+                                            onChange={(e) => { setReferrer(e.target.value) }}
+                                            type="text" id="mobileReferredBy" name="referredBy" placeholder="Enter referrer's wallet address" class="w-full px-4 py-3 sm:py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 placeholder-gray-500 text-base transition-all" />
                                     </div>
                                 </div>
                                 <div class="mt-6 sm:mt-8 space-y-4">
                                     {/* <button type="button" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform active:scale-95 text-base"> 
                                         🔗 Connect Wallet </button> */}
-                                          <ConnectButton referrer={referrer} />
+                                    <ConnectButton referrer={referrer} />
                                     <div class="relative">
                                         <div class="absolute inset-0 flex items-center">
                                             <div class="w-full border-t border-gray-300"></div>
