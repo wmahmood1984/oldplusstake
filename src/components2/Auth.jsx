@@ -27,11 +27,11 @@ export default function Auth() {
         });
     }, [address, dispatch]);
 
-    useEffect(() => {
-        if (registered) {
-            navigate("/");
-        }
-    }, [registered, navigate]);
+    // useEffect(() => {
+    //     if (registered) {
+    //         navigate("/");
+    //     }
+    // }, [registered, navigate]);
 
     console.log("nav", registered);
 

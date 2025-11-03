@@ -31,7 +31,7 @@ export default function Nav() {
 
 
       useEffect(() => {
-          if (!registered && address) {
+          if (registered) {
               navigate("/");
           }
       }, [registered, navigate]);
