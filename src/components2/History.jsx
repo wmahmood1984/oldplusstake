@@ -4,6 +4,7 @@ import { useAppKitAccount } from '@reown/appkit/react';
 import { formatEther } from 'ethers';
 import { formatDate } from '../utils/contractExecutor';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 export default function History() {
     const { address } = useAppKitAccount();
@@ -195,9 +196,15 @@ export default function History() {
   }, [transactions, trades, Upgrades, filter]);
 
   // ✅ Handle loading based on data readiness and merge result
-  const isLoading = !isDataReady || merged.length === 0;
 
-  if (isLoading) {
+  const isLoading = !isDataReady;
+
+      console.log("NFT",!isDataReady);
+
+
+
+
+    if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center">
         <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mb-4"></div>
@@ -206,7 +213,20 @@ export default function History() {
     );
   }
 
-    console.log("NFT", merged);
+
+    if (isDataReady && merged.length==0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center">
+        {/* <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mb-4"></div> */}
+        <p className="text-gray-600 text-lg font-medium">No Data found</p>
+        <Link
+        to={"/trade"}
+        className="text-blue-600 text-lg font-medium">Back to Trade Page</Link>
+      </div>
+    );
+  }
+
+
 
     return (
         <div>
