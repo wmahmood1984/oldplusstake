@@ -48,9 +48,9 @@ console.log("nav",nft,nft.id);
 
     return (
 
-        <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 group">
-            <div class="relative">
-                <div class="aspect-square bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative overflow-hidden">
+        <div class="nft-card bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl shadow-lg overflow-hidden flex flex-col h-full">
+            
+                <div class="h-48 bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
                     {/* <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div> */}
                     {/* <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"> */}
                         <img
@@ -71,7 +71,7 @@ console.log("nav",nft,nft.id);
                         Edit </button>
                     </div>
                 </div> */}
-            </div>
+            
             <div class="p-3 sm:p-4">
                 <h3 class="font-bold text-gray-900 mb-1 text-sm sm:text-base">{name} #{nft.id}</h3>
                 <p class="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">{description}</p>
