@@ -155,7 +155,6 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         users[_referrer].direct.push(_user);
 
         // ✅ Add to referrer's indirect network
-    
 
         address current = placement;
         for (uint i = 0; i < maxLevels; i++) {
@@ -179,9 +178,8 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         uint _type,
         uint _id
     ) internal {
-        bool eligible = _type != 1
-            ? // (block.timestamp - userPackage[up].purchaseTime) <=
-            //     60 * 60 * 24 * 30
+        bool eligible = _type != 1 // (block.timestamp - userPackage[up].purchaseTime) <=
+            ? //     60 * 60 * 24 * 30
             // :
             userPackage[up].id > 0
             : true;
@@ -195,9 +193,9 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         ) {
             if (block.timestamp - userTradingTime[up] <= (timelimit)) {
                 paymentToken.transfer(up, amount);
-                if(_type ==3 ){
+                if (_type == 3) {
                     tradingReferralBonus[up] += amount;
-                }else {
+                } else {
                     packageReferralBonus[up] += amount;
                 }
                 emit Incomes(
@@ -386,7 +384,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
             _nft.id
         );
         emit Trades(block.timestamp, amount, 0, oldOwner, _nft.id);
-        emit Trades(block.timestamp, amount+_nft.premium, 1, _user, _nft.id);
+        emit Trades(block.timestamp, amount + _nft.premium, 1, _user, _nft.id);
         paymentToken.transfer(
             owner(),
             ((amount * percentageAtBuyToAdmin) / percentageAtBuy)
@@ -460,16 +458,16 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         for (uint i = 0; i < _uplines.length; i++) {
             address up = _uplines[i];
             bool cond = _type == 2 // Package Buy
-            //     userLimitUtilized[up] >= (userPackage[up].limit / 2)) ||
-                ? // ((userPackage[up].id == 5 &&
+            // ((userPackage[up].id == 5 &&
+                ? //     userLimitUtilized[up] >= (userPackage[up].limit / 2)) ||
                 //     userPackage[up].id != 5) &&
 
                 users[up].direct.length >= 2 // ((userPackage[up].id == 5 && // Package buy
-                //     userLimitUtilized[up] >= (userPackage[up].limit / 2)) ||
-                : //     userPackage[up].id != 5) &&
-
-                userPackage[up].levelUnlock >= i &&
-                    users[up].direct.length >= userPackage[up].directrequired;
+                //     userPackage[up].id != 5) &&
+                : //     userLimitUtilized[up] >= (userPackage[up].limit / 2)) ||
+                userPackage[up].levelUnlock - 1 >= i &&
+                    users[up].direct.length - 1 >=
+                        userPackage[up].directrequired;
             uint transactionType = _type == 1 ? 2 : 3;
             if (
                 cond &&
@@ -478,12 +476,14 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
             ) {
                 if (block.timestamp - userTradingTime[up] <= (timelimit)) {
                     paymentToken.transfer(up, ((_amount * 70) / 100) / levelD);
-                    if(_type==1){
-                        tradingLevelBonus[up] += ((_amount * 70) / 100) / levelD;
-                    }else{
-                        packageLevelBonus[up] += ((_amount * 70) / 100) / levelD;
+                    if (_type == 1) {
+                        tradingLevelBonus[up] +=
+                            ((_amount * 70) / 100) / levelD;
+                    } else {
+                        packageLevelBonus[up] +=
+                            ((_amount * 70) / 100) / levelD;
                     }
-                    
+
                     emit Incomes(
                         block.timestamp,
                         ((_amount * 70) / 100) / levelD,
@@ -545,6 +545,10 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         paymentToken.transfer(nftused[0]._owner, amount);
 
         removeFirst2();
+
+        if (nftused.length == 0) {
+            NFTMayBeCreated = false;
+        }
     }
 
     /// @notice Mint a new NFT to `to`
@@ -747,15 +751,14 @@ contract MyNFT is
             );
 
             ownerMint(_uri);
-
         }
     }
 
     function ownerMint(string memory _uri) public onlyOwner {
-            helper.mint2(_uri, msg.sender, _nextTokenId);
-            _tokenURIs[_nextTokenId] = _uri;
-            _safeMint(msg.sender, _nextTokenId);
-            _nextTokenId++;
+        helper.mint2(_uri, msg.sender, _nextTokenId);
+        _tokenURIs[_nextTokenId] = _uri;
+        _safeMint(msg.sender, _nextTokenId);
+        _nextTokenId++;
     }
 
     function ownerSettlement() public {

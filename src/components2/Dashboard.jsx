@@ -10,13 +10,14 @@ import { mlmcontractaddress, packageKeys, usdtContract } from '../config';
 import CountdownTimer from './Timer';
 import Spinner from './Spinner';
 import HexawayPackages from './HexawayPackages';
+import CountdownTimer2 from './Timer2';
 
 export default function Dashboard() {
 
     const config = useConfig()
     const { Package, myNFTs, packages, downlines, registered, admin, allowance, NFTQueBalance, limitUtilized, NFTque
 
-        , walletBalance, tradingReferralBonus, packageReferralBonus, tradingLevelBonus, packageLevelBonus, selfTradingProfit,
+        , walletBalance, tradingReferralBonus, packageReferralBonus, tradingLevelBonus, packageLevelBonus, selfTradingProfit,nftPurchaseTime,
         status, error,totalIncome
     } = useSelector((state) => state.contract);
     const { address } = useAppKitAccount();
@@ -92,7 +93,7 @@ export default function Dashboard() {
 
     const isLoading = !Package || !downlines || !packages;
 
-    console.log("dashoard", packageKeys[Package.id].name);
+    // console.log("dashoard", packageKeys[Package.id].name);
 
     if (isLoading) {
         // show a waiting/loading screen
@@ -168,9 +169,10 @@ export default function Dashboard() {
                                     </div>
                                 </div>
                             </div>
-                            {
+                            
                                 <CountdownTimer durationInSeconds={Number(Package.purchaseTime) + 60 * 60 * 24 * 30 - now / 1000} />
-                            }
+                                <CountdownTimer2 durationInSeconds={Number(nftPurchaseTime) + 60 * 60 - now / 1000} />
+                            
                             {/* <div class="bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
                                 <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Hexaway Packages</h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 sm:gap-6">

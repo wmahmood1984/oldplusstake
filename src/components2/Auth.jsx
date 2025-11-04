@@ -31,7 +31,7 @@ export default function Auth() {
         if (registered && isConnected) {
             navigate("/");
         }
-    }, [registered, navigate,isConnected]);
+    }, [registered,navigate,isConnected]);
 
     console.log("nav", registered);
 

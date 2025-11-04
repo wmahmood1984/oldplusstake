@@ -69,6 +69,7 @@ export const readName = createAsyncThunk(
       let selfTradingProfit = 0
       let walletBalance = 0
       let nftListed = []
+      let nftPurchaseTime=0
 
 
       if (a.address && registered) {
@@ -87,6 +88,7 @@ export const readName = createAsyncThunk(
         selfTradingProfit = await safeCall("tradingIncome", () => contract.methods.selfTradingProfit(a.address).call());
         walletBalance = await safeCall("walletbalance", () => uContract.methods.balanceOf(a.address).call());
         nftListed = await safeCall("nftlisted", () => contract.methods.getNFTListed(a.address).call());
+        nftPurchaseTime = await safeCall("nftPurchaseTime", () => contract.methods.userTradingTime(a.address).call());
 
       }
 
@@ -125,7 +127,8 @@ export const readName = createAsyncThunk(
           Number(formatEther(tradingLevelBonus)) +
           Number(formatEther(packageLevelBonus)) +
           Number(formatEther(selfTradingProfit))
-        ).toFixed(4),nftListed
+        ).toFixed(4),nftListed,
+        nftPurchaseTime
 
 
         //      nftused,
@@ -166,6 +169,7 @@ const contractSlice = createSlice({
     selfTradingProfit: 0,
     walletBalance: 0,
     totalIncome: 0,
+    nftPurchaseTime:0,
     //nftused: null,
     status: "idle",
     error: null,
