@@ -237,11 +237,11 @@ export default function Suck() {
         //     handleUpdate2(pkg.id)
         // } else {
 
-         const value = Number(formatEther(nftused[0].price) * .07) + Number(formatEther(nftused[0].premium))
+        const value = Number(formatEther(nftused[0].price) * .07) + Number(formatEther(nftused[0].premium))
         await executeContract({
             config,
             functionName: "approve",
-            args: [mlmcontractaddress, value],
+            args: [mlmcontractaddress, parseEther(value.toString())],
             onSuccess: () => handleUpdate2(),
             onError: (err) => {
                 toast.error("Transaction failed", err)
