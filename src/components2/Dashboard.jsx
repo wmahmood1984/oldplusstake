@@ -178,9 +178,9 @@ export default function Dashboard() {
 
                             <CountdownTimer durationInSeconds={Number(Package.purchaseTime) + 60 * 60 * 24 * 30 - now / 1000} />
                             {levelBlockSeconds > 0 ? <IncomeBlockTimer durationInSeconds={Number(incomeBlockTime) + 60 * 60 - now / 1000} />
-                                : Number(nftPurchaseTime) + 60 * 60 - now / 1000 >0 ? 
+                                : Number(nftPurchaseTime) + 60 * 60*3 - now / 1000 >0 ? 
                                 
-                                <CountdownTimer2 durationInSeconds={Number(nftPurchaseTime) + 60 * 60 - now / 1000} />
+                                <CountdownTimer2 durationInSeconds={Number(nftPurchaseTime) + 60 * 60*3 - now / 1000} />
                             :<h1>Please Buy an NFT to get your income Unlocked</h1>
                             }
 
