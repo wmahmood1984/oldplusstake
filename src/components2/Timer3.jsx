@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const CountdownTimer3 = ({ durationInSeconds }) => {
+const IncomeBlockTimer = ({ durationInSeconds }) => {
   const [timeLeft, setTimeLeft] = useState(durationInSeconds);
 
   useEffect(() => {
@@ -84,4 +84,4 @@ const CountdownTimer3 = ({ durationInSeconds }) => {
   );
 };
 
-export default CountdownTimer3;
+export default IncomeBlockTimer;

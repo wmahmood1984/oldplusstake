@@ -12,6 +12,7 @@ import Spinner from './Spinner';
 import HexawayPackages from './HexawayPackages';
 import CountdownTimer2 from './Timer2';
 import CountdownTimer3 from './Timer3';
+import IncomeBlockTimer from './Timer3';
 
 export default function Dashboard() {
 
@@ -176,8 +177,12 @@ export default function Dashboard() {
                             </div>
 
                             <CountdownTimer durationInSeconds={Number(Package.purchaseTime) + 60 * 60 * 24 * 30 - now / 1000} />
-                            {levelBlockSeconds > 0 ? <CountdownTimer3 durationInSeconds={Number(incomeBlockTime) + 60 * 60 - now / 1000} />
-                                : <CountdownTimer2 durationInSeconds={Number(nftPurchaseTime) + 60 * 60 - now / 1000} />}
+                            {levelBlockSeconds > 0 ? <IncomeBlockTimer durationInSeconds={Number(incomeBlockTime) + 60 * 60 - now / 1000} />
+                                : Number(nftPurchaseTime) + 60 * 60 - now / 1000 >0 ? 
+                                
+                                <CountdownTimer2 durationInSeconds={Number(nftPurchaseTime) + 60 * 60 - now / 1000} />
+                            :<h1>Please Buy an NFT to get your income Unlocked</h1>
+                            }
 
 
                             {/* <div class="bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
