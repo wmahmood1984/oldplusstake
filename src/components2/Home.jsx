@@ -178,7 +178,7 @@ const { address } = useAppKitAccount();
                                     </div>
                                     <div>
                                         <h4 class="font-semibold text-gray-900">Cyber Genesis #7804</h4>
-                                        <p class="text-gray-600">Floor: 45.2 ETH</p>
+                                        <p class="text-gray-600">Floor: 45.2 $</p>
                                     </div>
                                 </div>
                                 <div class="bg-white/95 backdrop-blur-md border border-blue-200 p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-4">
@@ -191,7 +191,7 @@ const { address } = useAppKitAccount();
                                     </div>
                                     <div>
                                         <h4 class="font-semibold text-gray-900">Abstract Dreams #3749</h4>
-                                        <p class="text-gray-600">Floor: 32.1 ETH</p>
+                                        <p class="text-gray-600">Floor: 32.1 $</p>
                                     </div>
                                 </div>
                             </div>
@@ -206,7 +206,7 @@ const { address } = useAppKitAccount();
                                     </div>
                                     <div>
                                         <h4 class="font-semibold text-gray-900">DigitalVision</h4>
-                                        <p class="text-gray-600">Volume: 1,234 ETH</p>
+                                        <p class="text-gray-600">Volume: 1,234 $</p>
                                     </div>
                                 </div>
                                 <div class="bg-white/95 backdrop-blur-md border border-blue-200 p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-4">
@@ -216,7 +216,7 @@ const { address } = useAppKitAccount();
                                     </div>
                                     <div>
                                         <h4 class="font-semibold text-gray-900">SpaceArt</h4>
-                                        <p class="text-gray-600">Volume: 987 ETH</p>
+                                        <p class="text-gray-600">Volume: 987 $</p>
                                     </div>
                                 </div>
                             </div>

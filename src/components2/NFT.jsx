@@ -1,7 +1,7 @@
 import { useAppKitAccount } from "@reown/appkit/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useConfig } from "wagmi";
 import { executeContract, extractRevertReason, formatAddress } from "../utils/contractExecutor";
 import { readName } from "../slices/contractSlice";
@@ -18,6 +18,17 @@ export const NFT = ({ nft, index, toggle, setToggle }) => {
   // const {  nfts  } = useSelector((state) => state.contract);
   const { address } = useAppKitAccount();
   const [loading, setLoading] = useState(false);
+        const { Package, myNFTs, packages, downlines, registered, admin, allowance, NFTQueBalance, limitUtilized, NFTque
+
+        , levelIncome,
+        referralIncome,
+        tradingIncome, walletBalance,
+        status, error
+    } = useSelector((state) => state.contract);
+
+  const now = new Date().getTime()/1000
+
+  const canBuy = now - Number(Package.purchaseTime)<=60*1
 
 
   const dispatch = useDispatch()
@@ -67,6 +78,8 @@ export const NFT = ({ nft, index, toggle, setToggle }) => {
 
     //     handleBuy2(id, address)
     // } else {
+
+    if(canBuy){
     setLoading(true)
     const value = Number(formatEther(nft.price) * .07) + Number(formatEther(nft.premium))
     console.log("value", Number(value).toFixed(8))
@@ -82,6 +95,10 @@ export const NFT = ({ nft, index, toggle, setToggle }) => {
       },
       contract: usdtContract
     });
+    }else{
+      toast.error("Your package has been expired. Please upgrade")
+    }
+
     //        }
 
 

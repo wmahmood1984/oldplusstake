@@ -50,6 +50,8 @@ export default function Trade() {
 
   console.log("nn", nfts);
 
+
+
     return (
         <div>
 
