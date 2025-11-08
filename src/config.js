@@ -89,7 +89,7 @@ export const tradeKeys = [
 
 	},
 	{
-		name: "NFT Mint (Purchase)",
+		name: "NFT Purchase",
 		class: "w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center",
 		svg: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
 	},
