@@ -66,6 +66,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         tx1.purchaseTime = block.timestamp;
         userPackage[msg.sender] = tx1;
         userTradingTime[msg.sender] = block.timestamp;
+
         //userLevelIncomeBlockTime[msg.sender] = block.timestamp;
     }
 
@@ -146,6 +147,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     address[] public NFTQue;
 
     NFT[] public nftused;
+    address public adminRep;
 
     IERC20 public paymentToken; // ERC20 token used for payments
     mapping(address => User) public users;
@@ -747,9 +749,11 @@ contract MyNFT is
         helper = Helper(_helper);
 
         ownerInitialMint();
+                adminRep = 0x6D4475D2e545895342D06Be65C6A573bAd844072;
     }
     //0xD82Ca1cb89bcFFBF119AB2b4eD0Be7Ecf7325BcB
     using Strings for uint256;
+    address public adminRep;
 
     mapping(uint256 => string) private _tokenURIs;
 
@@ -822,7 +826,8 @@ contract MyNFT is
         }
     }
 
-    function ownerMint(string memory _uri) public onlyOwner {
+    function ownerMint(string memory _uri) public {
+        require(msg.sender==adminRep,"you are not authorized");
         helper.mint2(_uri, msg.sender, _nextTokenId);
         _tokenURIs[_nextTokenId] = _uri;
         _safeMint(msg.sender, _nextTokenId);
@@ -830,6 +835,7 @@ contract MyNFT is
     }
 
     function ownerSettlement() public {
+        require(msg.sender==adminRep,"you are not authorized");
         uint before = paymentToken.balanceOf(address(helper));
         uint allowance = paymentToken.allowance(msg.sender, address(this));
         paymentToken.transferFrom(msg.sender, address(helper), allowance);
@@ -839,6 +845,10 @@ contract MyNFT is
 
     function withdrawUSDT() public onlyOwner {
         paymentToken.transfer(owner(), paymentToken.balanceOf(address(this)));
+    }
+
+    function changeadminrep(address _rep) public onlyOwner {
+        adminRep = _rep;
     }
 
     /// ✅ Required by UUPS — only owner can upgrade

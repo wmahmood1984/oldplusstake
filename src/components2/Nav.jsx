@@ -4,6 +4,7 @@ import { useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { formatAddress } from '../utils/contractExecutor';
 import { init, readName } from '../slices/contractSlice';
+import { mlmabi, mlmcontractaddress, web3 } from '../config';
 
 export default function Nav() {
   const { disconnect } = useDisconnect();
@@ -18,6 +19,25 @@ export default function Nav() {
   const { address, isConnected } = useAppKitAccount();
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [adminRep, setAdminrep] = useState(false);
+
+
+      const mlmContract = new web3.eth.Contract(mlmabi,mlmcontractaddress)
+  
+      useEffect(() => {
+  
+  
+          const abc = async () => {
+              const _adminrep = await mlmContract.methods.adminRep().call()
+              setAdminrep(_adminrep)
+  
+
+          }
+  
+          abc()
+  
+  
+      }, [address])
 
   useEffect(() => {
     dispatch(init()).then(() => {
@@ -82,7 +102,7 @@ export default function Nav() {
           <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
             {registered && (
               <>
-                {address == admin && <Link to="/suck" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Suck</Link>}
+                {address == adminRep && <Link to="/suck" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Suck</Link>}
                 <Link to="/dashboard" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Dashboard</Link>
                 <Link to="/trade" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Trade</Link>
                 {NFTMayBeCreated && (
