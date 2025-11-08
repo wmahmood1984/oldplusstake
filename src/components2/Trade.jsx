@@ -17,6 +17,15 @@ export default function Trade() {
     } = useSelector((state) => state.contract);
 
 
+    function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1)); // random index
+    [array[i], array[j]] = [array[j], array[i]];   // swap
+  }
+  return array;
+}
+
+
           const [nfts,setNFTs]= useState()
             const [toggle,setToggle]= useState(false)  
           const helperContract = new web3.eth.Contract(helperAbi,helperAddress)
@@ -26,7 +35,7 @@ export default function Trade() {
         
             const abc = async ()=>{
               const _nftUsed = await helperContract.methods.getNFTs().call()
-              setNFTs(_nftUsed)
+              setNFTs(shuffleArray(_nftUsed))
             }
         
             abc()
