@@ -13,6 +13,7 @@ import HexawayPackages from './HexawayPackages';
 import CountdownTimer2 from './Timer2';
 import CountdownTimer3 from './Timer3';
 import IncomeBlockTimer from './Timer3';
+import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
 
@@ -20,7 +21,7 @@ export default function Dashboard() {
     const { Package, myNFTs, packages, downlines, registered, admin, allowance, NFTQueBalance, limitUtilized, NFTque
 
         , walletBalance, tradingReferralBonus, packageReferralBonus, tradingLevelBonus, packageLevelBonus, selfTradingProfit, nftPurchaseTime, incomeBlockTime,
-        status, error, totalIncome, timeLimit,packageExpiryLimit
+        status, error, totalIncome, timeLimit, packageExpiryLimit
     } = useSelector((state) => state.contract);
     const { address } = useAppKitAccount();
     const [referrer, setReferrer] = useState()
@@ -28,9 +29,9 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(false);
 
 
-    useEffect(()=>{},
-    
-    [loading])
+    useEffect(() => { },
+
+        [loading])
 
 
 
@@ -120,18 +121,19 @@ export default function Dashboard() {
     }
 
     const xyz = Math.max(
-                                    0,
-                                    Number(Package.packageUpgraded) + Number(packageExpiryLimit) - Math.floor(Date.now() / 1000)
-                                )
+        0,
+        Number(Package.packageUpgraded) + Number(packageExpiryLimit) - Math.floor(Date.now() / 1000)
+    )
     const time = Math.floor(Date.now() / 1000)
     const abc = {
         now: Math.floor(Date.now() / 1000),
         purchaseTime: Number(Package.purchaseTime),
         time: Number(Package.time),
         expiry: Number(Package.purchaseTime) + Number(Package.time),
-        remaining:Number(Package.purchaseTime) + Number(Package.time)-Math.floor(Date.now() / 1000)}
+        remaining: Number(Package.purchaseTime) + Number(Package.time) - Math.floor(Date.now() / 1000)
+    }
     console.log("dashboard",
-    {remaining:xyz,package:Package,expiry:packageExpiryLimit,now:time});
+        { remaining: xyz, package: Package, expiry: packageExpiryLimit, now: time });
 
 
     return (
@@ -143,6 +145,13 @@ export default function Dashboard() {
                         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">Dashboard</h1>
                             <p class="text-indigo-100 text-sm sm:text-base">Manage your NFT portfolio and earnings</p>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                                            <button onclick="showPage('history')" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg flex items-center space-x-2">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg><Link
+                                                        to={"/history"}
+                                                    >Transaction History</Link> </button>
+                                            </div>
                         </div>
                     </div>
                     <div class="relative -mt-6 sm:-mt-8">

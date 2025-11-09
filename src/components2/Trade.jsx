@@ -8,67 +8,67 @@ import { Link } from 'react-router-dom';
 
 export default function Trade() {
 
-        const { Package, myNFTs, packages, downlines, registered, admin, allowance, NFTQueBalance, limitUtilized, NFTque
+    const { Package, myNFTs, packages, downlines, registered, admin, allowance, NFTQueBalance, limitUtilized, NFTque
 
         , levelIncome,
         referralIncome,
-        tradingIncome, walletBalance,userTradingTime,timeLimit,
+        tradingIncome, walletBalance, userTradingTime, timeLimit,
         status, error
     } = useSelector((state) => state.contract);
 
 
-function shuffleArray(arr) {
-  // make a shallow copy so we can safely modify
-  const array = [...arr];
+    function shuffleArray(arr) {
+        // make a shallow copy so we can safely modify
+        const array = [...arr];
 
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
 
-  return array;
-}
-
-
-          const [nfts,setNFTs]= useState()
-            const [toggle,setToggle]= useState(false)  
-          const helperContract = new web3.eth.Contract(helperAbi,helperAddress)
-        
-          useEffect(()=>{
-        
-        
-            const abc = async ()=>{
-              const _nfts = await helperContract.methods.getNFTs().call()
-              setNFTs(_nfts)
-            }
-        
-            abc()
-        
-        
-          },[toggle])
+        return array;
+    }
 
 
-               const isLoading = !nfts || !Package
+    const [nfts, setNFTs] = useState()
+    const [toggle, setToggle] = useState(false)
+    const helperContract = new web3.eth.Contract(helperAbi, helperAddress)
+
+    useEffect(() => {
+
+
+        const abc = async () => {
+            const _nfts = await helperContract.methods.getNFTs().call()
+            setNFTs(_nfts)
+        }
+
+        abc()
+
+
+    }, [toggle])
+
+
+    const isLoading = !nfts || !Package
 
 
 
-  if (isLoading) {
-    // show a waiting/loading screen
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mb-4"></div>
-        <p className="text-gray-600 text-lg font-medium">Loading your data...</p>
-      </div>
-    );
-  }
+    if (isLoading) {
+        // show a waiting/loading screen
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mb-4"></div>
+                <p className="text-gray-600 text-lg font-medium">Loading your data...</p>
+            </div>
+        );
+    }
 
-  const now = new Date().getTime()/1000
+    const now = new Date().getTime() / 1000
 
-  const revisedLimitUtilized = now-Number(userTradingTime)>60*10?0:limitUtilized
+    const revisedLimitUtilized = now - Number(userTradingTime) > 60 * 10 ? 0 : limitUtilized
 
-    const randomeNFTs = nfts && shuffleArray(nfts) 
+    const randomeNFTs = nfts && shuffleArray(nfts)
 
-                 console.log("nn",randomeNFTs);
+    console.log("nn", randomeNFTs);
 
 
 
@@ -78,13 +78,13 @@ function shuffleArray(arr) {
 
             <div id="trade-page" class="page">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                    {/* <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                         <h2 class="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">NFT Marketplace</h2><button onclick="showPage('history')" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg flex items-center space-x-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg><Link
-                            to={"/history"}
+                                to={"/history"}
                             >Transaction History</Link> </button>
-                    </div>
+                    </div> */}
                     <div class="bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl shadow-2xl p-6 mb-8">
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             <div class="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
@@ -96,7 +96,7 @@ function shuffleArray(arr) {
                                     Wallet Balance
                                 </div>
                                 <div class="text-2xl font-bold text-green-600" id="trade-wallet-balance">
-                                    ${formatWithCommas(walletBalance) }
+                                    ${formatWithCommas(walletBalance)}
                                 </div>
                             </div>
                             <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
@@ -132,49 +132,50 @@ function shuffleArray(arr) {
                                     Remaining Limit
                                 </div>
                                 <div class="text-2xl font-bold text-purple-600" id="trade-limit-remaining">
-                                    ${formatWithCommas(Number(formatEther(Package.limit))-Number(revisedLimitUtilized))}
+                                    ${formatWithCommas(Number(formatEther(Package.limit)) - Number(revisedLimitUtilized))}
                                 </div>
                             </div>
                         </div>
                         <div class="mt-6">
-                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-gray-700">Trading Limit Usage</span> <span class="text-sm text-gray-600" id="trade-usage-percentage">{`${Number(Number(revisedLimitUtilized)/Number(formatEther(Package.limit))*100).toFixed(2)}%`}</span>
+                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-gray-700">Trading Limit Usage</span> <span class="text-sm text-gray-600" id="trade-usage-percentage">{`${Number(Number(revisedLimitUtilized) / Number(formatEther(Package.limit)) * 100).toFixed(2)}%`}</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-3">
-                                <div id="trade-progress-bar" class="bg-gradient-to-r from-orange-500 to-red-500 h-3 rounded-full transition-all duration-300" 
-                                
-                                style={{ width: `${Number(revisedLimitUtilized)/Number(formatEther(Package.limit))*100}%` }}></div>
+                                <div id="trade-progress-bar" class="bg-gradient-to-r from-orange-500 to-red-500 h-3 rounded-full transition-all duration-300"
+
+                                    style={{ width: `${Number(revisedLimitUtilized) / Number(formatEther(Package.limit)) * 100}%` }}></div>
                             </div>
                             <div class="flex justify-between text-xs text-gray-500 mt-1"><span>${revisedLimitUtilized}</span> <span id="trade-limit-display">${formatWithCommas(formatEther(Package.limit))}</span>
                             </div>
                         </div>
                     </div>
                     <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
-                        {randomeNFTs.map((v,e)=>{
-                             if(v._owner!="0x0000000000000000000000000000000000000000" && e<15){
-                            return (
-                                <NFT nft={v} index={e} toggle={toggle} setToggle={setToggle} revisedLimitUtilized={revisedLimitUtilized}/>
-                                //     <div class="nft-card bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl shadow-lg overflow-hidden">
-                        //     <div class="h-48 bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
-                        //         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                        //         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                        //             <div class="w-20 h-24 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-full opacity-80"></div>
-                        //             <div class="absolute top-4 left-4 w-2 h-2 bg-cyan-300 rounded-full animate-pulse"></div>
-                        //             <div class="absolute top-6 right-4 w-2 h-2 bg-pink-400 rounded-full animate-pulse"></div>
-                        //             <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-cyan-400"></div>
-                        //         </div>
-                        //     </div>
-                        //     <div class="p-4">
-                        //         <h3 class="font-semibold text-gray-900 mb-2">Cyber Genesis #001</h3>
-                        //         <div class="text-2xl font-bold text-blue-600 mb-3">
-                        //             $53.5
-                        //         </div><button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Buy Now</button>
-                        //     </div>
-                        // </div>
-                            )}   
+                        {randomeNFTs.map((v, e) => {
+                            if (v._owner != "0x0000000000000000000000000000000000000000" && e < 15) {
+                                return (
+                                    <NFT nft={v} index={e} toggle={toggle} setToggle={setToggle} revisedLimitUtilized={revisedLimitUtilized} />
+                                    //     <div class="nft-card bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl shadow-lg overflow-hidden">
+                                    //     <div class="h-48 bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
+                                    //         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                    //         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                    //             <div class="w-20 h-24 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-full opacity-80"></div>
+                                    //             <div class="absolute top-4 left-4 w-2 h-2 bg-cyan-300 rounded-full animate-pulse"></div>
+                                    //             <div class="absolute top-6 right-4 w-2 h-2 bg-pink-400 rounded-full animate-pulse"></div>
+                                    //             <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-cyan-400"></div>
+                                    //         </div>
+                                    //     </div>
+                                    //     <div class="p-4">
+                                    //         <h3 class="font-semibold text-gray-900 mb-2">Cyber Genesis #001</h3>
+                                    //         <div class="text-2xl font-bold text-blue-600 mb-3">
+                                    //             $53.5
+                                    //         </div><button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Buy Now</button>
+                                    //     </div>
+                                    // </div>
+                                )
+                            }
                         })
-                            
-                            
-}
+
+
+                        }
                         {/* <div class="nft-card bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl shadow-lg overflow-hidden">
                             <div class="h-48 bg-gradient-to-br from-orange-400 via-red-500 to-pink-600 relative">
                                 <div class="absolute inset-0">
