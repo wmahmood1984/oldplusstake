@@ -96,7 +96,7 @@ export default function NFTCreationDetails() {
                                                 className={`w-12 h-12 bg-gradient-to-br ${gradient} rounded-lg flex items-center justify-center`}
                                             >
                                                 <span className="text-white font-bold text-lg">
-                                                    {nft.id}
+                                                    {index+1}
                                                 </span>
                                             </div>
                                             <div>
