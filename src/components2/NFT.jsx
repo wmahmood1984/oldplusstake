@@ -123,7 +123,7 @@ export const NFT = ({ nft, index, toggle, setToggle,revisedLimitUtilized }) => {
 
     if (cond) {
       setLoading(true)
-      const value = Number(formatEther(nft.price) * .07) + Number(formatEther(nft.premium))
+      const value = Number(formatEther(nft.price) * .07) + Number(formatEther(nft.premium))+0.001
       console.log("value", Number(value).toFixed(8))
       await executeContract({
         config,

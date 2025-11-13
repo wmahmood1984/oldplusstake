@@ -751,7 +751,6 @@ contract MyNFT is
         _nextTokenId = 1;
         helper = Helper(_helper);
 
-        ownerInitialMint();
         adminRep = 0x6D4475D2e545895342D06Be65C6A573bAd844072;
     }
 
@@ -810,18 +809,6 @@ contract MyNFT is
         _nextTokenId++;
     }
 
-    function ownerInitialMint() internal onlyOwner {
-        string memory _uri;
-        for (uint8 i = 0; i < 20; i++) {
-            _uri = string.concat(
-                "https://harlequin-biological-bat-26.mypinata.cloud/ipfs/Qmc1M7gfdgK68TLamsvWPsbo725LX7UtsPaewxHSaXNCUH/",
-                (uint256(i + 1)).toString(),
-                ".json"
-            );
-
-            ownerMint(_uri);
-        }
-    }
 
     function ownerMint(string memory _uri) public {
         require(

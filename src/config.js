@@ -8,6 +8,7 @@ export const web3 = new Web3(
 		//	"https://opbnb-testnet-rpc.publicnode.com"   //op bnb
 		//"https://bsc-testnet-rpc.publicnode.com"
 		"https://bsc-testnet-dataseed.bnbchain.org"
+		///"https://opbnb-mainnet-rpc.bnbchain.org"
 	)
 );
 
