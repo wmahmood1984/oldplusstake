@@ -10,6 +10,7 @@ import { formatEther, parseEther } from 'ethers';
 import Spinner from './Spinner';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { NFT } from './NFT3';
+import axios from 'axios';
 
 export default function Suck() {
 
@@ -88,13 +89,47 @@ export default function Suck() {
         });
     };
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const selectedFile = e.target.files[0];
-        setFile(selectedFile);
+        if (!selectedFile) return;
 
-        if (selectedFile) {
-            const objectUrl = URL.createObjectURL(selectedFile);
-            setPreview(objectUrl);
+        try {
+            // 👇 native FormData — no import needed
+            const data = new FormData();
+            data.append("media", selectedFile);
+            data.append("models", "nudity-2.1,offensive-2.0,text-content,gore-2.0,violence,self-harm");
+            data.append("api_user", import.meta.env.VITE_SIGHTENGINE_KEY);
+            data.append("api_secret", import.meta.env.VITE_SIGHTENGINE_SECRET);
+
+            // 🔍 Send to Sightengine for NSFW check
+            const response = await axios.post(
+                "https://api.sightengine.com/1.0/check.json",
+                data
+            );
+
+            const result = response.data;
+            const nudity = result.nudity || {};
+            const nsfwScore =
+                nudity.sexual_activity ||
+                nudity.sexual_display ||
+                nudity.erotica ||
+                0;
+
+            console.log("nsfw",result);
+
+            if (nsfwScore > 0.3) {
+                toast.error("This image may contain NSFW content. Please upload a safe image.");
+                e.target.value = "";
+                return;
+            }
+
+            // ✅ Safe: allow preview
+            setFile(selectedFile);
+            setPreview(URL.createObjectURL(selectedFile));
+
+        } catch (err) {
+            console.error("Error checking NSFW:", err);
+            toast.error("Error verifying image safety. Please try again.");
         }
     };
 
