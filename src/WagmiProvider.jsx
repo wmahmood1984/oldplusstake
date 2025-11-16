@@ -24,8 +24,8 @@ const networks = [
   // mainnet
   // , arbitrum , 
   //bscTestnet, 
-  // opBNBTestnet,
-    opBNB
+   opBNBTestnet,
+  //  opBNB
 ]
 
 // 4. Create Wagmi Adapter
