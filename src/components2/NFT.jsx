@@ -49,7 +49,6 @@ export const NFT = ({ nft, index, toggle, setToggle,revisedLimitUtilized }) => {
       };
     }
 
-    console.log("object",remainingLimit,nftValue, Number(Package.limit), Number(limitUtilized));
 
     if (remainingLimit < nftValue) {
       return {
@@ -165,6 +164,7 @@ export const NFT = ({ nft, index, toggle, setToggle,revisedLimitUtilized }) => {
     );
   }
 
+    console.log("object",nft);
 
 
   return (
@@ -183,7 +183,7 @@ export const NFT = ({ nft, index, toggle, setToggle,revisedLimitUtilized }) => {
       <div className="p-4 flex flex-col justify-between flex-grow">
         <div>
           <h3 className="font-semibold text-gray-900 mb-1 text-base sm:text-lg truncate">
-            {name} #{nft.id}
+            {name} #{index}
           </h3>
 
           <div className="text-xs text-gray-500 mb-2 break-all">

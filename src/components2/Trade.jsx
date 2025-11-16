@@ -152,7 +152,7 @@ export default function Trade() {
                         {randomeNFTs.map((v, e) => {
                             if (v._owner != "0x0000000000000000000000000000000000000000" && e < 15) {
                                 return (
-                                    <NFT nft={v} index={e} toggle={toggle} setToggle={setToggle} revisedLimitUtilized={revisedLimitUtilized} />
+                                    <NFT nft={v} index={v.id} toggle={toggle} setToggle={setToggle} revisedLimitUtilized={revisedLimitUtilized} />
                                     //     <div class="nft-card bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl shadow-lg overflow-hidden">
                                     //     <div class="h-48 bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
                                     //         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
