@@ -45,6 +45,7 @@ export default function ConnectButton({ referrer }) {
                 console.log("🎉 Tx Hash:", txHash);
                 console.log("🚀 Tx Receipt:", receipt);
                 dispatch(readName({ address: receipt.from }));
+                toast.success("Registration successful done!")
                 navigate("/")
                 setLoading(false)
             },
