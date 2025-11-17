@@ -75,7 +75,7 @@ export const NFT = ({ name,description,image,price,status,id }) => {
             </div>
 
             <div class="p-4">
-                <h4 class="font-bold text-gray-900 mb-1 truncate text-base">{name} #{id} </h4>
+                <h4 class="font-bold text-gray-900 mb-1 truncate text-base">{name} Token Id#{id} </h4>
                 
                 <p class="text-sm text-gray-600 mb-3 line-clamp-2">{description}</p>
 

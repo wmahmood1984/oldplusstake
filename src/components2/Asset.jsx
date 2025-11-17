@@ -141,7 +141,7 @@ export default function Asset() {
     const totalEth = Number(totalWei).toFixed(1);
 
 
-
+console.log("filtered nft",filteredNFTs);
 
 
     return (

@@ -68,7 +68,7 @@ export default function Trade() {
 
     const randomeNFTs = nfts && shuffleArray(nfts)
 
-    console.log("nn",  nfts);
+    console.log("nn",  randomeNFTs);
 
 
 
