@@ -69,14 +69,17 @@ export default function ConnectButton({ referrer }) {
         setLoading(true)
        const contract = new web3.eth.Contract(erc20abi, erc20Add)
        const balance = await contract.methods.balanceOf(address).call();
+      console.log("object",formatEther(balance),formatEther(packages[0].price),formatEther(balance) < formatEther(packages[0].price));
+      const bal = BigInt(balance);            // raw units
+const price = BigInt(packages[0].price); 
 
-       if(formatEther(balance) < formatEther(packages[0].price)){
+if (bal < price) {
         toast.error("Insufficient USDT balance.")
         setLoading(false)
         return
        }
        
-       console.log("object",balance);
+ 
 
         await executeContract({
             config,
