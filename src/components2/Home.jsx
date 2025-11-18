@@ -54,12 +54,7 @@ const { address } = useAppKitAccount();
                     <div class="flex-shrink-0 w-80 h-80 bg-black rounded-2xl overflow-hidden shadow-2xl">
                         <div class="w-full h-full bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                <div class="w-32 h-40 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-full opacity-80"></div>
-                                <div class="absolute top-8 left-8 w-4 h-4 bg-cyan-300 rounded-full animate-pulse"></div>
-                                <div class="absolute top-12 right-8 w-4 h-4 bg-pink-400 rounded-full animate-pulse"></div>
-                                <div class="absolute bottom-16 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-cyan-400"></div>
-                            </div>
+                            <img src="/37.png" alt="Cyber Genesis NFT" class="object-cover rounded-lg shadow-lg" />
                             <div class="absolute bottom-4 left-4 text-white">
                                 <div class="text-sm font-bold">
                                     Cyber Genesis #001
@@ -70,14 +65,10 @@ const { address } = useAppKitAccount();
                             </div>
                         </div>
                     </div>
-                    <div class="flex-shrink-0 w-80 h-80 bg-white rounded-2xl overflow-hidden shadow-2xl">
-                        <div class="w-full h-full bg-gradient-to-br from-orange-400 via-red-500 to-pink-600 relative">
-                            <div class="absolute inset-0">
-                                <div class="absolute top-12 left-12 w-24 h-24 bg-yellow-300 rounded-full opacity-70 blur-sm"></div>
-                                <div class="absolute top-32 right-16 w-16 h-32 bg-blue-400 rounded-lg opacity-60 transform rotate-45"></div>
-                                <div class="absolute bottom-20 left-20 w-20 h-20 bg-green-400 opacity-50 transform rotate-12"></div>
-                                <div class="absolute top-20 right-32 w-8 h-8 bg-white rounded-full"></div>
-                            </div>
+                    <div class="flex-shrink-0 w-80 h-80 bg-black rounded-2xl overflow-hidden shadow-2xl">
+                        <div class="w-full h-full bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <img src="/35.png" alt="Cyber Genesis NFT" class="object-cover rounded-lg shadow-lg" />
                             <div class="absolute bottom-4 left-4 text-white">
                                 <div class="text-sm font-bold">
                                     Abstract Dreams #247
@@ -88,17 +79,10 @@ const { address } = useAppKitAccount();
                             </div>
                         </div>
                     </div>
-                    <div class="flex-shrink-0 w-80 h-80 bg-slate-900 rounded-2xl overflow-hidden shadow-2xl">
-                        <div class="w-full h-full bg-gradient-to-b from-indigo-900 via-purple-800 to-pink-900 relative">
-                            <div class="absolute bottom-0 left-0 right-0">
-                                <svg viewbox="0 0 320 200" class="w-full h-32"><polygon points="0,200 80,120 160,140 240,100 320,130 320,200" fill="#1e1b4b" opacity="0.8" /> <polygon points="0,200 60,150 140,160 220,130 280,150 320,140 320,200" fill="#312e81" opacity="0.6" />
-                                </svg>
-                            </div>
-                            <div class="absolute top-8 left-12 w-1 h-1 bg-white rounded-full"></div>
-                            <div class="absolute top-16 right-20 w-1 h-1 bg-white rounded-full"></div>
-                            <div class="absolute top-12 right-32 w-1 h-1 bg-white rounded-full"></div>
-                            <div class="absolute top-20 left-32 w-1 h-1 bg-white rounded-full"></div>
-                            <div class="absolute top-16 right-16 w-12 h-12 bg-yellow-200 rounded-full opacity-90"></div>
+                    <div class="flex-shrink-0 w-80 h-80 bg-black rounded-2xl overflow-hidden shadow-2xl">
+                        <div class="w-full h-full bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <img src="/29.png" alt="Cyber Genesis NFT" class="object-cover rounded-lg shadow-lg" />
                             <div class="absolute bottom-4 left-4 text-white">
                                 <div class="text-sm font-bold">
                                     Cosmic Valley #089
@@ -109,58 +93,37 @@ const { address } = useAppKitAccount();
                             </div>
                         </div>
                     </div>
-                    <div class="flex-shrink-0 w-80 h-80 bg-white rounded-2xl overflow-hidden shadow-2xl">
-                        <div class="w-full h-full bg-gradient-to-br from-emerald-400 to-teal-600 relative">
-                            <div class="absolute inset-0 grid grid-cols-8 grid-rows-8 gap-1 p-4">
-                                <div class="bg-white opacity-20 rounded"></div>
-                                <div class="bg-white opacity-40 rounded"></div>
-                                <div class="bg-white opacity-60 rounded"></div>
-                                <div class="bg-white opacity-30 rounded"></div>
-                                <div class="bg-white opacity-50 rounded"></div>
-                                <div class="bg-white opacity-70 rounded"></div>
-                                <div class="bg-white opacity-20 rounded"></div>
-                                <div class="bg-white opacity-40 rounded"></div>
-                                <div class="bg-white opacity-60 rounded"></div>
-                                <div class="bg-white opacity-80 rounded"></div>
-                                <div class="bg-white opacity-30 rounded"></div>
-                                <div class="bg-white opacity-50 rounded"></div>
-                                <div class="bg-white opacity-40 rounded"></div>
-                                <div class="bg-white opacity-60 rounded"></div>
-                                <div class="bg-white opacity-20 rounded"></div>
-                                <div class="bg-white opacity-70 rounded"></div>
-                            </div>
+                    <div class="flex-shrink-0 w-80 h-80 bg-black rounded-2xl overflow-hidden shadow-2xl">
+                        <div class="w-full h-full bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <img src="/33.png" alt="Cyber Genesis NFT" class="object-cover rounded-lg shadow-lg" />
                             <div class="absolute bottom-4 left-4 text-white">
                                 <div class="text-sm font-bold">
-                                    Pixel Matrix #156
+                                    Cyber Genesis #001
                                 </div>
                                 <div class="text-xs opacity-75">
-                                    by GeometricArt
+                                    by DigitalVision
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="flex-shrink-0 w-80 h-80 bg-amber-50 rounded-2xl overflow-hidden shadow-2xl">
-                        <div class="w-full h-full bg-gradient-to-b from-amber-200 via-orange-300 to-red-400 relative">
-                            <div class="absolute top-16 left-1/2 transform -translate-x-1/2">
-                                <div class="w-24 h-32 bg-gradient-to-b from-pink-200 to-orange-200 rounded-full"></div>
-                                <div class="absolute top-8 left-6 w-3 h-3 bg-gray-800 rounded-full"></div>
-                                <div class="absolute top-8 right-6 w-3 h-3 bg-gray-800 rounded-full"></div>
-                                <div class="absolute top-12 left-1/2 transform -translate-x-1/2 w-1 h-2 bg-orange-300"></div>
-                                <div class="absolute top-16 left-1/2 transform -translate-x-1/2 w-4 h-1 bg-red-400 rounded-full"></div>
-                            </div>
-                            <div class="absolute bottom-4 left-4 text-gray-800">
+                    <div class="flex-shrink-0 w-80 h-80 bg-black rounded-2xl overflow-hidden shadow-2xl">
+                        <div class="w-full h-full bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <img src="/34.png" alt="Cyber Genesis NFT" class="object-cover rounded-lg shadow-lg" />
+                            <div class="absolute bottom-4 left-4 text-white">
                                 <div class="text-sm font-bold">
-                                    Portrait Series #034
+                                    Abstract Dreams #247
                                 </div>
                                 <div class="text-xs opacity-75">
-                                    by ClassicArt
+                                    by ModernArt
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-            <section class="py-16 bg-gray-100">
+            {/* <section class="py-16 bg-gray-100">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid md:grid-cols-2 gap-12">
                         <div>
@@ -223,14 +186,14 @@ const { address } = useAppKitAccount();
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
             <section class="py-16 bg-white">
                 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h3 class="text-3xl font-bold font-display text-gray-900 mb-8">Contact Us</h3>
                     <div class="grid md:grid-cols-3 gap-8">
                         <div class="p-6 bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl hover:shadow-lg transition-all duration-200">
                             <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mb-4">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                 </svg>
                             </div>
                             <h4 class="font-semibold text-gray-900 mb-2">Email Support</h4>
@@ -238,19 +201,19 @@ const { address } = useAppKitAccount();
                         </div>
                         <div class="p-6 bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl hover:shadow-lg transition-all duration-200">
                             <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mb-4">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                                 </svg>
                             </div>
-                            <h4 class="font-semibold text-gray-900 mb-2">Live Chat</h4>
-                            <p class="text-gray-600">24/7 Support Available</p>
+                            <h4 class="font-semibold text-gray-900 mb-2">Chat</h4>
+                            <p class="text-gray-600">Support Available</p>
                         </div>
                         <div class="p-6 bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl hover:shadow-lg transition-all duration-200">
                             <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center mb-4">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                 </svg>
                             </div>
                             <h4 class="font-semibold text-gray-900 mb-2">Community</h4>
-                            <p class="text-gray-600">Join our Discord</p>
+                            <p class="text-gray-600">Join our Telegram</p>
                         </div>
                     </div>
                 </div>
