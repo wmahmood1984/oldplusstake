@@ -181,7 +181,7 @@ export default function Trade() {
                             </div>
                         </div>
                     </div>
-                    <TradingLimitTimer durationInSeconds={Number(userTradingLimitTime) + 60 * 60 * 24 - now} />
+                    <TradingLimitTimer durationInSeconds={Number(userTradingLimitTime) + 60 * 60 * 24 - now >0?Number(userTradingLimitTime) + 60 * 60 * 24 - now :0} />
                     <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
                         {randomeNFTs.map((v, e) => {
                             if (e < 15) {
