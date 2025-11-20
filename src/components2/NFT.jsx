@@ -11,10 +11,10 @@ import toast from "react-hot-toast";
 import Spinner from "./Spinner";
 
 
-export const NFT = ({ nft, index, toggle, setToggle,revisedLimitUtilized }) => {
+export const NFT = ({ nft, index, toggle, setToggle,revisedLimitUtilized,image,name }) => {
   const config = useConfig()
-  const [image, setImage] = useState()
-  const [name, setName] = useState()
+  // const [image, setImage] = useState()
+  // const [name, setName] = useState()
   // const {  nfts  } = useSelector((state) => state.contract);
   const { address } = useAppKitAccount();
   const [loading, setLoading] = useState(false);
@@ -39,7 +39,7 @@ export const NFT = ({ nft, index, toggle, setToggle,revisedLimitUtilized }) => {
 
     // 3️⃣ Calculate NFT total cost (price + 7%)
     const nftValue =
-      Number(formatEther(nft.price)) * 0.07 + Number(formatEther(nft.premium));
+      Number(nft.price) * 0.07 + Number(formatEther(nft.premium));
 
     // 4️⃣ Now check both conditions sequentially
     if (!packageValid) {
@@ -48,21 +48,21 @@ export const NFT = ({ nft, index, toggle, setToggle,revisedLimitUtilized }) => {
         msg: "Your package is expired.",
       };
     }
-    console.log("object",remainingLimit,nftValue,nft.price, nft.premium);
+    console.log("object",remainingLimit,nftValue+50);
 
-    if (remainingLimit < nftValue) {
+    if (remainingLimit < nftValue+50) {
       return {
         cond: false,
         msg: "Your trade limit is exceeding.",
       };
     }
 
-    // if (walletBalance < nftValue) {
-    //   return {
-    //     cond: false,
-    //     msg: "Insufficient USDT Balance.",
-    //   };
-    // }
+    if (walletBalance < nftValue) {
+      return {
+        cond: false,
+        msg: "Insufficient USDT Balance.",
+      };
+    }
 
     // ✅ Both conditions satisfied
     return {
@@ -77,23 +77,23 @@ export const NFT = ({ nft, index, toggle, setToggle,revisedLimitUtilized }) => {
 
 
   const dispatch = useDispatch()
-  useEffect(() => {
-    const abc = async () => {
+  // useEffect(() => {
+  //   const abc = async () => {
 
 
-      const res = await axios.get(nft.uri)
+  //     const res = await axios.get(nft.uri)
 
 
-      if (nft._owner != "0x0000000000000000000000000000000000000000") {
-        setImage(res.data.image)
-        setName(res.data.name)
-      }
+  //     if (nft._owner != "0x0000000000000000000000000000000000000000") {
+  //       setImage(res.data.image)
+  //       setName(res.data.name)
+  //     }
 
-    }
+  //   }
 
-    abc()
+  //   abc()
 
-  }, [])
+  // }, [])
 
 
   const handleBuy2 = async (id) => {
@@ -129,7 +129,7 @@ export const NFT = ({ nft, index, toggle, setToggle,revisedLimitUtilized }) => {
 
     if (cond) {
       setLoading(true)
-      const value = Number(formatEther(nft.price) * .07) + Number(formatEther(nft.premium))+0.001
+      const value = Number(nft.price * .07) + Number(formatEther(nft.premium))+0.001
       console.log("value", Number(value).toFixed(8))
       await executeContract({
         config,
@@ -191,7 +191,7 @@ export const NFT = ({ nft, index, toggle, setToggle,revisedLimitUtilized }) => {
           </div>
 
           <div className="text-2xl font-bold text-blue-600 mb-3">
-            ${Number(formatEther(nft.price) * 1.07).toFixed(2)}
+            ${Number(nft.price * 1.07).toFixed(2)}
           </div>
         </div>
 

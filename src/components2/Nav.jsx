@@ -45,9 +45,9 @@ export default function Nav() {
         dispatch(readName({ address }));
       }
 
-      // if(address && !registered && status=="succeeded"){
-      //   navigate("/auth")
-      // }
+      if(address && !registered && status=="succeeded"){
+        navigate("/auth")
+      }
 
 
     });

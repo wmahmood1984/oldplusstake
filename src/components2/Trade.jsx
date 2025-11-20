@@ -5,6 +5,7 @@ import { formatEther } from 'ethers';
 import { helperAbi, helperAddress, web3 } from '../config';
 import { NFT } from './NFT';
 import { Link } from 'react-router-dom';
+import { useAppKitAccount } from '@reown/appkit/react';
 
 export default function Trade() {
 
@@ -15,7 +16,7 @@ export default function Trade() {
         tradingIncome, walletBalance, userTradingTime, timeLimit,
         status, error
     } = useSelector((state) => state.contract);
-
+  const { address } = useAppKitAccount();
 
     function shuffleArray(arr) {
         // make a shallow copy so we can safely modify
@@ -39,13 +40,48 @@ export default function Trade() {
 
         const abc = async () => {
             const _nfts = await helperContract.methods.getNFTs().call()
-            setNFTs(_nfts)
+            const _filteredNFTs = _nfts.filter(v => v._owner != "0x0000000000000000000000000000000000000000" &&
+                v._owner.toLowerCase() !== address.toLowerCase()
+            )
+
+    console.log("nn", _nfts);
+            const resolved = await Promise.all(
+                _filteredNFTs.map(async (nft) => {
+                    try {
+                        const res = await fetch(nft.uri);
+                        const _purchasedTime = await helperContract.methods.idPurchasedtime(nft.id).call();
+                        if (!res.ok) throw new Error(`Failed to fetch ${nft.uri}`);
+                        const meta = await res.json();
+
+                        return {
+                            id: nft.id,
+                            name: meta.name || "Unnamed NFT",
+                            description: meta.description || "",
+                            image: meta.image || "",
+                            price: nft.price ? formatEther(nft.price.toString()) : "0",
+                            premium: nft.premium || false,
+                            creator: meta.creator || "Unknown",
+                            owner: nft._owner || "Unknown",
+                            uri: nft.uri,
+                            source: nft.source,
+                            nftObject: nft,
+                            purchasedTime: _purchasedTime
+                        };
+                    } catch (err) {
+                        console.error("Error fetching metadata for", nft.uri, err);
+                        return null;
+                    }
+                })
+            );
+
+
+            setNFTs(resolved)
         }
 
         abc()
 
 
-    }, [toggle])
+    }, [toggle,address])
 
 
     const isLoading = !nfts || !Package
@@ -64,12 +100,14 @@ export default function Trade() {
 
     const now = new Date().getTime() / 1000
 
-    const revisedLimitUtilized = now - Number(userTradingTime) > 60 * 60 *24 ? 0 : limitUtilized
+    const revisedLimitUtilized = now - Number(userTradingTime) > 60 * 60 * 24 ? 0 : limitUtilized
 
-    const randomeNFTs = nfts && shuffleArray(nfts)
+    const randomeNFTs = nfts
+  ? [...nfts].sort((a, b) => a.purchasedTime - b.purchasedTime)
+  : [];//nfts && shuffleArray(nfts)
 
-    console.log("nn",  randomeNFTs);
 
+console.log("object",randomeNFTs);
 
 
 
@@ -150,9 +188,16 @@ export default function Trade() {
                     </div>
                     <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
                         {randomeNFTs.map((v, e) => {
-                            if (v._owner != "0x0000000000000000000000000000000000000000" && e < 15) {
+                            if (e < 15) {
                                 return (
-                                    <NFT nft={v} index={v.id} toggle={toggle} setToggle={setToggle} revisedLimitUtilized={revisedLimitUtilized} />
+                                    <NFT 
+                                    nft={v}
+                                    image={v.image}
+                                    name={v.name} 
+                                    index={v.id}
+                                    toggle={toggle}
+                                    setToggle={setToggle}
+                                    revisedLimitUtilized={revisedLimitUtilized} />
                                     //     <div class="nft-card bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl shadow-lg overflow-hidden">
                                     //     <div class="h-48 bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
                                     //         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
