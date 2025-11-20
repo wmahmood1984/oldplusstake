@@ -5,28 +5,34 @@ import { useAppKitAccount } from "@reown/appkit/react";
 
 const TradingLimitTimer = ({ durationInSeconds }) => {
   const [timeLeft, setTimeLeft] = useState(durationInSeconds);
+  const [expiryDate, setExpiryDate] = useState("");
     const { address, isConnected } = useAppKitAccount();
     const dispatch = useDispatch()
 
-  useEffect(() => {
-    if (durationInSeconds <= 0) {
+useEffect(() => {
+  // Set expiry date only once when component loads
+  if (!expiryDate) {
+    const fixedExpiry = new Date(Date.now() + durationInSeconds * 1000).toLocaleString();
+    setExpiryDate(fixedExpiry);
+  }
+
+  if (durationInSeconds <= 0) {
     dispatch(readName({ address }));
-      return;
-    
-    };
+    return;
+  }
 
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+  const interval = setInterval(() => {
+    setTimeLeft((prev) => {
+      if (prev <= 1) {
+        clearInterval(interval);
+        return 0;
+      }
+      return prev - 1;
+    });
+  }, 1000);
 
-    return () => clearInterval(interval);
-  }, [durationInSeconds]);
+  return () => clearInterval(interval);
+}, [durationInSeconds, address, dispatch, expiryDate]);
 
   // Convert total seconds into hours, minutes, seconds
   const totalHours = Math.floor(timeLeft / 3600);
@@ -34,17 +40,17 @@ const TradingLimitTimer = ({ durationInSeconds }) => {
   const seconds = timeLeft % 60;
 
   // Expiry date (based on initial duration)
-  const expiryDate = new Date(Date.now() + durationInSeconds * 1000).toLocaleString();
+  // const expiryDate = new Date(Date.now() + durationInSeconds * 1000).toLocaleString();
 
   return (
     <div className="bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 mb-6 sm:mb-8">
       <div className="p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl sm:rounded-2xl border border-blue-200">
         <div className="text-center mb-4">
           <h3 className="text-lg sm:text-xl font-bold text-blue-800 mb-2">
-            ⏰ Income Block Countdown
+            ⏰ Trading Limit Countdown
           </h3>
           <p className="text-xs sm:text-sm text-gray-600">
-            Time remaining for your Income unblock
+            Time remaining for your Trading Limit Refill
           </p>
         </div>
 
@@ -82,7 +88,7 @@ const TradingLimitTimer = ({ durationInSeconds }) => {
 
         <div className="mt-4 text-center">
           <div className="text-xs sm:text-sm text-gray-500">
-            Your income will be unlocked after:{" "}
+            Your trading limit will be refilled after:{" "}
             <span id="expiry-date" className="font-medium text-gray-700">
               {expiryDate}
             </span>

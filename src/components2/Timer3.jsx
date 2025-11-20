@@ -5,28 +5,34 @@ import { useAppKitAccount } from "@reown/appkit/react";
 
 const IncomeBlockTimer = ({ durationInSeconds }) => {
   const [timeLeft, setTimeLeft] = useState(durationInSeconds);
-    const { address, isConnected } = useAppKitAccount();
-    const dispatch = useDispatch()
-
-  useEffect(() => {
-    if (durationInSeconds <= 0) {
-    dispatch(readName({ address }));
-      return;
-    
-    };
-
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [durationInSeconds]);
+     const [expiryDate, setExpiryDate] = useState("");
+       const { address, isConnected } = useAppKitAccount();
+       const dispatch = useDispatch()
+   
+   useEffect(() => {
+     // Set expiry date only once when component loads
+     if (!expiryDate) {
+       const fixedExpiry = new Date(Date.now() + durationInSeconds * 1000).toLocaleString();
+       setExpiryDate(fixedExpiry);
+     }
+   
+     if (durationInSeconds <= 0) {
+       dispatch(readName({ address }));
+       return;
+     }
+   
+     const interval = setInterval(() => {
+       setTimeLeft((prev) => {
+         if (prev <= 1) {
+           clearInterval(interval);
+           return 0;
+         }
+         return prev - 1;
+       });
+     }, 1000);
+   
+     return () => clearInterval(interval);
+   }, [durationInSeconds, address, dispatch, expiryDate]);
 
   // Convert total seconds into hours, minutes, seconds
   const totalHours = Math.floor(timeLeft / 3600);
@@ -34,7 +40,7 @@ const IncomeBlockTimer = ({ durationInSeconds }) => {
   const seconds = timeLeft % 60;
 
   // Expiry date (based on initial duration)
-  const expiryDate = new Date(Date.now() + durationInSeconds * 1000).toLocaleString();
+  // const expiryDate = new Date(Date.now() + durationInSeconds * 1000).toLocaleString();
 
   return (
     <div className="bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 mb-6 sm:mb-8">
