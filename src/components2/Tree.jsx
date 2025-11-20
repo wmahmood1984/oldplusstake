@@ -99,7 +99,7 @@ export default function Tree() {
         </div>
 
         {/* --- Direct Referrals --- */}
-        <div className="mb-12">
+        {/* <div className="mb-12">
           <h3 className="text-2xl font-bold text-center mb-6 text-gray-800 bg-gradient-to-r from-green-50 to-green-100 py-3 rounded-lg border border-green-200">
             Direct Referrals
           </h3>
@@ -111,7 +111,7 @@ export default function Tree() {
               ))}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* --- Dynamic Matrix Levels --- */}
         <div className="mb-8">
