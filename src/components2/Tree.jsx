@@ -132,7 +132,7 @@ export default function Tree() {
                   levelIndex
                 )}`}
               >
-                Level {levelIndex}
+                {levelIndex ===0? "You": `Level ${levelIndex + 1}`}
               </h5>
 
               {/* Centered Grid */}

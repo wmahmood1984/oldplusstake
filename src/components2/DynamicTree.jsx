@@ -38,7 +38,7 @@ export default function DynamicMatrixTree({ data  }) {
             <h5
               className={`text-lg font-semibold text-center mb-6 text-gray-700 bg-${color.bg} py-2 rounded-lg`}
             >
-              Level {levelIdx + 1}
+              {levelIdx ===0? "You": `Level ${levelIdx + 1}`}
             </h5>
 
             <div className={`grid ${gridCols} gap-4 max-w-5xl mx-auto`}>
