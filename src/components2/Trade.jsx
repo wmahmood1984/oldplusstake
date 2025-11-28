@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { formatWithCommas } from '../utils/contractExecutor';
 import { formatEther } from 'ethers';
-import { helperAbi, helperAddress, web3 } from '../config';
+import { fetcherAbi, fetcherAddress, helperAbi, helperAddress, web3 } from '../config';
 import { NFT } from './NFT';
 import { Link } from 'react-router-dom';
 import { useAppKitAccount } from '@reown/appkit/react';
@@ -26,6 +26,7 @@ export default function Trade() {
     const [toggle, setToggle] = useState(false)
     const [userTradingLimitTime, setUserTradingLimitTime] = useState(0)
     const helperContract = new web3.eth.Contract(helperAbi, helperAddress)
+    const fetcherContract = new web3.eth.Contract(fetcherAbi, fetcherAddress)
 
     // useEffect(() => {
 
@@ -77,34 +78,117 @@ export default function Trade() {
 
     // }, [toggle, address])
 
+// useEffect(() => {
+
+//     const processInBatches = async (items, batchSize, callback) => {
+//         const results = [];
+
+//         for (let i = 0; i < items.length; i += batchSize) {
+//             const batch = items.slice(i, i + batchSize);
+
+//             const batchResults = await Promise.all(
+//                 batch.map(item => callback(item))
+//             );
+
+//             results.push(...batchResults);
+
+//             // small wait so RPC does NOT rate-limit
+//             await new Promise(r => setTimeout(r, 200));
+//         }
+
+//         return results;
+//     };
+
+//     const abc = async () => {
+//         try {
+//             const _userTradingLimitTime =
+//                 await helperContract.methods.userTradingLimitTime(address).call();
+
+//             setUserTradingLimitTime(_userTradingLimitTime);
+
+//             const _nfts = await helperContract.methods.getNFTs().call();
+
+//             const _filteredNFTs = _nfts.filter(
+//                 v =>
+//                     v._owner !== "0x0000000000000000000000000000000000000000" &&
+//                     v._owner.toLowerCase() !== address.toLowerCase()
+//             );
+
+//             console.log("nn", _nfts);
+
+//             const resolved = await processInBatches(_filteredNFTs, 5, async (nft) => {
+//                 try {
+//                     const res = await fetch(nft.uri);
+//                     if (!res.ok) throw new Error(`Failed to fetch ${nft.uri}`);
+
+//                     const meta = await res.json();
+//                     const _purchasedTime =
+//                         await helperContract.methods.idPurchasedtime(nft.id).call();
+
+//                     return {
+//                         id: nft.id,
+//                         name: meta.name || "Unnamed NFT",
+//                         description: meta.description || "",
+//                         image: meta.image || "",
+//                         price: nft.price ? formatEther(nft.price.toString()) : "0",
+//                         premium: nft.premium || false,
+//                         creator: meta.creator || "Unknown",
+//                         owner: nft._owner || "Unknown",
+//                         uri: nft.uri,
+//                         source: nft.source,
+//                         nftObject: nft,
+//                         purchasedTime: _purchasedTime
+//                     };
+//                 } catch (err) {
+//                     console.error("Error fetching metadata for", nft.uri, err);
+//                     return null;
+//                 }
+//             });
+
+//             setNFTs(resolved);
+//         } catch (error) {
+//             console.error("Error in abc()", error);
+//         }
+//     };
+
+//     abc();
+
+// }, [toggle, address]);
+
+
 useEffect(() => {
+    if (!address) return;
 
-    const processInBatches = async (items, batchSize, callback) => {
+    const concurrencyLimit = 10;
+
+    const runWithConcurrency = async (items, limit, task) => {
         const results = [];
+        let index = 0;
 
-        for (let i = 0; i < items.length; i += batchSize) {
-            const batch = items.slice(i, i + batchSize);
+        const workers = Array(limit).fill(null).map(async () => {
+            while (index < items.length) {
+                const i = index++;
+                try {
+                    results[i] = await task(items[i], i);
+                } catch (e) {
+                    console.error(e);
+                    results[i] = null;
+                }
+            }
+        });
 
-            const batchResults = await Promise.all(
-                batch.map(item => callback(item))
-            );
-
-            results.push(...batchResults);
-
-            // small wait so RPC does NOT rate-limit
-            await new Promise(r => setTimeout(r, 200));
-        }
-
+        await Promise.all(workers);
         return results;
     };
 
     const abc = async () => {
         try {
+            // 1️⃣ User limit time
             const _userTradingLimitTime =
                 await helperContract.methods.userTradingLimitTime(address).call();
-
             setUserTradingLimitTime(_userTradingLimitTime);
 
+            // 2️⃣ Get NFTs
             const _nfts = await helperContract.methods.getNFTs().call();
 
             const _filteredNFTs = _nfts.filter(
@@ -113,38 +197,46 @@ useEffect(() => {
                     v._owner.toLowerCase() !== address.toLowerCase()
             );
 
-            console.log("nn", _nfts);
+            // 3️⃣ Prepare IDs array
+            const ids = _filteredNFTs.map(n => n.id);
 
-            const resolved = await processInBatches(_filteredNFTs, 5, async (nft) => {
-                try {
-                    const res = await fetch(nft.uri);
-                    if (!res.ok) throw new Error(`Failed to fetch ${nft.uri}`);
+            // 4️⃣ Single RPC call to Fetcher contract 🚀
+            const allPurchasedTimes = await fetcherContract.methods
+                .getAllPurchasedTimes(ids)
+                .call();
 
-                    const meta = await res.json();
-                    const _purchasedTime =
-                        await helperContract.methods.idPurchasedtime(nft.id).call();
+            // 5️⃣ Fetch metadata with concurrency limit (fast)
+            const resolved = await runWithConcurrency(
+                _filteredNFTs,
+                concurrencyLimit,
+                async (nft, i) => {
+                    try {
+                        const res = await fetch(nft.uri);
+                        const meta = await res.json();
 
-                    return {
-                        id: nft.id,
-                        name: meta.name || "Unnamed NFT",
-                        description: meta.description || "",
-                        image: meta.image || "",
-                        price: nft.price ? formatEther(nft.price.toString()) : "0",
-                        premium: nft.premium || false,
-                        creator: meta.creator || "Unknown",
-                        owner: nft._owner || "Unknown",
-                        uri: nft.uri,
-                        source: nft.source,
-                        nftObject: nft,
-                        purchasedTime: _purchasedTime
-                    };
-                } catch (err) {
-                    console.error("Error fetching metadata for", nft.uri, err);
-                    return null;
+                        return {
+                            id: nft.id,
+                            name: meta?.name || "Unnamed NFT",
+                            description: meta?.description || "",
+                            image: meta?.image || "",
+                            price: nft.price ? formatEther(nft.price.toString()) : "0",
+                            premium: nft.premium || false,
+                            creator: meta?.creator || "Unknown",
+                            owner: nft._owner || "Unknown",
+                            uri: nft.uri,
+                            source: nft.source,
+                            nftObject: nft,
+                            purchasedTime: allPurchasedTimes[i] ?? "0"
+                        };
+                    } catch (err) {
+                        console.error("Failed metadata", nft.uri, err);
+                        return null;
+                    }
                 }
-            });
+            );
 
-            setNFTs(resolved);
+            setNFTs(resolved.filter(Boolean));
+
         } catch (error) {
             console.error("Error in abc()", error);
         }
@@ -153,6 +245,7 @@ useEffect(() => {
     abc();
 
 }, [toggle, address]);
+
 
     const isLoading = !nfts || !Package
 
