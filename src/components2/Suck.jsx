@@ -27,6 +27,7 @@ export default function Suck() {
 
 
     const [nftused, setNFTUsed] = useState()
+    const [dateNftused, setDateNFTUsed] = useState()
     const [totalTradingLimit, setTotalTradingLimit] = useState(0)
     const [Trades, setTrades] = useState(0)
     const [nftBurnt, setNFTBurnt] = useState(0)
@@ -59,6 +60,11 @@ export default function Suck() {
         const abc = async () => {
             const _nftUsed = await helperContract.methods.getNFTused().call()
             setNFTUsed(_nftUsed)
+
+            const _datenftued = await helperContract.methods.idPurchasedtime(_nftUsed[0]?.id).call()
+            const _alfadatenftused = secondsToHMS(new Date().getTime()/1000 - _datenftued)
+            console.log("nfst ", _alfadatenftused);
+            setDateNFTUsed(_alfadatenftused)
 
             const _nfts = await helperContract.methods.getNFTs().call()
             setNFTs(_nfts)
@@ -124,7 +130,7 @@ export default function Suck() {
                 }
             }
 
-            console.log("All events:", allEvents);
+            // console.log("All events:", allEvents);
         };
 
 
@@ -136,84 +142,84 @@ export default function Suck() {
 
 
     const filteredTrades = Trades && Trades.filter(t => t.returnValues._type == "1").map(t => Number(formatEther(t.returnValues.amount))).reduce((a, b) => a + b, 0);
-    
+
 
     function secondsToHMS(seconds) {
-    seconds = Number(seconds);
+        seconds = Number(seconds);
 
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
 
-    // Format: HH:MM:SS
-    return (
-        String(h).padStart(2, "0") + " hrs : " +
-        String(m).padStart(2, "0") + " min ago" 
-        // +
-        // String(s).padStart(2, "0") + " seconds ago"
-    );
-}
+        // Format: HH:MM:SS
+        return (
+            String(h).padStart(2, "0") + " hrs : " +
+            String(m).padStart(2, "0") + " min ago"
+            // +
+            // String(s).padStart(2, "0") + " seconds ago"
+        );
+    }
 
 
-function analyzeLastNFTTransaction(events) {
-    if (!events || events.length === 0) return null;
+    function analyzeLastNFTTransaction(events) {
+        if (!events || events.length === 0) return null;
 
-    const filtered = events.filter(ev => ev.returnValues._type === "1");
+        const filtered = events.filter(ev => ev.returnValues._type === "1");
 
-    // 1. Sort by time (ascending)
-    const sorted = [...filtered].sort((a, b) =>
-        Number(a.returnValues.time) - Number(b.returnValues.time)
-    );
+        // 1. Sort by time (ascending)
+        const sorted = [...filtered].sort((a, b) =>
+            Number(a.returnValues.time) - Number(b.returnValues.time)
+        );
 
-    const selected = sorted[sorted.length - 1]; // most recent event
+        const selected = sorted[sorted.length - 1]; // most recent event
 
-    const selectedFiltered = sorted.filter(ev => ev.returnValues.id === selected.returnValues.id);
+        const selectedFiltered = sorted.filter(ev => ev.returnValues.id === selected.returnValues.id);
 
-    const previous = selectedFiltered[selectedFiltered.length - 2];
+        const previous = selectedFiltered[selectedFiltered.length - 2];
 
-    const diffSeconds = Number(selected?.returnValues?.time) - Number(previous?.returnValues?.time);
+        const diffSeconds = Number(selected?.returnValues?.time) - Number(previous?.returnValues?.time);
 
-    const diffFormatted = secondsToHMS(diffSeconds);
+        const diffFormatted = secondsToHMS(diffSeconds);
 
-    return  diffFormatted
+        return diffFormatted
 
-    // 2. Get the last (most recent) transaction
-    // const lastTx = sorted[sorted.length - 1];
-    // const nftId = lastTx.returnValues.id;
-    // const lastTime = Number(lastTx.returnValues.time);
+        // 2. Get the last (most recent) transaction
+        // const lastTx = sorted[sorted.length - 1];
+        // const nftId = lastTx.returnValues.id;
+        // const lastTime = Number(lastTx.returnValues.time);
 
-    // // 3. Find previous transaction of the same NFT ID
-    // const prevTx = [...sorted]
-    //     .filter(ev => ev.returnValues.id === nftId)
-    //     .slice(0, -1)                // drop the last one
-    //     .pop();                      // get the previous one
+        // // 3. Find previous transaction of the same NFT ID
+        // const prevTx = [...sorted]
+        //     .filter(ev => ev.returnValues.id === nftId)
+        //     .slice(0, -1)                // drop the last one
+        //     .pop();                      // get the previous one
 
-    // if (!prevTx) {
-    //     return {
-    //         nftId,
-    //         lastTransactionTime: lastTime,
-    //         message: "No previous transaction found for this NFT."
-    //     };
-    // }
+        // if (!prevTx) {
+        //     return {
+        //         nftId,
+        //         lastTransactionTime: lastTime,
+        //         message: "No previous transaction found for this NFT."
+        //     };
+        // }
 
-    // const prevTime = Number(prevTx.returnValues.time);
+        // const prevTime = Number(prevTx.returnValues.time);
 
-    // // 4. Time difference
-    // const diffSeconds = lastTime - prevTime;
+        // // 4. Time difference
+        // const diffSeconds = lastTime - prevTime;
 
-    // return {
-    //     nftId,
-    //     lastTransaction: lastTx,
-    //     previousTransaction: prevTx,
-    //     timeDifferenceSeconds: diffSeconds,
-    //     timeDifferenceHours: (diffSeconds / 3600).toFixed(2),
-    //     timeDifferenceDays: (diffSeconds / 86400).toFixed(2)
-    // };
-}
+        // return {
+        //     nftId,
+        //     lastTransaction: lastTx,
+        //     previousTransaction: prevTx,
+        //     timeDifferenceSeconds: diffSeconds,
+        //     timeDifferenceHours: (diffSeconds / 3600).toFixed(2),
+        //     timeDifferenceDays: (diffSeconds / 86400).toFixed(2)
+        // };
+    }
 
-const lastTraded = Trades && analyzeLastNFTTransaction(Trades);
+    const lastTraded = Trades && analyzeLastNFTTransaction(Trades);
 
-    console.log("suck", lastTraded);
+
 
 
 
@@ -230,6 +236,8 @@ const lastTraded = Trades && analyzeLastNFTTransaction(Trades);
                 toast.success("NFT Minted Successfully")
                 setLoading(false);
                 setCreate(false)
+                setFile(null)
+                setPreview(null)
             },
             onError: (err) => {
                 console.error("🔥 Error in owner minting:", err);
@@ -474,10 +482,10 @@ const lastTraded = Trades && analyzeLastNFTTransaction(Trades);
     }, [myNFTs, sortType]);
 
     ;
-    const filteredNFTs = nfts && nfts.filter(nft=>nft._owner!="0x0000000000000000000000000000000000000000").map(v=>Number(formatEther(v.price))*1.07).reduce((a,b)=>a+b,0)  ;
+    const filteredNFTs = nfts && nfts.filter(nft => nft._owner != "0x0000000000000000000000000000000000000000").map(v => Number(formatEther(v.price)) * 1.07).reduce((a, b) => a + b, 0);
 
+ 
 
-    console.log("nfst ",filteredNFTs);
 
     return (
         <div>
@@ -732,12 +740,20 @@ const lastTraded = Trades && analyzeLastNFTTransaction(Trades);
                                         </div>
                                     </div>
 
-                                                                        <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
+                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
                                         <div id="total-created" class="text-xl sm:text-1xl lg:text-1xl font-bold text-purple-600">
-                                            {formatWithCommas(filteredNFTs,2)}
+                                            {formatWithCommas(filteredNFTs, 2)}
                                         </div>
                                         <div class="text-xs sm:text-sm text-gray-600 font-medium">
                                             Total NFT Value
+                                        </div>
+                                    </div>
+                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
+                                        <div id="total-created" class="text-xl sm:text-1xl lg:text-1xl font-bold text-purple-600">
+                                            {dateNftused}
+                                        </div>
+                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
+                                            Burning NFT time
                                         </div>
                                     </div>
                                 </div>

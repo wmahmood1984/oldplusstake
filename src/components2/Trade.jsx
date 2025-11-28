@@ -27,56 +27,132 @@ export default function Trade() {
     const [userTradingLimitTime, setUserTradingLimitTime] = useState(0)
     const helperContract = new web3.eth.Contract(helperAbi, helperAddress)
 
-    useEffect(() => {
+    // useEffect(() => {
 
 
-        const abc = async () => {
-            const _userTradingLimitTime = await helperContract.methods.userTradingLimitTime(address).call()
-            setUserTradingLimitTime(_userTradingLimitTime)
-            const _nfts = await helperContract.methods.getNFTs().call()
-            const _filteredNFTs = _nfts.filter(v => v._owner != "0x0000000000000000000000000000000000000000" &&
-                v._owner.toLowerCase() !== address.toLowerCase()
-            )
+    //     const abc = async () => {
+    //         const _userTradingLimitTime = await helperContract.methods.userTradingLimitTime(address).call()
+    //         setUserTradingLimitTime(_userTradingLimitTime)
+    //         const _nfts = await helperContract.methods.getNFTs().call()
+    //         const _filteredNFTs = _nfts.filter(v => v._owner != "0x0000000000000000000000000000000000000000" &&
+    //             v._owner.toLowerCase() !== address.toLowerCase()
+    //         )
 
-            console.log("nn", _nfts);
-            const resolved = await Promise.all(
-                _filteredNFTs.map(async (nft) => {
-                    try {
-                        const res = await fetch(nft.uri);
-                        const _purchasedTime = await helperContract.methods.idPurchasedtime(nft.id).call();
-                        if (!res.ok) throw new Error(`Failed to fetch ${nft.uri}`);
-                        const meta = await res.json();
+    //         console.log("nn", _nfts);
+    //         const resolved = await Promise.all(
+    //             _filteredNFTs.map(async (nft) => {
+    //                 try {
+    //                     const res = await fetch(nft.uri);
+    //                     const _purchasedTime = await helperContract.methods.idPurchasedtime(nft.id).call();
+    //                     if (!res.ok) throw new Error(`Failed to fetch ${nft.uri}`);
+    //                     const meta = await res.json();
 
-                        return {
-                            id: nft.id,
-                            name: meta.name || "Unnamed NFT",
-                            description: meta.description || "",
-                            image: meta.image || "",
-                            price: nft.price ? formatEther(nft.price.toString()) : "0",
-                            premium: nft.premium || false,
-                            creator: meta.creator || "Unknown",
-                            owner: nft._owner || "Unknown",
-                            uri: nft.uri,
-                            source: nft.source,
-                            nftObject: nft,
-                            purchasedTime: _purchasedTime
-                        };
-                    } catch (err) {
-                        console.error("Error fetching metadata for", nft.uri, err);
-                        return null;
-                    }
-                })
+    //                     return {
+    //                         id: nft.id,
+    //                         name: meta.name || "Unnamed NFT",
+    //                         description: meta.description || "",
+    //                         image: meta.image || "",
+    //                         price: nft.price ? formatEther(nft.price.toString()) : "0",
+    //                         premium: nft.premium || false,
+    //                         creator: meta.creator || "Unknown",
+    //                         owner: nft._owner || "Unknown",
+    //                         uri: nft.uri,
+    //                         source: nft.source,
+    //                         nftObject: nft,
+    //                         purchasedTime: _purchasedTime
+    //                     };
+    //                 } catch (err) {
+    //                     console.error("Error fetching metadata for", nft.uri, err);
+    //                     return null;
+    //                 }
+    //             })
+    //         );
+
+
+    //         setNFTs(resolved)
+    //     }
+
+    //     abc()
+
+
+    // }, [toggle, address])
+
+useEffect(() => {
+
+    const processInBatches = async (items, batchSize, callback) => {
+        const results = [];
+
+        for (let i = 0; i < items.length; i += batchSize) {
+            const batch = items.slice(i, i + batchSize);
+
+            const batchResults = await Promise.all(
+                batch.map(item => callback(item))
             );
 
+            results.push(...batchResults);
 
-            setNFTs(resolved)
+            // small wait so RPC does NOT rate-limit
+            await new Promise(r => setTimeout(r, 200));
         }
 
-        abc()
+        return results;
+    };
 
+    const abc = async () => {
+        try {
+            const _userTradingLimitTime =
+                await helperContract.methods.userTradingLimitTime(address).call();
 
-    }, [toggle, address])
+            setUserTradingLimitTime(_userTradingLimitTime);
 
+            const _nfts = await helperContract.methods.getNFTs().call();
+
+            const _filteredNFTs = _nfts.filter(
+                v =>
+                    v._owner !== "0x0000000000000000000000000000000000000000" &&
+                    v._owner.toLowerCase() !== address.toLowerCase()
+            );
+
+            console.log("nn", _nfts);
+
+            const resolved = await processInBatches(_filteredNFTs, 5, async (nft) => {
+                try {
+                    const res = await fetch(nft.uri);
+                    if (!res.ok) throw new Error(`Failed to fetch ${nft.uri}`);
+
+                    const meta = await res.json();
+                    const _purchasedTime =
+                        await helperContract.methods.idPurchasedtime(nft.id).call();
+
+                    return {
+                        id: nft.id,
+                        name: meta.name || "Unnamed NFT",
+                        description: meta.description || "",
+                        image: meta.image || "",
+                        price: nft.price ? formatEther(nft.price.toString()) : "0",
+                        premium: nft.premium || false,
+                        creator: meta.creator || "Unknown",
+                        owner: nft._owner || "Unknown",
+                        uri: nft.uri,
+                        source: nft.source,
+                        nftObject: nft,
+                        purchasedTime: _purchasedTime
+                    };
+                } catch (err) {
+                    console.error("Error fetching metadata for", nft.uri, err);
+                    return null;
+                }
+            });
+
+            setNFTs(resolved);
+        } catch (error) {
+            console.error("Error in abc()", error);
+        }
+    };
+
+    abc();
+
+}, [toggle, address]);
 
     const isLoading = !nfts || !Package
 

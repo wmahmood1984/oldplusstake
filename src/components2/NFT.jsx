@@ -152,6 +152,8 @@ export const NFT = ({ nft, index, toggle, setToggle,revisedLimitUtilized,image,n
 
   };
 
+  console.log("nft",image,name);
+
   const isLoading = !image || !name;
 
   if (isLoading) {
