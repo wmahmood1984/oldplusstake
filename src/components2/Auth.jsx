@@ -308,39 +308,83 @@ export default function Nav() {
   // ============================================
   // CORE LOGIC: FORCE USER TO /create IF ELIGIBLE
   // ============================================
-  useEffect(() => {
-    const checkUserEligibility = async () => {
-      if (!address || !registered) return;
+//   useEffect(() => {
+//     const checkUserEligibility = async () => {
+//       if (!address || !registered) return;
 
-      // 1) Check if package >= $20
-      const userPkg = await helperContract.methods.userPackage(address).call();
-      const hasTwentyDollarPkg = Number(userPkg.id) >= 2;
+//       // 1) Check if package >= $20
+//       const userPkg = await helperContract.methods.userPackage(address).call();
+//       const hasTwentyDollarPkg = Number(userPkg.id) >= 2;
 
-      // 2) Check last minted NFT
-      const userMints = await helperContract.methods.userMint(address).call();
+//       // 2) Check last minted NFT
+//       const userMints = await helperContract.methods.userMint(address).call();
 
-      let mintedBefore7Days = true;
+//       let mintedBefore7Days = true;
 
-      if (userMints.length > 0) {
-        const lastMint = userMints[userMints.length - 1];
-        const lastMintInfo = await helperContract.methods.idPurchasedTime(lastMint.id).call();
+//       if (userMints.length > 0) {
+//         const lastMint = userMints[userMints.length - 1];
+//         const lastMintInfo = await helperContract.methods.idPurchasedTime(lastMint.id).call();
 
-        const purchasedTime = Number(lastMintInfo);
-        const now = Math.floor(Date.now() / 1000);
-        const sevenDays = 7 * 24 * 60 * 60;
+//         const purchasedTime = Number(lastMintInfo);
+//         const now = Math.floor(Date.now() / 1000);
+//         const sevenDays = 7 * 24 * 60 * 60;
 
-        mintedBefore7Days = now - purchasedTime >= sevenDays;
-      }
+//         mintedBefore7Days = now - purchasedTime >= sevenDays;
+//       }
 
-      // 3) If eligible → force create page
-      if (hasTwentyDollarPkg && mintedBefore7Days) {
-        setShouldForceCreate(true);
-        navigate("/create");
-      }
-    };
+//       // 3) If eligible → force create page
+//       if (hasTwentyDollarPkg && mintedBefore7Days) {
+//         setShouldForceCreate(true);
+//         navigate("/create");
+//       }
+//     };
 
-    checkUserEligibility();
-  }, [address, registered]);
+//     checkUserEligibility();
+//   }, [address, registered]);
+
+
+useEffect(() => {
+  const checkUserEligibility = async () => {
+    if (!address || !registered) return;
+
+    // 1) Check package ID
+    const userPkg = await helperContract.methods.userPackage(address).call();
+    const pkgId = Number(userPkg.id);
+
+    // Determine cooldown days based on package
+    let cooldownDays = 9999; // default large number
+
+    if (pkgId === 1) cooldownDays = 10; 
+    if (pkgId === 2) cooldownDays = 7;  
+    if (pkgId === 3) cooldownDays = 5;  
+    if (pkgId === 4) cooldownDays = 3;  
+    if (pkgId === 5) cooldownDays = 1;  
+
+    // 2) Check last mint
+    const userMints = await helperContract.methods.userMint(address).call();
+    let canMint = true;
+
+    if (userMints.length > 0) {
+      const lastMint = userMints[userMints.length - 1];
+      const lastMintInfo = await helperContract.methods.idPurchasedTime(lastMint.id).call();
+
+      const purchasedTime = Number(lastMintInfo);
+      const now = Math.floor(Date.now() / 1000);
+      const seconds = cooldownDays * 24 * 60 * 60;
+
+      canMint = now - purchasedTime >= seconds;
+    }
+
+    // 3) If eligible → force create
+    if (canMint) {
+      setShouldForceCreate(true);
+      navigate("/create");
+    }
+  };
+
+  checkUserEligibility();
+}, [address, registered]);
+
 
   const handleClick = async () => {
     if (isConnected) {
