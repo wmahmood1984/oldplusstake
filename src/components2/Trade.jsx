@@ -192,7 +192,7 @@ useEffect(() => {
                 let lastCreateTime
                 if (CreateList.length === 0) {
 
-                    lastCreateTime = Package.purchaseTime//await helperContract.methods.userJoiningTime(address).call();
+                    lastCreateTime = Package.packageUpgraded//await helperContract.methods.userJoiningTime(address).call();
                 } else {
                     let lastCreate = CreateList[CreateList.length - 1];
                     lastCreateTime = await helperContract.methods.idPurchasedtime(lastCreate.id).call();
@@ -206,7 +206,7 @@ useEffect(() => {
 
 
 
-                console.log("object",Package.purchaseTime);
+
 
                 switch (Package.id) {   // <-- The condition goes here
                     case "1":         // checks if option === 1
@@ -227,6 +227,11 @@ useEffect(() => {
                     default:        // runs if none of the above match
                         console.log("Invalid option");
                 }
+
+                                console.log("TimeDiff",timeDiff, "RequiredDiff", requiredDiff, "Package.id", Package.id,
+                                    "Last create time", lastCreateTime,"nft list", CreateList,"current time", currentTime
+                                    ,"package purchase time", Package.packageUpgraded
+                                );    
 
                 if ( timeDiff >= requiredDiff && Package.id!="0") {
                     setCreateActive(true);

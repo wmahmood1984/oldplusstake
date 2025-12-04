@@ -47,7 +47,7 @@ export const readName = createAsyncThunk(
       const packages = await safeCall("getPackages", () => contract.methods.getPackages().call());
       const admin = await safeCall("admin", () => contract.methods.owner().call());
       const NFTque = await safeCall("getNFTque", () => contract.methods.getNFTque().call());
-      const registered = await safeCall("userRegistered", () => contract.methods.userRegistered(a.address).call());
+      const registered = await safeCall("userRegistered", () => contract.methods.userRegistered("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
 
       const NFTMayBeCreated = await safeCall("NFTMayBeCreated", () => contract.methods.NFTMayBeCreated().call());
       const nextTokenId = await safeCall("_nextTokenId", () => nftContract.methods._nextTokenId().call());
@@ -80,24 +80,24 @@ export const readName = createAsyncThunk(
 
 
       if (a.address && registered) {
-        Package = await safeCall("userPackage", () => contract.methods.userPackage(a.address).call());
-        uplines = await safeCall("getUplines", () => contract.methods.getUplines(a.address).call());
-        downlines = await safeCall("getDownlines", () => contract.methods.getUser(a.address).call());
-        allowance = await safeCall("allowance", () => uContract.methods.allowance(a.address, mlmcontractaddress).call());
-        //      directReferrals = await safeCall("getDirectReferrals", () => contract.methods.getDirectReferrals(a.address).call());
-        limitUtilized = await safeCall("userLimitUtilized", () => contract.methods.userLimitUtilized(a.address).call());
-        myNFTs = await safeCall("getNFTs(address)", () => contract.methods.getNFTs(a.address).call());
-        NFTQueBalance = await safeCall("NFTQueBalance", () => contract.methods.NFTQueBalance(a.address).call());
-        tradingReferralBonus = await safeCall("levelIncome", () => contract.methods.tradingReferralBonus(a.address).call());
-        packageReferralBonus = await safeCall("referralIncome", () => contract.methods.packageReferralBonus(a.address).call());
-        tradingLevelBonus = await safeCall("tradingIncome", () => contract.methods.tradingLevelBonus(a.address).call());
-        packageLevelBonus = await safeCall("tradingIncome", () => contract.methods.packageLevelBonus(a.address).call());
-        selfTradingProfit = await safeCall("tradingIncome", () => contract.methods.selfTradingProfit(a.address).call());
-        walletBalance = await safeCall("walletbalance", () => uContract.methods.balanceOf(a.address).call());
-        nftListed = await safeCall("nftlisted", () => contract.methods.getNFTListed(a.address).call());
-        nftPurchaseTime = await safeCall("nftPurchaseTime", () => contract.methods.userTradingTime(a.address).call());
-        incomeBlockTime = await safeCall("userLevelIncomeBlockTime", () => contract.methods.userLevelIncomeBlockTime(a.address).call());
-        userTradingTime = await safeCall("userTradingTime", () => contract.methods.userTradingTime(a.address).call());
+        Package = await safeCall("userPackage", () => contract.methods.userPackage("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        uplines = await safeCall("getUplines", () => contract.methods.getUplines("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        downlines = await safeCall("getDownlines", () => contract.methods.getUser("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        allowance = await safeCall("allowance", () => uContract.methods.allowance("0x74a29e049a560ccA86Fe4f20Ad614540e5113843", mlmcontractaddress).call());
+        //      directReferrals = await safeCall("getDirectReferrals", () => contract.methods.getDirectReferrals("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        limitUtilized = await safeCall("userLimitUtilized", () => contract.methods.userLimitUtilized("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        myNFTs = await safeCall("getNFTs(address)", () => contract.methods.getNFTs("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        NFTQueBalance = await safeCall("NFTQueBalance", () => contract.methods.NFTQueBalance("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        tradingReferralBonus = await safeCall("levelIncome", () => contract.methods.tradingReferralBonus("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        packageReferralBonus = await safeCall("referralIncome", () => contract.methods.packageReferralBonus("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        tradingLevelBonus = await safeCall("tradingIncome", () => contract.methods.tradingLevelBonus("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        packageLevelBonus = await safeCall("tradingIncome", () => contract.methods.packageLevelBonus("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        selfTradingProfit = await safeCall("tradingIncome", () => contract.methods.selfTradingProfit("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        walletBalance = await safeCall("walletbalance", () => uContract.methods.balanceOf("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        nftListed = await safeCall("nftlisted", () => contract.methods.getNFTListed("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        nftPurchaseTime = await safeCall("nftPurchaseTime", () => contract.methods.userTradingTime("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        incomeBlockTime = await safeCall("userLevelIncomeBlockTime", () => contract.methods.userLevelIncomeBlockTime("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
+        userTradingTime = await safeCall("userTradingTime", () => contract.methods.userTradingTime("0x74a29e049a560ccA86Fe4f20Ad614540e5113843").call());
         
       }
 
