@@ -228,7 +228,7 @@ useEffect(() => {
                         console.log("Invalid option");
                 }
 
-                if ( timeDiff >= requiredDiff) {
+                if ( timeDiff >= requiredDiff && Package.id!="0") {
                     setCreateActive(true);
                     navigate("/create");
                     toast.success("Please create an NFT before proceeding.");
