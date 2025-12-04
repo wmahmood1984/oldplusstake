@@ -192,7 +192,7 @@ useEffect(() => {
                 let lastCreateTime
                 if (CreateList.length === 0) {
 
-                    lastCreateTime = await helperContract.methods.userJoiningTime(address).call();
+                    lastCreateTime = Package.purchaseTime//await helperContract.methods.userJoiningTime(address).call();
                 } else {
                     let lastCreate = CreateList[CreateList.length - 1];
                     lastCreateTime = await helperContract.methods.idPurchasedtime(lastCreate.id).call();
@@ -206,7 +206,7 @@ useEffect(() => {
 
 
 
-                console.log("object",Package.id);
+                console.log("object",Package.purchaseTime);
 
                 switch (Package.id) {   // <-- The condition goes here
                     case "1":         // checks if option === 1
