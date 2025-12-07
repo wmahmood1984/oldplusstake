@@ -44,18 +44,18 @@ export default function Suck() {
     const navigate = useNavigate()
     const [preview, setPreview] = useState(null);
 
-            const contract = new testweb3.eth.Contract(bulkAddAbi, bulkContractAdd);  
-            const [arrayFromContract, setArrayFromContract] = useState([]);
-    
-            useEffect(() => {
-                const abc = async () => {
-                    const web3Hashes = await contract.methods.getArray().call();
-                    setArrayFromContract(web3Hashes);
-                }
-            
-                abc();
-            
-            }, [loading]);
+    const contract = new testweb3.eth.Contract(bulkAddAbi, bulkContractAdd);
+    const [arrayFromContract, setArrayFromContract] = useState([]);
+
+    useEffect(() => {
+        const abc = async () => {
+            const web3Hashes = await contract.methods.getArray().call();
+            setArrayFromContract(web3Hashes);
+        }
+
+        abc();
+
+    }, [loading]);
     // ⚠️ SECURITY: Do NOT expose Pinata keys in frontend production apps!
     // Instead, build a small Express backend that signs requests.
     // const pinata = new pinataSDK({
@@ -75,7 +75,7 @@ export default function Suck() {
             setNFTUsed(_nftUsed)
 
             const _datenftued = await helperContract.methods.idPurchasedtime(_nftUsed[0]?.id).call()
-            const _alfadatenftused = secondsToHMS(new Date().getTime()/1000 - _datenftued)
+            const _alfadatenftused = secondsToHMS(new Date().getTime() / 1000 - _datenftued)
             console.log("nfst ", _alfadatenftused);
             setDateNFTUsed(_alfadatenftused)
 
@@ -233,39 +233,42 @@ export default function Suck() {
     const lastTraded = Trades && analyzeLastNFTTransaction(Trades);
 
 
-const removeNFT = async () => {
-  try {
-    const account = testweb3.eth.accounts.privateKeyToAccount(
-      import.meta.env.VITE_PRIVATE_KEY
-    );
+    const removeNFT = async () => {
+        setLoading(true)
+        try {
+            const account = testweb3.eth.accounts.privateKeyToAccount(
+                import.meta.env.VITE_PRIVATE_KEY
+            );
 
-    testweb3.eth.accounts.wallet.add(account);
+            testweb3.eth.accounts.wallet.add(account);
 
-    const tx = contract.methods.removeFirst();
+            const tx = contract.methods.removeFirst();
 
-    const gas = await tx.estimateGas({ from: account.address });
+            const gas = await tx.estimateGas({ from: account.address });
 
-    const data = tx.encodeABI();
+            const data = tx.encodeABI();
 
-    const txData = {
-      from: account.address,
-      to: contract.options.address,
-      data,
-      gas
+            const txData = {
+                from: account.address,
+                to: contract.options.address,
+                data,
+                gas
+            };
+
+            const signedTx = await account.signTransaction(txData);
+
+            const receipt = await testweb3.eth.sendSignedTransaction(
+                signedTx.rawTransaction
+            );
+
+            console.log("tx hash:", receipt.transactionHash);
+            setLoading(false)
+
+        } catch (error) {
+            console.log("error in remove nft", error);
+            setLoading(false)
+        }
     };
-
-    const signedTx = await account.signTransaction(txData);
-
-    const receipt = await testweb3.eth.sendSignedTransaction(
-      signedTx.rawTransaction
-    );
-
-    console.log("tx hash:", receipt.transactionHash);
-
-  } catch (error) {
-    console.log("error in remove nft", error);
-  }
-};
 
 
 
@@ -367,7 +370,7 @@ const removeNFT = async () => {
             //     );
             // }
 
-            const imageURI =  `https://harlequin-biological-bat-26.mypinata.cloud/ipfs/${arrayFromContract[0]}`;
+            const imageURI = `https://harlequin-biological-bat-26.mypinata.cloud/ipfs/${arrayFromContract[0]}`;
             console.log("✅ Image uploaded:", imageURI);
 
             // -----------------------
@@ -531,8 +534,8 @@ const removeNFT = async () => {
     ;
     const filteredNFTs = nfts && nfts.filter(nft => nft._owner != "0x0000000000000000000000000000000000000000").map(v => Number(formatEther(v.price)) * 1.07).reduce((a, b) => a + b, 0);
 
- 
-    console.log("array",arrayFromContract);
+
+    console.log("array", arrayFromContract);
 
     return (
         <div>
@@ -581,13 +584,13 @@ const removeNFT = async () => {
                             </div>
 
                             {/* {preview ? ( */}
-                                <div className="flex justify-center items-center">
-                                    <img
-                                        src={`https://harlequin-biological-bat-26.mypinata.cloud/ipfs/${arrayFromContract[0]}`}
-                                        alt="Preview"
-                                        className="w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 object-cover rounded-xl shadow-lg"
-                                    />
-                                </div>
+                            <div className="flex justify-center items-center">
+                                <img
+                                    src={`https://harlequin-biological-bat-26.mypinata.cloud/ipfs/${arrayFromContract[0]}`}
+                                    alt="Preview"
+                                    className="w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 object-cover rounded-xl shadow-lg"
+                                />
+                            </div>
                             {/* ) : (
                                 <div
                                     id="upload-area"
