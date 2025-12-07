@@ -233,19 +233,40 @@ export default function Suck() {
     const lastTraded = Trades && analyzeLastNFTTransaction(Trades);
 
 
-    const removeNFT = async ()=>{
-        
-        const account = testweb3.eth.accounts.privateKeyToAccount(import.meta.env.VITE_PRIVATE_KEY);
+const removeNFT = async () => {
+  try {
+    const account = testweb3.eth.accounts.privateKeyToAccount(
+      import.meta.env.VITE_PRIVATE_KEY
+    );
 
+    testweb3.eth.accounts.wallet.add(account);
 
+    const tx = contract.methods.removeFirst();
 
-        try {
-        const res = await contract.methods.removeFirst().send({from:account.address,gaslimit:3000000});
-        console.log("res",res.txHash);
-        } catch (error) {
-            console.log("error in remove nft",error);
-        }
-    }
+    const gas = await tx.estimateGas({ from: account.address });
+
+    const data = tx.encodeABI();
+
+    const txData = {
+      from: account.address,
+      to: contract.options.address,
+      data,
+      gas
+    };
+
+    const signedTx = await account.signTransaction(txData);
+
+    const receipt = await testweb3.eth.sendSignedTransaction(
+      signedTx.rawTransaction
+    );
+
+    console.log("tx hash:", receipt.transactionHash);
+
+  } catch (error) {
+    console.log("error in remove nft", error);
+  }
+};
+
 
 
 
