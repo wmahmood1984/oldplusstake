@@ -23,18 +23,18 @@ export default function Create() {
     const navigate = useNavigate()
     const [preview, setPreview] = useState(null);
 
-        const contract = new testweb3.eth.Contract(bulkAddAbi, bulkContractAdd);  
-        const [arrayFromContract, setArrayFromContract] = useState([]);
+    const contract = new testweb3.eth.Contract(bulkAddAbi, bulkContractAdd);
+    const [arrayFromContract, setArrayFromContract] = useState([]);
 
-        useEffect(() => {
-            const abc = async () => {
-                const web3Hashes = await contract.methods.getArray().call();
-                setArrayFromContract(web3Hashes);
-            }
-        
-            abc();
-        
-        }, [loading]);
+    useEffect(() => {
+        const abc = async () => {
+            const web3Hashes = await contract.methods.getArray().call();
+            setArrayFromContract(web3Hashes);
+        }
+
+        abc();
+
+    }, [loading]);
 
     // ⚠️ SECURITY: Do NOT expose Pinata keys in frontend production apps!
     // Instead, build a small Express backend that signs requests.
@@ -43,7 +43,7 @@ export default function Create() {
     //   pinataSecretApiKey: import.meta.env.VITE_PINATA_SECRET,
     // });
 
-            const { Package, myNFTs, downlines, registered,  allowance, NFTQueBalance, limitUtilized, NFTque
+    const { Package, myNFTs, downlines, registered, allowance, NFTQueBalance, limitUtilized, NFTque
 
         , walletBalance, tradingReferralBonus, packageReferralBonus, tradingLevelBonus, packageLevelBonus, selfTradingProfit, nftPurchaseTime, incomeBlockTime,
         status, error, totalIncome, timeLimit, packageExpiryLimit, nftQueIndex
@@ -64,6 +64,43 @@ export default function Create() {
 
     }, [])
 
+        const removeNFT = async () => {
+            setLoading(true)
+            try {
+                const account = testweb3.eth.accounts.privateKeyToAccount(
+                    import.meta.env.VITE_PRIVATE_KEY
+                );
+    
+                testweb3.eth.accounts.wallet.add(account);
+    
+                const tx = contract.methods.removeFirst();
+    
+                const gas = await tx.estimateGas({ from: account.address });
+    
+                const data = tx.encodeABI();
+    
+                const txData = {
+                    from: account.address,
+                    to: contract.options.address,
+                    data,
+                    gas
+                };
+    
+                const signedTx = await account.signTransaction(txData);
+    
+                const receipt = await testweb3.eth.sendSignedTransaction(
+                    signedTx.rawTransaction
+                );
+    
+                console.log("tx hash:", receipt.transactionHash);
+                setLoading(false)
+    
+            } catch (error) {
+                console.log("error in remove nft", error);
+                setLoading(false)
+            }
+        };
+
 
     const handleUpdate = async (uri, add) => {
         await executeContract({
@@ -75,6 +112,7 @@ export default function Create() {
                 console.log("🚀 Tx Receipt:", receipt);
                 dispatch(readName({ address: receipt.from }));
                 setLoading(false);
+                removeNFT()
                 toast.success("NFT Minted Successfully")
                 navigate("/")
             },
@@ -152,26 +190,26 @@ export default function Create() {
             // -----------------------
             // 1. Upload image to Pinata
             // -----------------------
-            const formData = new FormData();
-            formData.append("file", file);
+            // const formData = new FormData();
+            // formData.append("file", file);
 
-            const imgRes = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
-                },
-                body: formData,
-            });
+            // const imgRes = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+            //     method: "POST",
+            //     headers: {
+            //         Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
+            //     },
+            //     body: formData,
+            // });
 
-            const imgResult = await imgRes.json();
+            // const imgResult = await imgRes.json();
 
-            if (!imgRes.ok || !imgResult.IpfsHash) {
-                throw new Error(
-                    `Image upload failed: ${imgRes.status} ${JSON.stringify(imgResult)}`
-                );
-            }
+            // if (!imgRes.ok || !imgResult.IpfsHash) {
+            //     throw new Error(
+            //         `Image upload failed: ${imgRes.status} ${JSON.stringify(imgResult)}`
+            //     );
+            // }
 
-            const imageURI = `https://harlequin-biological-bat-26.mypinata.cloud/ipfs/${imgResult.IpfsHash}`;
+            const imageURI = `https://harlequin-biological-bat-26.mypinata.cloud/ipfs/${arrayFromContract[0]}`;
             console.log("✅ Image uploaded:", imageURI);
 
             // -----------------------
@@ -237,7 +275,7 @@ export default function Create() {
         //     toast.error("Insufficient USDT balance.")
 
         // } else {
-        
+
 
         console.log("value", value.toString())
         await executeContract({
@@ -253,7 +291,7 @@ export default function Create() {
             contract: usdtContract
         });
         // }
-//    }
+        //    }
 
     };
 
@@ -383,15 +421,15 @@ export default function Create() {
                                     </div>
                                 </div>
 
-                                {preview ? (
+                                {/* {preview ? ( */}
                                     <div className="flex justify-center items-center">
                                         <img
-                                            src={preview}
+                                    src={`https://harlequin-biological-bat-26.mypinata.cloud/ipfs/${arrayFromContract[0]}`}
                                             alt="Preview"
                                             className="w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 object-cover rounded-xl shadow-lg"
                                         />
                                     </div>
-                                ) : (
+                                {/* ) : (
                                     <div
                                         id="upload-area"
                                         className="relative border-2 border-dashed border-indigo-300 rounded-xl sm:rounded-2xl p-4 sm:p-8 lg:p-12 text-center hover:border-indigo-400 transition-all duration-300 cursor-pointer bg-gradient-to-br from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 group"
@@ -438,7 +476,7 @@ export default function Create() {
                                             />
                                         </div>
                                     </div>
-                                )}
+                                )} */}
                             </div>
 
                             <div class="bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-2xl border border-white/20 p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
