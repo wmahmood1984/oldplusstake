@@ -9,7 +9,6 @@ const TradingLimitTimer = ({ durationInSeconds }) => {
   const { address, isConnected } = useAppKitAccount();
   const dispatch = useDispatch()
 
-      console.log("duration",timeLeft,durationInSeconds);
 
 useEffect(() => {
   setTimeLeft(durationInSeconds);
