@@ -168,7 +168,7 @@ export const NFT = ({ nft, index, toggle, setToggle, revisedLimitUtilized }) => 
       0.001;
 
     // fetch latest NFT data
-    const newNft = await helperContract.methods.nfts(nft.id).call();
+    const newNft = await helperContract.methods.nfts(Number(nft.id)-1).call();
 
     // calculate NEW value
     const newValue =
