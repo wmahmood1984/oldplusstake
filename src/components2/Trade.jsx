@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { formatWithCommas } from '../utils/contractExecutor';
 import { formatEther } from 'ethers';
-import { fetcherAbi, fetcherAddress, helperAbi, helperAddress, web3 } from '../config';
+import { bulkAddAbi, bulkContractAdd, fetcherAbi, fetcherAddress, helperAbi, helperAddress, testweb3, web3 } from '../config';
 import { NFT } from './NFT';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppKitAccount } from '@reown/appkit/react';
@@ -28,28 +28,47 @@ export default function Trade({ setCreateActive }) {
     const [userTradingLimitTime, setUserTradingLimitTime] = useState(0)
     const helperContract = new web3.eth.Contract(helperAbi, helperAddress)
     const fetcherContract = new web3.eth.Contract(fetcherAbi, fetcherAddress)
+    const saveContract = new testweb3.eth.Contract(bulkAddAbi, bulkContractAdd);
 
+    useEffect(() => {
+        if (!fetcherContract) return;
 
-useEffect(() => {
-  if (!fetcherContract) return;
+        let intervalId;
 
-  let intervalId;
+        const fetchNFTs = async () => {
+            const _nfts = await fetcherContract.methods.getNFTs().call();
 
-  const fetchNFTs = async () => {
-    const _nfts = await fetcherContract.methods.getNFTs().call();
-    console.log("nft call",_nfts);
-    setNFTs(
-      [..._nfts]
-        .sort((a, b) => Number(a.purchasedTime) - Number(b.purchasedTime))
-        .slice(0, 1)
-    );
-  };
+            const idThreshold = await saveContract.methods.arrayToStart().call();
+            const unitsTotake = await saveContract.methods.unitsToEnter().call();
 
-  fetchNFTs();
-  intervalId = setInterval(fetchNFTs, 10000);
+            // Array with NFTs having id <= 2500
+            const firstArray = _nfts.filter(nft => Number(nft.id) <= idThreshold);
 
-  return () => clearInterval(intervalId);
-}, [ toggle]);
+            // Array with NFTs having id > 2500
+            const secondArray = _nfts.filter(nft => Number(nft.id) > idThreshold).sort(
+                (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
+                );
+
+            const firstSlice = firstArray.slice(0, unitsTotake);
+            const secondSlice = secondArray.slice(0, 15 - unitsTotake); // 15 items
+
+            console.log("First array:", firstArray);
+            console.log("Second array:", secondArray);
+            console.log("nft call", _nfts);
+
+            const mergedSorted = [...firstSlice, ...secondSlice].sort(
+                (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
+            );
+
+            // Save to state
+            setNFTs(mergedSorted);
+        };
+
+        fetchNFTs();
+        intervalId = setInterval(fetchNFTs, 10000);
+
+        return () => clearInterval(intervalId);
+    }, [toggle]);
 
 
 
@@ -59,25 +78,6 @@ useEffect(() => {
 
         const concurrencyLimit = 10;
 
-        // const runWithConcurrency = async (items, limit, task) => {
-        //     const results = [];
-        //     let index = 0;
-
-        //     const workers = Array(limit).fill(null).map(async () => {
-        //         while (index < items.length) {
-        //             const i = index++;
-        //             try {
-        //                 results[i] = await task(items[i], i);
-        //             } catch (e) {
-        //                 console.error(e);
-        //                 results[i] = null;
-        //             }
-        //         }
-        //     });
-
-        //     await Promise.all(workers);
-        //     return results;
-        // };
 
         const abc = async () => {
 
@@ -143,69 +143,6 @@ useEffect(() => {
                     await helperContract.methods.userTradingLimitTime(address).call();
                 setUserTradingLimitTime(_userTradingLimitTime);
 
-                                // 2️⃣ Get NFTs
-                
-                // const _nfts = []//await fetcherContract.methods.getNFTs().call();
-                // console.log("object",_nfts);
-
-                // const _filteredNFTs = _nfts.filter(
-                //     v =>
-                //         v._owner !== "0x0000000000000000000000000000000000000000" &&
-                //         v._owner.toLowerCase() !== address.toLowerCase()
-                // );
-
-                // // 3️⃣ Prepare IDs array
-                // const ids = _filteredNFTs.map(n => n.id);
-
-                // // 4️⃣ Single RPC call to Fetcher contract 🚀
-                // const allPurchasedTimes = await fetcherContract.methods
-                //     .getAllPurchasedTimes(ids)
-                //     .call();
-
-                // const resolved = _filteredNFTs.map((nft, i) => {
-                //     return ({
-                //         id: nft.id,
-                //         price: nft.price ? formatEther(nft.price.toString()) : "0",
-                //         premium: nft.premium || false,
-                //         owner: nft._owner || "Unknown",
-                //         uri: nft.uri,
-                //         source: nft.source,
-                //         nftObject: nft,
-                //         purchasedTime: allPurchasedTimes[i] ?? "0"
-                //     })
-                // })
-
-                // 5️⃣ Fetch metadata with concurrency limit (fast)
-                // const resolved = await runWithConcurrency(
-                //     _filteredNFTs,
-                //     concurrencyLimit,
-                //     async (nft, i) => {
-                //         try {
-                //             const res = await fetch(nft.uri);
-                //             const meta = await res.json();
-
-                //             return {
-                //                 id: nft.id,
-                //                 name: meta?.name || "Unnamed NFT",
-                //                 description: meta?.description || "",
-                //                 image: meta?.image || "",
-                //                 price: nft.price ? formatEther(nft.price.toString()) : "0",
-                //                 premium: nft.premium || false,
-                //                 creator: meta?.creator || "Unknown",
-                //                 owner: nft._owner || "Unknown",
-                //                 uri: nft.uri,
-                //                 source: nft.source,
-                //                 nftObject: nft,
-                //                 purchasedTime: allPurchasedTimes[i] ?? "0"
-                //             };
-                //         } catch (err) {
-                //             console.error("Failed metadata", nft.uri, err);
-                //             return null;
-                //         }
-                //     }
-                // );
-
-//                setNFTs(resolved);
 
             } catch (error) {
                 console.error("Error in abc()", error);
@@ -239,10 +176,6 @@ useEffect(() => {
         now - Number(userTradingLimitTime) > 60 * 60 * 24 ? 0 : limitUtilized
 
     const duration = Number(userTradingLimitTime) + 60 * 60 * 24 - now > 0 ? Number(userTradingLimitTime) + 60 * 60 * 24 - now : 0
-
-    // console.log({"duration":duration,"user trading limit time":userTradingLimitTime
-    //     ,"now":now,"utt plus time":Number(userTradingLimitTime) + 60 * 60 * 24
-    // });
 
     const randomeNFTs = nfts
         ? [...nfts].sort((a, b) => a.purchasedTime - b.purchasedTime)
@@ -331,35 +264,35 @@ useEffect(() => {
                     <TradingLimitTimer durationInSeconds={duration} />
                     <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
                         {randomeNFTs.map((v, e) => {
-                            
-                                return (
-                                    <NFT
-                                        nft={v}
-                                        // image={v.image}
-                                        // name={v.name}
-                                        index={v.id}
-                                        toggle={toggle}
-                                        setToggle={setToggle}
-                                        revisedLimitUtilized={revisedLimitUtilized} />
-                                    //     <div class="nft-card bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl shadow-lg overflow-hidden">
-                                    //     <div class="h-48 bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
-                                    //         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                                    //         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                    //             <div class="w-20 h-24 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-full opacity-80"></div>
-                                    //             <div class="absolute top-4 left-4 w-2 h-2 bg-cyan-300 rounded-full animate-pulse"></div>
-                                    //             <div class="absolute top-6 right-4 w-2 h-2 bg-pink-400 rounded-full animate-pulse"></div>
-                                    //             <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-cyan-400"></div>
-                                    //         </div>
-                                    //     </div>
-                                    //     <div class="p-4">
-                                    //         <h3 class="font-semibold text-gray-900 mb-2">Cyber Genesis #001</h3>
-                                    //         <div class="text-2xl font-bold text-blue-600 mb-3">
-                                    //             $53.5
-                                    //         </div><button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Buy Now</button>
-                                    //     </div>
-                                    // </div>
-                                )
-                            
+
+                            return (
+                                <NFT
+                                    nft={v}
+                                    // image={v.image}
+                                    // name={v.name}
+                                    index={v.id}
+                                    toggle={toggle}
+                                    setToggle={setToggle}
+                                    revisedLimitUtilized={revisedLimitUtilized} />
+                                //     <div class="nft-card bg-white/95 backdrop-blur-md border border-blue-200 rounded-xl shadow-lg overflow-hidden">
+                                //     <div class="h-48 bg-gradient-to-br from-purple-900 via-blue-900 to-cyan-900 relative">
+                                //         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                //         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                //             <div class="w-20 h-24 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-full opacity-80"></div>
+                                //             <div class="absolute top-4 left-4 w-2 h-2 bg-cyan-300 rounded-full animate-pulse"></div>
+                                //             <div class="absolute top-6 right-4 w-2 h-2 bg-pink-400 rounded-full animate-pulse"></div>
+                                //             <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-cyan-400"></div>
+                                //         </div>
+                                //     </div>
+                                //     <div class="p-4">
+                                //         <h3 class="font-semibold text-gray-900 mb-2">Cyber Genesis #001</h3>
+                                //         <div class="text-2xl font-bold text-blue-600 mb-3">
+                                //             $53.5
+                                //         </div><button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Buy Now</button>
+                                //     </div>
+                                // </div>
+                            )
+
                         })
 
 
