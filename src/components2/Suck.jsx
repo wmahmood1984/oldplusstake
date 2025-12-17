@@ -694,7 +694,7 @@ export default function Suck() {
                 </section>
                 <section id="marketplace" class={`py-12 sm:py-20 bg-white ${create && `hidden`}`}>
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <MyForm/>
+
                         <div class="text-center mb-8 sm:mb-12">
                             <h3 id="marketplace-title" class="text-3xl sm:text-4xl lg:text-5xl font-bold font-display text-gray-900 mb-4">NFT Marketplace</h3>
                             <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">Discover and trade unique digital assets from creators worldwide</p>

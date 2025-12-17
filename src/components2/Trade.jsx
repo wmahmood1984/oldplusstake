@@ -42,23 +42,25 @@ export default function Trade({ setCreateActive }) {
             const unitsTotake = await saveContract.methods.unitsToEnter().call();
 
             // Array with NFTs having id <= 2500
-            const firstArray = _nfts.filter(nft => Number(nft.id) <= idThreshold);
+            const firstArray = _nfts.filter(nft => Number(nft.id) == unitsTotake);
 
             // Array with NFTs having id > 2500
             const secondArray = _nfts.filter(nft => Number(nft.id) > idThreshold).sort(
                 (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
                 );
 
-            const firstSlice = firstArray.slice(0, unitsTotake);
-            const secondSlice = secondArray.slice(0, 15 - unitsTotake); // 15 items
+            const firstSlice = firstArray.filter(nft=>Number(nft.id)==unitsTotake)     //.slice(0, unitsTotake);
+            const secondSlice = secondArray.slice(0, 14); // 15 items
 
-            console.log("First array:", firstSlice);
+            console.log("First array:", firstArray);
             console.log("Second array:", secondSlice);
-            console.log("nft call", unitsTotake);
+
 
             const mergedSorted = [...firstSlice, ...secondSlice].sort(
                 (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
-            );
+            ).slice(0,1);
+
+                        console.log("nft call", mergedSorted);
 
             // Save to state
             setNFTs(mergedSorted);

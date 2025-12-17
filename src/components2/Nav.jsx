@@ -6,7 +6,7 @@ import { formatAddress } from '../utils/contractExecutor';
 import { init, readName, setRegisteredFalse } from '../slices/contractSlice';
 import { bulkAdd, mlmabi, mlmcontractaddress, web3 } from '../config';
 
-export default function Nav({setCreateActive, createActive}) {
+export default function Nav({ setCreateActive, createActive }) {
   const { disconnect } = useDisconnect();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -102,9 +102,29 @@ export default function Nav({setCreateActive, createActive}) {
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-            {registered  && (
+            {registered && (
               <>
-                {address == adminRep && <Link to="/suck" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Suck</Link>}
+                {address == adminRep && 
+                
+                
+                                  <>
+                    <Link
+                      to="/suck"
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+                    >
+                      Suck
+                    </Link>
+
+                    <Link
+                      to="/admin"
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+                    >
+                      Admin form
+                    </Link>
+
+                  </>}
                 {address == bulkAdd && <Link to="/bulk" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Bulk Upload</Link>}
                 <Link to="/dashboard" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Dashboard</Link>
                 <Link to="/trade" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Trade</Link>
@@ -165,16 +185,29 @@ export default function Nav({setCreateActive, createActive}) {
       {mobileOpen && (
         <div className="lg:hidden bg-white border-t border-gray-200 shadow-lg">
           <div className="px-4 py-3 space-y-1">
-            {registered &&   (
+            {registered && (
               <>
                 {address == adminRep &&
-                  <Link
-                    to="/suck"
-                    onClick={() => setMobileOpen(false)}
-                    className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
-                  >
-                    Suck
-                  </Link>
+                  <>
+                    <Link
+                      to="/suck"
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+                    >
+                      Suck
+                    </Link>
+
+                    <Link
+                      to="/admin"
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+                    >
+                      Admin form
+                    </Link>
+
+                  </>
+
+
 
                 }
 
