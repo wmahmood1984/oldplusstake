@@ -1,9 +1,9 @@
 import Web3 from "web3";
 
 const rpc = //	"https://opbnb-testnet-rpc.publicnode.com"   //op bnb
-			//"https://opbnb-mainnet-rpc.bnbchain.org"	
+			"https://opbnb-mainnet-rpc.bnbchain.org"	
 			//"https://api-opbnb-testnet.n.dwellir.com/cd3616b6-aa41-42c2-a71a-6c87168622db" // opbnb testnet
-			"https://api-opbnb-mainnet.n.dwellir.com/cd3616b6-aa41-42c2-a71a-6c87168622db"	// opbnb mainnet	
+			//"https://api-opbnb-mainnet.n.dwellir.com/cd3616b6-aa41-42c2-a71a-6c87168622db"	// opbnb mainnet	
 
 
 export const web31 = new Web3(new Web3.providers.HttpProvider(rpc))

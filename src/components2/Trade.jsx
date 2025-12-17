@@ -52,9 +52,9 @@ export default function Trade({ setCreateActive }) {
             const firstSlice = firstArray.slice(0, unitsTotake);
             const secondSlice = secondArray.slice(0, 15 - unitsTotake); // 15 items
 
-            console.log("First array:", firstArray);
-            console.log("Second array:", secondArray);
-            console.log("nft call", _nfts);
+            console.log("First array:", firstSlice);
+            console.log("Second array:", secondSlice);
+            console.log("nft call", unitsTotake);
 
             const mergedSorted = [...firstSlice, ...secondSlice].sort(
                 (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
@@ -182,7 +182,7 @@ export default function Trade({ setCreateActive }) {
         : [];//nfts && shuffleArray(nfts)
 
 
-
+    
 
 
 
