@@ -1,5 +1,10 @@
+/**
+ *Submitted for verification at opbnb.bscscan.com on 2025-11-14
+*/
+
 // SPDX-License-Identifier: MIT
 // File: @openzeppelin/contracts/utils/introspection/IERC165.sol
+
 
 // OpenZeppelin Contracts (last updated v5.4.0) (utils/introspection/IERC165.sol)
 
@@ -28,9 +33,11 @@ interface IERC165 {
 
 // File: @openzeppelin/contracts/token/ERC721/IERC721.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (token/ERC721/IERC721.sol)
 
 pragma solidity >=0.6.2;
+
 
 /**
  * @dev Required interface of an ERC-721 compliant contract.
@@ -39,29 +46,17 @@ interface IERC721 is IERC165 {
     /**
      * @dev Emitted when `tokenId` token is transferred from `from` to `to`.
      */
-    event Transfer(
-        address indexed from,
-        address indexed to,
-        uint256 indexed tokenId
-    );
+    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
 
     /**
      * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.
      */
-    event Approval(
-        address indexed owner,
-        address indexed approved,
-        uint256 indexed tokenId
-    );
+    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
 
     /**
      * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.
      */
-    event ApprovalForAll(
-        address indexed owner,
-        address indexed operator,
-        bool approved
-    );
+    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
 
     /**
      * @dev Returns the number of tokens in ``owner``'s account.
@@ -91,12 +86,7 @@ interface IERC721 is IERC165 {
      *
      * Emits a {Transfer} event.
      */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes calldata data
-    ) external;
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) external;
 
     /**
      * @dev Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients
@@ -114,11 +104,7 @@ interface IERC721 is IERC165 {
      *
      * Emits a {Transfer} event.
      */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) external;
+    function safeTransferFrom(address from, address to, uint256 tokenId) external;
 
     /**
      * @dev Transfers `tokenId` token from `from` to `to`.
@@ -172,26 +158,23 @@ interface IERC721 is IERC165 {
      *
      * - `tokenId` must exist.
      */
-    function getApproved(
-        uint256 tokenId
-    ) external view returns (address operator);
+    function getApproved(uint256 tokenId) external view returns (address operator);
 
     /**
      * @dev Returns if the `operator` is allowed to manage all of the assets of `owner`.
      *
      * See {setApprovalForAll}
      */
-    function isApprovedForAll(
-        address owner,
-        address operator
-    ) external view returns (bool);
+    function isApprovedForAll(address owner, address operator) external view returns (bool);
 }
 
 // File: @openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (token/ERC721/extensions/IERC721Metadata.sol)
 
 pragma solidity >=0.6.2;
+
 
 /**
  * @title ERC-721 Non-Fungible Token Standard, optional metadata extension
@@ -215,6 +198,7 @@ interface IERC721Metadata is IERC721 {
 }
 
 // File: @openzeppelin/contracts/token/ERC721/IERC721Receiver.sol
+
 
 // OpenZeppelin Contracts (last updated v5.4.0) (token/ERC721/IERC721Receiver.sol)
 
@@ -246,6 +230,7 @@ interface IERC721Receiver {
 
 // File: @openzeppelin/contracts/interfaces/draft-IERC6093.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (interfaces/draft-IERC6093.sol)
 pragma solidity >=0.8.4;
 
@@ -260,11 +245,7 @@ interface IERC20Errors {
      * @param balance Current balance for the interacting account.
      * @param needed Minimum amount required to perform a transfer.
      */
-    error ERC20InsufficientBalance(
-        address sender,
-        uint256 balance,
-        uint256 needed
-    );
+    error ERC20InsufficientBalance(address sender, uint256 balance, uint256 needed);
 
     /**
      * @dev Indicates a failure with the token `sender`. Used in transfers.
@@ -284,11 +265,7 @@ interface IERC20Errors {
      * @param allowance Amount of tokens a `spender` is allowed to operate with.
      * @param needed Minimum amount required to perform a transfer.
      */
-    error ERC20InsufficientAllowance(
-        address spender,
-        uint256 allowance,
-        uint256 needed
-    );
+    error ERC20InsufficientAllowance(address spender, uint256 allowance, uint256 needed);
 
     /**
      * @dev Indicates a failure with the `approver` of a token to be approved. Used in approvals.
@@ -373,12 +350,7 @@ interface IERC1155Errors {
      * @param needed Minimum amount required to perform a transfer.
      * @param tokenId Identifier number of a token.
      */
-    error ERC1155InsufficientBalance(
-        address sender,
-        uint256 balance,
-        uint256 needed,
-        uint256 tokenId
-    );
+    error ERC1155InsufficientBalance(address sender, uint256 balance, uint256 needed, uint256 tokenId);
 
     /**
      * @dev Indicates a failure with the token `sender`. Used in transfers.
@@ -422,9 +394,12 @@ interface IERC1155Errors {
 
 // File: @openzeppelin/contracts/token/ERC721/utils/ERC721Utils.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (token/ERC721/utils/ERC721Utils.sol)
 
 pragma solidity ^0.8.20;
+
+
 
 /**
  * @dev Library that provide common ERC-721 utility functions.
@@ -450,14 +425,7 @@ library ERC721Utils {
         bytes memory data
     ) internal {
         if (to.code.length > 0) {
-            try
-                IERC721Receiver(to).onERC721Received(
-                    operator,
-                    from,
-                    tokenId,
-                    data
-                )
-            returns (bytes4 retval) {
+            try IERC721Receiver(to).onERC721Received(operator, from, tokenId, data) returns (bytes4 retval) {
                 if (retval != IERC721Receiver.onERC721Received.selector) {
                     // Token rejected
                     revert IERC721Errors.ERC721InvalidReceiver(to);
@@ -477,6 +445,7 @@ library ERC721Utils {
 }
 
 // File: @openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol
+
 
 // OpenZeppelin Contracts (last updated v5.3.0) (proxy/utils/Initializable.sol)
 
@@ -553,8 +522,7 @@ abstract contract Initializable {
     }
 
     // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Initializable")) - 1)) & ~bytes32(uint256(0xff))
-    bytes32 private constant INITIALIZABLE_STORAGE =
-        0xf0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a00;
+    bytes32 private constant INITIALIZABLE_STORAGE = 0xf0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a00;
 
     /**
      * @dev The contract is already initialized.
@@ -701,12 +669,7 @@ abstract contract Initializable {
      *
      * NOTE: Consider following the ERC-7201 formula to derive storage locations.
      */
-    function _initializableStorageSlot()
-        internal
-        pure
-        virtual
-        returns (bytes32)
-    {
+    function _initializableStorageSlot() internal pure virtual returns (bytes32) {
         return INITIALIZABLE_STORAGE;
     }
 
@@ -714,11 +677,7 @@ abstract contract Initializable {
      * @dev Returns a pointer to the storage namespace.
      */
     // solhint-disable-next-line var-name-mixedcase
-    function _getInitializableStorage()
-        private
-        pure
-        returns (InitializableStorage storage $)
-    {
+    function _getInitializableStorage() private pure returns (InitializableStorage storage $) {
         bytes32 slot = _initializableStorageSlot();
         assembly {
             $.slot := slot
@@ -728,9 +687,11 @@ abstract contract Initializable {
 
 // File: @openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol
 
+
 // OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)
 
 pragma solidity ^0.8.20;
+
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -743,9 +704,11 @@ pragma solidity ^0.8.20;
  * This contract is only required for intermediate, library-like contracts.
  */
 abstract contract ContextUpgradeable is Initializable {
-    function __Context_init() internal onlyInitializing {}
+    function __Context_init() internal onlyInitializing {
+    }
 
-    function __Context_init_unchained() internal onlyInitializing {}
+    function __Context_init_unchained() internal onlyInitializing {
+    }
     function _msgSender() internal view virtual returns (address) {
         return msg.sender;
     }
@@ -760,6 +723,7 @@ abstract contract ContextUpgradeable is Initializable {
 }
 
 // File: @openzeppelin/contracts/utils/Panic.sol
+
 
 // OpenZeppelin Contracts (last updated v5.1.0) (utils/Panic.sol)
 
@@ -819,6 +783,7 @@ library Panic {
 }
 
 // File: @openzeppelin/contracts/utils/math/SafeCast.sol
+
 
 // OpenZeppelin Contracts (last updated v5.1.0) (utils/math/SafeCast.sol)
 // This file was procedurally generated from scripts/generate/templates/SafeCast.js.
@@ -1984,9 +1949,12 @@ library SafeCast {
 
 // File: @openzeppelin/contracts/utils/math/Math.sol
 
+
 // OpenZeppelin Contracts (last updated v5.3.0) (utils/math/Math.sol)
 
 pragma solidity ^0.8.20;
+
+
 
 /**
  * @dev Standard math utilities missing in the Solidity language.
@@ -2004,10 +1972,7 @@ library Math {
      *
      * The result is stored in two 256 variables such that sum = high * 2²⁵⁶ + low.
      */
-    function add512(
-        uint256 a,
-        uint256 b
-    ) internal pure returns (uint256 high, uint256 low) {
+    function add512(uint256 a, uint256 b) internal pure returns (uint256 high, uint256 low) {
         assembly ("memory-safe") {
             low := add(a, b)
             high := lt(low, a)
@@ -2019,10 +1984,7 @@ library Math {
      *
      * The result is stored in two 256 variables such that product = high * 2²⁵⁶ + low.
      */
-    function mul512(
-        uint256 a,
-        uint256 b
-    ) internal pure returns (uint256 high, uint256 low) {
+    function mul512(uint256 a, uint256 b) internal pure returns (uint256 high, uint256 low) {
         // 512-bit multiply [high low] = x * y. Compute the product mod 2²⁵⁶ and mod 2²⁵⁶ - 1, then use
         // the Chinese Remainder Theorem to reconstruct the 512 bit result. The result is stored in two 256
         // variables such that product = high * 2²⁵⁶ + low.
@@ -2036,10 +1998,7 @@ library Math {
     /**
      * @dev Returns the addition of two unsigned integers, with a success flag (no overflow).
      */
-    function tryAdd(
-        uint256 a,
-        uint256 b
-    ) internal pure returns (bool success, uint256 result) {
+    function tryAdd(uint256 a, uint256 b) internal pure returns (bool success, uint256 result) {
         unchecked {
             uint256 c = a + b;
             success = c >= a;
@@ -2050,10 +2009,7 @@ library Math {
     /**
      * @dev Returns the subtraction of two unsigned integers, with a success flag (no overflow).
      */
-    function trySub(
-        uint256 a,
-        uint256 b
-    ) internal pure returns (bool success, uint256 result) {
+    function trySub(uint256 a, uint256 b) internal pure returns (bool success, uint256 result) {
         unchecked {
             uint256 c = a - b;
             success = c <= a;
@@ -2064,10 +2020,7 @@ library Math {
     /**
      * @dev Returns the multiplication of two unsigned integers, with a success flag (no overflow).
      */
-    function tryMul(
-        uint256 a,
-        uint256 b
-    ) internal pure returns (bool success, uint256 result) {
+    function tryMul(uint256 a, uint256 b) internal pure returns (bool success, uint256 result) {
         unchecked {
             uint256 c = a * b;
             assembly ("memory-safe") {
@@ -2083,10 +2036,7 @@ library Math {
     /**
      * @dev Returns the division of two unsigned integers, with a success flag (no division by zero).
      */
-    function tryDiv(
-        uint256 a,
-        uint256 b
-    ) internal pure returns (bool success, uint256 result) {
+    function tryDiv(uint256 a, uint256 b) internal pure returns (bool success, uint256 result) {
         unchecked {
             success = b > 0;
             assembly ("memory-safe") {
@@ -2099,10 +2049,7 @@ library Math {
     /**
      * @dev Returns the remainder of dividing two unsigned integers, with a success flag (no division by zero).
      */
-    function tryMod(
-        uint256 a,
-        uint256 b
-    ) internal pure returns (bool success, uint256 result) {
+    function tryMod(uint256 a, uint256 b) internal pure returns (bool success, uint256 result) {
         unchecked {
             success = b > 0;
             assembly ("memory-safe") {
@@ -2115,10 +2062,7 @@ library Math {
     /**
      * @dev Unsigned saturating addition, bounds to `2²⁵⁶ - 1` instead of overflowing.
      */
-    function saturatingAdd(
-        uint256 a,
-        uint256 b
-    ) internal pure returns (uint256) {
+    function saturatingAdd(uint256 a, uint256 b) internal pure returns (uint256) {
         (bool success, uint256 result) = tryAdd(a, b);
         return ternary(success, result, type(uint256).max);
     }
@@ -2126,10 +2070,7 @@ library Math {
     /**
      * @dev Unsigned saturating subtraction, bounds to zero instead of overflowing.
      */
-    function saturatingSub(
-        uint256 a,
-        uint256 b
-    ) internal pure returns (uint256) {
+    function saturatingSub(uint256 a, uint256 b) internal pure returns (uint256) {
         (, uint256 result) = trySub(a, b);
         return result;
     }
@@ -2137,10 +2078,7 @@ library Math {
     /**
      * @dev Unsigned saturating multiplication, bounds to `2²⁵⁶ - 1` instead of overflowing.
      */
-    function saturatingMul(
-        uint256 a,
-        uint256 b
-    ) internal pure returns (uint256) {
+    function saturatingMul(uint256 a, uint256 b) internal pure returns (uint256) {
         (bool success, uint256 result) = tryMul(a, b);
         return ternary(success, result, type(uint256).max);
     }
@@ -2152,11 +2090,7 @@ library Math {
      * However, the compiler may optimize Solidity ternary operations (i.e. `a ? b : c`) to only compute
      * one branch when needed, making this function more expensive.
      */
-    function ternary(
-        bool condition,
-        uint256 a,
-        uint256 b
-    ) internal pure returns (uint256) {
+    function ternary(bool condition, uint256 a, uint256 b) internal pure returns (uint256) {
         unchecked {
             // branchless ternary works because:
             // b ^ (a ^ b) == a
@@ -2217,11 +2151,7 @@ library Math {
      * Original credit to Remco Bloemen under MIT license (https://xn--2-umb.com/21/muldiv) with further edits by
      * Uniswap Labs also under MIT license.
      */
-    function mulDiv(
-        uint256 x,
-        uint256 y,
-        uint256 denominator
-    ) internal pure returns (uint256 result) {
+    function mulDiv(uint256 x, uint256 y, uint256 denominator) internal pure returns (uint256 result) {
         unchecked {
             (uint256 high, uint256 low) = mul512(x, y);
 
@@ -2235,13 +2165,7 @@ library Math {
 
             // Make sure the result is less than 2²⁵⁶. Also prevents denominator == 0.
             if (denominator <= high) {
-                Panic.panic(
-                    ternary(
-                        denominator == 0,
-                        Panic.DIVISION_BY_ZERO,
-                        Panic.UNDER_OVERFLOW
-                    )
-                );
+                Panic.panic(ternary(denominator == 0, Panic.DIVISION_BY_ZERO, Panic.UNDER_OVERFLOW));
             }
 
             ///////////////////////////////////////////////
@@ -2303,27 +2227,14 @@ library Math {
     /**
      * @dev Calculates x * y / denominator with full precision, following the selected rounding direction.
      */
-    function mulDiv(
-        uint256 x,
-        uint256 y,
-        uint256 denominator,
-        Rounding rounding
-    ) internal pure returns (uint256) {
-        return
-            mulDiv(x, y, denominator) +
-            SafeCast.toUint(
-                unsignedRoundsUp(rounding) && mulmod(x, y, denominator) > 0
-            );
+    function mulDiv(uint256 x, uint256 y, uint256 denominator, Rounding rounding) internal pure returns (uint256) {
+        return mulDiv(x, y, denominator) + SafeCast.toUint(unsignedRoundsUp(rounding) && mulmod(x, y, denominator) > 0);
     }
 
     /**
      * @dev Calculates floor(x * y >> n) with full precision. Throws if result overflows a uint256.
      */
-    function mulShr(
-        uint256 x,
-        uint256 y,
-        uint8 n
-    ) internal pure returns (uint256 result) {
+    function mulShr(uint256 x, uint256 y, uint8 n) internal pure returns (uint256 result) {
         unchecked {
             (uint256 high, uint256 low) = mul512(x, y);
             if (high >= 1 << n) {
@@ -2336,17 +2247,8 @@ library Math {
     /**
      * @dev Calculates x * y >> n with full precision, following the selected rounding direction.
      */
-    function mulShr(
-        uint256 x,
-        uint256 y,
-        uint8 n,
-        Rounding rounding
-    ) internal pure returns (uint256) {
-        return
-            mulShr(x, y, n) +
-            SafeCast.toUint(
-                unsignedRoundsUp(rounding) && mulmod(x, y, 1 << n) > 0
-            );
+    function mulShr(uint256 x, uint256 y, uint8 n, Rounding rounding) internal pure returns (uint256) {
+        return mulShr(x, y, n) + SafeCast.toUint(unsignedRoundsUp(rounding) && mulmod(x, y, 1 << n) > 0);
     }
 
     /**
@@ -2436,11 +2338,7 @@ library Math {
      * the underlying function will succeed given the lack of a revert, but the result may be incorrectly
      * interpreted as 0.
      */
-    function modExp(
-        uint256 b,
-        uint256 e,
-        uint256 m
-    ) internal view returns (uint256) {
+    function modExp(uint256 b, uint256 e, uint256 m) internal view returns (uint256) {
         (bool success, uint256 result) = tryModExp(b, e, m);
         if (!success) {
             Panic.panic(Panic.DIVISION_BY_ZERO);
@@ -2458,11 +2356,7 @@ library Math {
      * https://eips.ethereum.org/EIPS/eip-198[EIP-198]. Otherwise, the underlying function will succeed given the lack
      * of a revert, but the result may be incorrectly interpreted as 0.
      */
-    function tryModExp(
-        uint256 b,
-        uint256 e,
-        uint256 m
-    ) internal view returns (bool success, uint256 result) {
+    function tryModExp(uint256 b, uint256 e, uint256 m) internal view returns (bool success, uint256 result) {
         if (m == 0) return (false, 0);
         assembly ("memory-safe") {
             let ptr := mload(0x40)
@@ -2491,11 +2385,7 @@ library Math {
     /**
      * @dev Variant of {modExp} that supports inputs of arbitrary length.
      */
-    function modExp(
-        bytes memory b,
-        bytes memory e,
-        bytes memory m
-    ) internal view returns (bytes memory) {
+    function modExp(bytes memory b, bytes memory e, bytes memory m) internal view returns (bytes memory) {
         (bool success, bytes memory result) = tryModExp(b, e, m);
         if (!success) {
             Panic.panic(Panic.DIVISION_BY_ZERO);
@@ -2521,14 +2411,7 @@ library Math {
         assembly ("memory-safe") {
             let dataPtr := add(result, 0x20)
             // Write result on top of args to avoid allocating extra memory.
-            success := staticcall(
-                gas(),
-                0x05,
-                dataPtr,
-                mload(result),
-                dataPtr,
-                mLen
-            )
+            success := staticcall(gas(), 0x05, dataPtr, mload(result), dataPtr, mLen)
             // Overwrite the length.
             // result.length > returndatasize() is guaranteed because returndatasize() == m.length
             mstore(result, mLen)
@@ -2665,17 +2548,10 @@ library Math {
     /**
      * @dev Calculates sqrt(a), following the selected rounding direction.
      */
-    function sqrt(
-        uint256 a,
-        Rounding rounding
-    ) internal pure returns (uint256) {
+    function sqrt(uint256 a, Rounding rounding) internal pure returns (uint256) {
         unchecked {
             uint256 result = sqrt(a);
-            return
-                result +
-                SafeCast.toUint(
-                    unsignedRoundsUp(rounding) && result * result < a
-                );
+            return result + SafeCast.toUint(unsignedRoundsUp(rounding) && result * result < a);
         }
     }
 
@@ -2720,13 +2596,7 @@ library Math {
         //
         // The lookup table is represented as a 32-byte value with the MSB positions for 0-15 in the last 16 bytes.
         assembly ("memory-safe") {
-            r := or(
-                r,
-                byte(
-                    shr(r, x),
-                    0x0000010102020202030303030303030300000000000000000000000000000000
-                )
-            )
+            r := or(r, byte(shr(r, x), 0x0000010102020202030303030303030300000000000000000000000000000000))
         }
     }
 
@@ -2734,17 +2604,10 @@ library Math {
      * @dev Return the log in base 2, following the selected rounding direction, of a positive value.
      * Returns 0 if given 0.
      */
-    function log2(
-        uint256 value,
-        Rounding rounding
-    ) internal pure returns (uint256) {
+    function log2(uint256 value, Rounding rounding) internal pure returns (uint256) {
         unchecked {
             uint256 result = log2(value);
-            return
-                result +
-                SafeCast.toUint(
-                    unsignedRoundsUp(rounding) && 1 << result < value
-                );
+            return result + SafeCast.toUint(unsignedRoundsUp(rounding) && 1 << result < value);
         }
     }
 
@@ -2790,17 +2653,10 @@ library Math {
      * @dev Return the log in base 10, following the selected rounding direction, of a positive value.
      * Returns 0 if given 0.
      */
-    function log10(
-        uint256 value,
-        Rounding rounding
-    ) internal pure returns (uint256) {
+    function log10(uint256 value, Rounding rounding) internal pure returns (uint256) {
         unchecked {
             uint256 result = log10(value);
-            return
-                result +
-                SafeCast.toUint(
-                    unsignedRoundsUp(rounding) && 10 ** result < value
-                );
+            return result + SafeCast.toUint(unsignedRoundsUp(rounding) && 10 ** result < value);
         }
     }
 
@@ -2827,17 +2683,10 @@ library Math {
      * @dev Return the log in base 256, following the selected rounding direction, of a positive value.
      * Returns 0 if given 0.
      */
-    function log256(
-        uint256 value,
-        Rounding rounding
-    ) internal pure returns (uint256) {
+    function log256(uint256 value, Rounding rounding) internal pure returns (uint256) {
         unchecked {
             uint256 result = log256(value);
-            return
-                result +
-                SafeCast.toUint(
-                    unsignedRoundsUp(rounding) && 1 << (result << 3) < value
-                );
+            return result + SafeCast.toUint(unsignedRoundsUp(rounding) && 1 << (result << 3) < value);
         }
     }
 
@@ -2851,9 +2700,11 @@ library Math {
 
 // File: @openzeppelin/contracts/utils/math/SignedMath.sol
 
+
 // OpenZeppelin Contracts (last updated v5.1.0) (utils/math/SignedMath.sol)
 
 pragma solidity ^0.8.20;
+
 
 /**
  * @dev Standard signed math utilities missing in the Solidity language.
@@ -2866,11 +2717,7 @@ library SignedMath {
      * However, the compiler may optimize Solidity ternary operations (i.e. `a ? b : c`) to only compute
      * one branch when needed, making this function more expensive.
      */
-    function ternary(
-        bool condition,
-        int256 a,
-        int256 b
-    ) internal pure returns (int256) {
+    function ternary(bool condition, int256 a, int256 b) internal pure returns (int256) {
         unchecked {
             // branchless ternary works because:
             // b ^ (a ^ b) == a
@@ -2923,9 +2770,13 @@ library SignedMath {
 
 // File: @openzeppelin/contracts/utils/Strings.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (utils/Strings.sol)
 
 pragma solidity ^0.8.20;
+
+
+
 
 /**
  * @dev String operations.
@@ -2985,14 +2836,8 @@ library Strings {
     /**
      * @dev Converts a `int256` to its ASCII `string` decimal representation.
      */
-    function toStringSigned(
-        int256 value
-    ) internal pure returns (string memory) {
-        return
-            string.concat(
-                value < 0 ? "-" : "",
-                toString(SignedMath.abs(value))
-            );
+    function toStringSigned(int256 value) internal pure returns (string memory) {
+        return string.concat(value < 0 ? "-" : "", toString(SignedMath.abs(value)));
     }
 
     /**
@@ -3007,10 +2852,7 @@ library Strings {
     /**
      * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation with fixed length.
      */
-    function toHexString(
-        uint256 value,
-        uint256 length
-    ) internal pure returns (string memory) {
+    function toHexString(uint256 value, uint256 length) internal pure returns (string memory) {
         uint256 localValue = value;
         bytes memory buffer = new bytes(2 * length + 2);
         buffer[0] = "0";
@@ -3037,9 +2879,7 @@ library Strings {
      * @dev Converts an `address` with fixed length of 20 bytes to its checksummed ASCII `string` hexadecimal
      * representation, according to EIP-55.
      */
-    function toChecksumHexString(
-        address addr
-    ) internal pure returns (string memory) {
+    function toChecksumHexString(address addr) internal pure returns (string memory) {
         bytes memory buffer = bytes(toHexString(addr));
 
         // hash the hex part of buffer (skip length + 2 bytes, length 40)
@@ -3062,13 +2902,8 @@ library Strings {
     /**
      * @dev Returns true if the two strings are equal.
      */
-    function equal(
-        string memory a,
-        string memory b
-    ) internal pure returns (bool) {
-        return
-            bytes(a).length == bytes(b).length &&
-            keccak256(bytes(a)) == keccak256(bytes(b));
+    function equal(string memory a, string memory b) internal pure returns (bool) {
+        return bytes(a).length == bytes(b).length && keccak256(bytes(a)) == keccak256(bytes(b));
     }
 
     /**
@@ -3090,11 +2925,7 @@ library Strings {
      * - The substring must be formatted as `[0-9]*`
      * - The result must fit into an `uint256` type
      */
-    function parseUint(
-        string memory input,
-        uint256 begin,
-        uint256 end
-    ) internal pure returns (uint256) {
+    function parseUint(string memory input, uint256 begin, uint256 end) internal pure returns (uint256) {
         (bool success, uint256 value) = tryParseUint(input, begin, end);
         if (!success) revert StringsInvalidChar();
         return value;
@@ -3105,9 +2936,7 @@ library Strings {
      *
      * NOTE: This function will revert if the result does not fit in a `uint256`.
      */
-    function tryParseUint(
-        string memory input
-    ) internal pure returns (bool success, uint256 value) {
+    function tryParseUint(string memory input) internal pure returns (bool success, uint256 value) {
         return _tryParseUintUncheckedBounds(input, 0, bytes(input).length);
     }
 
@@ -3166,11 +2995,7 @@ library Strings {
      * - The substring must be formatted as `[-+]?[0-9]*`
      * - The result must fit in an `int256` type.
      */
-    function parseInt(
-        string memory input,
-        uint256 begin,
-        uint256 end
-    ) internal pure returns (int256) {
+    function parseInt(string memory input, uint256 begin, uint256 end) internal pure returns (int256) {
         (bool success, int256 value) = tryParseInt(input, begin, end);
         if (!success) revert StringsInvalidChar();
         return value;
@@ -3182,9 +3007,7 @@ library Strings {
      *
      * NOTE: This function will revert if the absolute value of the result does not fit in a `uint256`.
      */
-    function tryParseInt(
-        string memory input
-    ) internal pure returns (bool success, int256 value) {
+    function tryParseInt(string memory input) internal pure returns (bool success, int256 value) {
         return _tryParseIntUncheckedBounds(input, 0, bytes(input).length);
     }
 
@@ -3217,18 +3040,12 @@ library Strings {
         bytes memory buffer = bytes(input);
 
         // Check presence of a negative sign.
-        bytes1 sign = begin == end
-            ? bytes1(0)
-            : bytes1(_unsafeReadBytesOffset(buffer, begin)); // don't do out-of-bound (possibly unsafe) read if sub-string is empty
+        bytes1 sign = begin == end ? bytes1(0) : bytes1(_unsafeReadBytesOffset(buffer, begin)); // don't do out-of-bound (possibly unsafe) read if sub-string is empty
         bool positiveSign = sign == bytes1("+");
         bool negativeSign = sign == bytes1("-");
         uint256 offset = (positiveSign || negativeSign).toUint();
 
-        (bool absSuccess, uint256 absValue) = tryParseUint(
-            input,
-            begin + offset,
-            end
-        );
+        (bool absSuccess, uint256 absValue) = tryParseUint(input, begin + offset, end);
 
         if (absSuccess && absValue < ABS_MIN_INT256) {
             return (true, negativeSign ? -int256(absValue) : int256(absValue));
@@ -3256,11 +3073,7 @@ library Strings {
      * - The substring must be formatted as `(0x)?[0-9a-fA-F]*`
      * - The result must fit in an `uint256` type.
      */
-    function parseHexUint(
-        string memory input,
-        uint256 begin,
-        uint256 end
-    ) internal pure returns (uint256) {
+    function parseHexUint(string memory input, uint256 begin, uint256 end) internal pure returns (uint256) {
         (bool success, uint256 value) = tryParseHexUint(input, begin, end);
         if (!success) revert StringsInvalidChar();
         return value;
@@ -3271,9 +3084,7 @@ library Strings {
      *
      * NOTE: This function will revert if the result does not fit in a `uint256`.
      */
-    function tryParseHexUint(
-        string memory input
-    ) internal pure returns (bool success, uint256 value) {
+    function tryParseHexUint(string memory input) internal pure returns (bool success, uint256 value) {
         return _tryParseHexUintUncheckedBounds(input, 0, bytes(input).length);
     }
 
@@ -3304,8 +3115,7 @@ library Strings {
         bytes memory buffer = bytes(input);
 
         // skip 0x prefix if present
-        bool hasPrefix = (end > begin + 1) &&
-            bytes2(_unsafeReadBytesOffset(buffer, begin)) == bytes2("0x"); // don't do out-of-bound (possibly unsafe) read if sub-string is empty
+        bool hasPrefix = (end > begin + 1) && bytes2(_unsafeReadBytesOffset(buffer, begin)) == bytes2("0x"); // don't do out-of-bound (possibly unsafe) read if sub-string is empty
         uint256 offset = hasPrefix.toUint() * 2;
 
         uint256 result = 0;
@@ -3339,11 +3149,7 @@ library Strings {
      * Requirements:
      * - The substring must be formatted as `(0x)?[0-9a-fA-F]{40}`
      */
-    function parseAddress(
-        string memory input,
-        uint256 begin,
-        uint256 end
-    ) internal pure returns (address) {
+    function parseAddress(string memory input, uint256 begin, uint256 end) internal pure returns (address) {
         (bool success, address value) = tryParseAddress(input, begin, end);
         if (!success) revert StringsInvalidAddressFormat();
         return value;
@@ -3353,9 +3159,7 @@ library Strings {
      * @dev Variant of {parseAddress-string} that returns false if the parsing fails because the input is not a properly
      * formatted address. See {parseAddress-string} requirements.
      */
-    function tryParseAddress(
-        string memory input
-    ) internal pure returns (bool success, address value) {
+    function tryParseAddress(string memory input) internal pure returns (bool success, address value) {
         return tryParseAddress(input, 0, bytes(input).length);
     }
 
@@ -3368,21 +3172,15 @@ library Strings {
         uint256 begin,
         uint256 end
     ) internal pure returns (bool success, address value) {
-        if (end > bytes(input).length || begin > end)
-            return (false, address(0));
+        if (end > bytes(input).length || begin > end) return (false, address(0));
 
-        bool hasPrefix = (end > begin + 1) &&
-            bytes2(_unsafeReadBytesOffset(bytes(input), begin)) == bytes2("0x"); // don't do out-of-bound (possibly unsafe) read if sub-string is empty
+        bool hasPrefix = (end > begin + 1) && bytes2(_unsafeReadBytesOffset(bytes(input), begin)) == bytes2("0x"); // don't do out-of-bound (possibly unsafe) read if sub-string is empty
         uint256 expectedLength = 40 + hasPrefix.toUint() * 2;
 
         // check that input is the correct length
         if (end - begin == expectedLength) {
             // length guarantees that this does not overflow, and value is at most type(uint160).max
-            (bool s, uint256 v) = _tryParseHexUintUncheckedBounds(
-                input,
-                begin,
-                end
-            );
+            (bool s, uint256 v) = _tryParseHexUintUncheckedBounds(input, begin, end);
             return (s, address(uint160(v)));
         } else {
             return (false, address(0));
@@ -3416,9 +3214,7 @@ library Strings {
      * RFC-4627 (U+0000 to U+001F, U+0022 and U+005C). ECMAScript's `JSON.parse` does recover escaped unicode
      * characters that are not in this range, but other tooling may provide different results.
      */
-    function escapeJSON(
-        string memory input
-    ) internal pure returns (string memory) {
+    function escapeJSON(string memory input) internal pure returns (string memory) {
         bytes memory buffer = bytes(input);
         bytes memory output = new bytes(2 * buffer.length); // worst case scenario
         uint256 outputLength = 0;
@@ -3456,10 +3252,7 @@ library Strings {
      * NOTE: making this function internal would mean it could be used with memory unsafe offset, and marking the
      * assembly block as such would prevent some optimizations.
      */
-    function _unsafeReadBytesOffset(
-        bytes memory buffer,
-        uint256 offset
-    ) private pure returns (bytes32 value) {
+    function _unsafeReadBytesOffset(bytes memory buffer, uint256 offset) private pure returns (bytes32 value) {
         // This is not memory safe in the general case, but all calls to this private function are within bounds.
         assembly ("memory-safe") {
             value := mload(add(add(buffer, 0x20), offset))
@@ -3469,9 +3262,12 @@ library Strings {
 
 // File: @openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (utils/introspection/ERC165.sol)
 
 pragma solidity ^0.8.20;
+
+
 
 /**
  * @dev Implementation of the {IERC165} interface.
@@ -3486,59 +3282,62 @@ pragma solidity ^0.8.20;
  * ```
  */
 abstract contract ERC165Upgradeable is Initializable, IERC165 {
-    function __ERC165_init() internal onlyInitializing {}
+    function __ERC165_init() internal onlyInitializing {
+    }
 
-    function __ERC165_init_unchained() internal onlyInitializing {}
+    function __ERC165_init_unchained() internal onlyInitializing {
+    }
     /// @inheritdoc IERC165
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view virtual returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
         return interfaceId == type(IERC165).interfaceId;
     }
 }
 
 // File: @openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (token/ERC721/ERC721.sol)
 
 pragma solidity ^0.8.20;
+
+
+
+
+
+
+
+
+
 
 /**
  * @dev Implementation of https://eips.ethereum.org/EIPS/eip-721[ERC-721] Non-Fungible Token Standard, including
  * the Metadata extension, but not including the Enumerable extension, which is available separately as
  * {ERC721Enumerable}.
  */
-abstract contract ERC721Upgradeable is
-    Initializable,
-    ContextUpgradeable,
-    ERC165Upgradeable,
-    IERC721,
-    IERC721Metadata,
-    IERC721Errors
-{
+abstract contract ERC721Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeable, IERC721, IERC721Metadata, IERC721Errors {
     using Strings for uint256;
 
     /// @custom:storage-location erc7201:openzeppelin.storage.ERC721
     struct ERC721Storage {
         // Token name
         string _name;
+
         // Token symbol
         string _symbol;
+
         mapping(uint256 tokenId => address) _owners;
+
         mapping(address owner => uint256) _balances;
+
         mapping(uint256 tokenId => address) _tokenApprovals;
+
         mapping(address owner => mapping(address operator => bool)) _operatorApprovals;
     }
 
     // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.ERC721")) - 1)) & ~bytes32(uint256(0xff))
-    bytes32 private constant ERC721StorageLocation =
-        0x80bb2b638cc20bc4d0a60d66940f3ab4a00c1d7b313497ca82fb0b4ab0079300;
+    bytes32 private constant ERC721StorageLocation = 0x80bb2b638cc20bc4d0a60d66940f3ab4a00c1d7b313497ca82fb0b4ab0079300;
 
-    function _getERC721Storage()
-        private
-        pure
-        returns (ERC721Storage storage $)
-    {
+    function _getERC721Storage() private pure returns (ERC721Storage storage $) {
         assembly {
             $.slot := ERC721StorageLocation
         }
@@ -3547,26 +3346,18 @@ abstract contract ERC721Upgradeable is
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
-    function __ERC721_init(
-        string memory name_,
-        string memory symbol_
-    ) internal onlyInitializing {
+    function __ERC721_init(string memory name_, string memory symbol_) internal onlyInitializing {
         __ERC721_init_unchained(name_, symbol_);
     }
 
-    function __ERC721_init_unchained(
-        string memory name_,
-        string memory symbol_
-    ) internal onlyInitializing {
+    function __ERC721_init_unchained(string memory name_, string memory symbol_) internal onlyInitializing {
         ERC721Storage storage $ = _getERC721Storage();
         $._name = name_;
         $._symbol = symbol_;
     }
 
     /// @inheritdoc IERC165
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view virtual override(ERC165Upgradeable, IERC165) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165Upgradeable, IERC165) returns (bool) {
         return
             interfaceId == type(IERC721).interfaceId ||
             interfaceId == type(IERC721Metadata).interfaceId ||
@@ -3600,16 +3391,11 @@ abstract contract ERC721Upgradeable is
     }
 
     /// @inheritdoc IERC721Metadata
-    function tokenURI(
-        uint256 tokenId
-    ) public view virtual returns (string memory) {
+    function tokenURI(uint256 tokenId) public view virtual returns (string memory) {
         _requireOwned(tokenId);
 
         string memory baseURI = _baseURI();
-        return
-            bytes(baseURI).length > 0
-                ? string.concat(baseURI, tokenId.toString())
-                : "";
+        return bytes(baseURI).length > 0 ? string.concat(baseURI, tokenId.toString()) : "";
     }
 
     /**
@@ -3627,9 +3413,7 @@ abstract contract ERC721Upgradeable is
     }
 
     /// @inheritdoc IERC721
-    function getApproved(
-        uint256 tokenId
-    ) public view virtual returns (address) {
+    function getApproved(uint256 tokenId) public view virtual returns (address) {
         _requireOwned(tokenId);
 
         return _getApproved(tokenId);
@@ -3641,20 +3425,13 @@ abstract contract ERC721Upgradeable is
     }
 
     /// @inheritdoc IERC721
-    function isApprovedForAll(
-        address owner,
-        address operator
-    ) public view virtual returns (bool) {
+    function isApprovedForAll(address owner, address operator) public view virtual returns (bool) {
         ERC721Storage storage $ = _getERC721Storage();
         return $._operatorApprovals[owner][operator];
     }
 
     /// @inheritdoc IERC721
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public virtual {
+    function transferFrom(address from, address to, uint256 tokenId) public virtual {
         if (to == address(0)) {
             revert ERC721InvalidReceiver(address(0));
         }
@@ -3667,29 +3444,14 @@ abstract contract ERC721Upgradeable is
     }
 
     /// @inheritdoc IERC721
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public {
+    function safeTransferFrom(address from, address to, uint256 tokenId) public {
         safeTransferFrom(from, to, tokenId, "");
     }
 
     /// @inheritdoc IERC721
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) public virtual {
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) public virtual {
         transferFrom(from, to, tokenId);
-        ERC721Utils.checkOnERC721Received(
-            _msgSender(),
-            from,
-            to,
-            tokenId,
-            data
-        );
+        ERC721Utils.checkOnERC721Received(_msgSender(), from, to, tokenId, data);
     }
 
     /**
@@ -3708,9 +3470,7 @@ abstract contract ERC721Upgradeable is
     /**
      * @dev Returns the approved address for `tokenId`. Returns 0 if `tokenId` is not minted.
      */
-    function _getApproved(
-        uint256 tokenId
-    ) internal view virtual returns (address) {
+    function _getApproved(uint256 tokenId) internal view virtual returns (address) {
         ERC721Storage storage $ = _getERC721Storage();
         return $._tokenApprovals[tokenId];
     }
@@ -3722,16 +3482,10 @@ abstract contract ERC721Upgradeable is
      * WARNING: This function assumes that `owner` is the actual owner of `tokenId` and does not verify this
      * assumption.
      */
-    function _isAuthorized(
-        address owner,
-        address spender,
-        uint256 tokenId
-    ) internal view virtual returns (bool) {
+    function _isAuthorized(address owner, address spender, uint256 tokenId) internal view virtual returns (bool) {
         return
             spender != address(0) &&
-            (owner == spender ||
-                isApprovedForAll(owner, spender) ||
-                _getApproved(tokenId) == spender);
+            (owner == spender || isApprovedForAll(owner, spender) || _getApproved(tokenId) == spender);
     }
 
     /**
@@ -3743,11 +3497,7 @@ abstract contract ERC721Upgradeable is
      * WARNING: This function assumes that `owner` is the actual owner of `tokenId` and does not verify this
      * assumption.
      */
-    function _checkAuthorized(
-        address owner,
-        address spender,
-        uint256 tokenId
-    ) internal view virtual {
+    function _checkAuthorized(address owner, address spender, uint256 tokenId) internal view virtual {
         if (!_isAuthorized(owner, spender, tokenId)) {
             if (owner == address(0)) {
                 revert ERC721NonexistentToken(tokenId);
@@ -3785,11 +3535,7 @@ abstract contract ERC721Upgradeable is
      *
      * NOTE: If overriding this function in a way that tracks balances, see also {_increaseBalance}.
      */
-    function _update(
-        address to,
-        uint256 tokenId,
-        address auth
-    ) internal virtual returns (address) {
+    function _update(address to, uint256 tokenId, address auth) internal virtual returns (address) {
         ERC721Storage storage $ = _getERC721Storage();
         address from = _ownerOf(tokenId);
 
@@ -3861,19 +3607,9 @@ abstract contract ERC721Upgradeable is
      * @dev Same as {xref-ERC721-_safeMint-address-uint256-}[`_safeMint`], with an additional `data` parameter which is
      * forwarded in {IERC721Receiver-onERC721Received} to contract recipients.
      */
-    function _safeMint(
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) internal virtual {
+    function _safeMint(address to, uint256 tokenId, bytes memory data) internal virtual {
         _mint(to, tokenId);
-        ERC721Utils.checkOnERC721Received(
-            _msgSender(),
-            address(0),
-            to,
-            tokenId,
-            data
-        );
+        ERC721Utils.checkOnERC721Received(_msgSender(), address(0), to, tokenId, data);
     }
 
     /**
@@ -3944,20 +3680,9 @@ abstract contract ERC721Upgradeable is
      * @dev Same as {xref-ERC721-_safeTransfer-address-address-uint256-}[`_safeTransfer`], with an additional `data` parameter which is
      * forwarded in {IERC721Receiver-onERC721Received} to contract recipients.
      */
-    function _safeTransfer(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) internal virtual {
+    function _safeTransfer(address from, address to, uint256 tokenId, bytes memory data) internal virtual {
         _transfer(from, to, tokenId);
-        ERC721Utils.checkOnERC721Received(
-            _msgSender(),
-            from,
-            to,
-            tokenId,
-            data
-        );
+        ERC721Utils.checkOnERC721Received(_msgSender(), from, to, tokenId, data);
     }
 
     /**
@@ -3978,23 +3703,14 @@ abstract contract ERC721Upgradeable is
      * @dev Variant of `_approve` with an optional flag to enable or disable the {Approval} event. The event is not
      * emitted in the context of transfers.
      */
-    function _approve(
-        address to,
-        uint256 tokenId,
-        address auth,
-        bool emitEvent
-    ) internal virtual {
+    function _approve(address to, uint256 tokenId, address auth, bool emitEvent) internal virtual {
         ERC721Storage storage $ = _getERC721Storage();
         // Avoid reading the owner unless necessary
         if (emitEvent || auth != address(0)) {
             address owner = _requireOwned(tokenId);
 
             // We do not use _isAuthorized because single-token approvals should not be able to call approve
-            if (
-                auth != address(0) &&
-                owner != auth &&
-                !isApprovedForAll(owner, auth)
-            ) {
+            if (auth != address(0) && owner != auth && !isApprovedForAll(owner, auth)) {
                 revert ERC721InvalidApprover(auth);
             }
 
@@ -4014,11 +3730,7 @@ abstract contract ERC721Upgradeable is
      *
      * Emits an {ApprovalForAll} event.
      */
-    function _setApprovalForAll(
-        address owner,
-        address operator,
-        bool approved
-    ) internal virtual {
+    function _setApprovalForAll(address owner, address operator, bool approved) internal virtual {
         ERC721Storage storage $ = _getERC721Storage();
         if (operator == address(0)) {
             revert ERC721InvalidOperator(operator);
@@ -4044,9 +3756,12 @@ abstract contract ERC721Upgradeable is
 
 // File: @openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol
 
+
 // OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)
 
 pragma solidity ^0.8.20;
+
+
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -4067,14 +3782,9 @@ abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
     }
 
     // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Ownable")) - 1)) & ~bytes32(uint256(0xff))
-    bytes32 private constant OwnableStorageLocation =
-        0x9016d09d72d40fdae2fd8ceac6b6234c7706214fd39c1cd1e609a0528c199300;
+    bytes32 private constant OwnableStorageLocation = 0x9016d09d72d40fdae2fd8ceac6b6234c7706214fd39c1cd1e609a0528c199300;
 
-    function _getOwnableStorage()
-        private
-        pure
-        returns (OwnableStorage storage $)
-    {
+    function _getOwnableStorage() private pure returns (OwnableStorage storage $) {
         assembly {
             $.slot := OwnableStorageLocation
         }
@@ -4090,10 +3800,7 @@ abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
      */
     error OwnableInvalidOwner(address owner);
 
-    event OwnershipTransferred(
-        address indexed previousOwner,
-        address indexed newOwner
-    );
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     /**
      * @dev Initializes the contract setting the address provided by the deployer as the initial owner.
@@ -4102,9 +3809,7 @@ abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
         __Ownable_init_unchained(initialOwner);
     }
 
-    function __Ownable_init_unchained(
-        address initialOwner
-    ) internal onlyInitializing {
+    function __Ownable_init_unchained(address initialOwner) internal onlyInitializing {
         if (initialOwner == address(0)) {
             revert OwnableInvalidOwner(address(0));
         }
@@ -4172,6 +3877,7 @@ abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
 
 // File: @openzeppelin/contracts/interfaces/draft-IERC1822.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (interfaces/draft-IERC1822.sol)
 
 pragma solidity >=0.4.16;
@@ -4194,6 +3900,7 @@ interface IERC1822Proxiable {
 
 // File: @openzeppelin/contracts/proxy/beacon/IBeacon.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (proxy/beacon/IBeacon.sol)
 
 pragma solidity >=0.4.16;
@@ -4211,6 +3918,7 @@ interface IBeacon {
 }
 
 // File: @openzeppelin/contracts/interfaces/IERC1967.sol
+
 
 // OpenZeppelin Contracts (last updated v5.4.0) (interfaces/IERC1967.sol)
 
@@ -4237,6 +3945,7 @@ interface IERC1967 {
 }
 
 // File: @openzeppelin/contracts/utils/Errors.sol
+
 
 // OpenZeppelin Contracts (last updated v5.1.0) (utils/Errors.sol)
 
@@ -4274,9 +3983,11 @@ library Errors {
 
 // File: @openzeppelin/contracts/utils/Address.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (utils/Address.sol)
 
 pragma solidity ^0.8.20;
+
 
 /**
  * @dev Collection of functions related to the address type
@@ -4308,9 +4019,7 @@ library Address {
             revert Errors.InsufficientBalance(address(this).balance, amount);
         }
 
-        (bool success, bytes memory returndata) = recipient.call{value: amount}(
-            ""
-        );
+        (bool success, bytes memory returndata) = recipient.call{value: amount}("");
         if (!success) {
             _revert(returndata);
         }
@@ -4334,10 +4043,7 @@ library Address {
      * - `target` must be a contract.
      * - calling `target` with `data` must not revert.
      */
-    function functionCall(
-        address target,
-        bytes memory data
-    ) internal returns (bytes memory) {
+    function functionCall(address target, bytes memory data) internal returns (bytes memory) {
         return functionCallWithValue(target, data, 0);
     }
 
@@ -4350,17 +4056,11 @@ library Address {
      * - the calling contract must have an ETH balance of at least `value`.
      * - the called Solidity function must be `payable`.
      */
-    function functionCallWithValue(
-        address target,
-        bytes memory data,
-        uint256 value
-    ) internal returns (bytes memory) {
+    function functionCallWithValue(address target, bytes memory data, uint256 value) internal returns (bytes memory) {
         if (address(this).balance < value) {
             revert Errors.InsufficientBalance(address(this).balance, value);
         }
-        (bool success, bytes memory returndata) = target.call{value: value}(
-            data
-        );
+        (bool success, bytes memory returndata) = target.call{value: value}(data);
         return verifyCallResultFromTarget(target, success, returndata);
     }
 
@@ -4368,10 +4068,7 @@ library Address {
      * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],
      * but performing a static call.
      */
-    function functionStaticCall(
-        address target,
-        bytes memory data
-    ) internal view returns (bytes memory) {
+    function functionStaticCall(address target, bytes memory data) internal view returns (bytes memory) {
         (bool success, bytes memory returndata) = target.staticcall(data);
         return verifyCallResultFromTarget(target, success, returndata);
     }
@@ -4380,10 +4077,7 @@ library Address {
      * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],
      * but performing a delegate call.
      */
-    function functionDelegateCall(
-        address target,
-        bytes memory data
-    ) internal returns (bytes memory) {
+    function functionDelegateCall(address target, bytes memory data) internal returns (bytes memory) {
         (bool success, bytes memory returndata) = target.delegatecall(data);
         return verifyCallResultFromTarget(target, success, returndata);
     }
@@ -4414,10 +4108,7 @@ library Address {
      * @dev Tool to verify that a low level call was successful, and reverts if it wasn't, either by bubbling the
      * revert reason or with a default {Errors.FailedCall} error.
      */
-    function verifyCallResult(
-        bool success,
-        bytes memory returndata
-    ) internal pure returns (bytes memory) {
+    function verifyCallResult(bool success, bytes memory returndata) internal pure returns (bytes memory) {
         if (!success) {
             _revert(returndata);
         } else {
@@ -4442,6 +4133,7 @@ library Address {
 }
 
 // File: @openzeppelin/contracts/utils/StorageSlot.sol
+
 
 // OpenZeppelin Contracts (last updated v5.1.0) (utils/StorageSlot.sol)
 // This file was procedurally generated from scripts/generate/templates/StorageSlot.js.
@@ -4507,9 +4199,7 @@ library StorageSlot {
     /**
      * @dev Returns an `AddressSlot` with member `value` located at `slot`.
      */
-    function getAddressSlot(
-        bytes32 slot
-    ) internal pure returns (AddressSlot storage r) {
+    function getAddressSlot(bytes32 slot) internal pure returns (AddressSlot storage r) {
         assembly ("memory-safe") {
             r.slot := slot
         }
@@ -4518,9 +4208,7 @@ library StorageSlot {
     /**
      * @dev Returns a `BooleanSlot` with member `value` located at `slot`.
      */
-    function getBooleanSlot(
-        bytes32 slot
-    ) internal pure returns (BooleanSlot storage r) {
+    function getBooleanSlot(bytes32 slot) internal pure returns (BooleanSlot storage r) {
         assembly ("memory-safe") {
             r.slot := slot
         }
@@ -4529,9 +4217,7 @@ library StorageSlot {
     /**
      * @dev Returns a `Bytes32Slot` with member `value` located at `slot`.
      */
-    function getBytes32Slot(
-        bytes32 slot
-    ) internal pure returns (Bytes32Slot storage r) {
+    function getBytes32Slot(bytes32 slot) internal pure returns (Bytes32Slot storage r) {
         assembly ("memory-safe") {
             r.slot := slot
         }
@@ -4540,9 +4226,7 @@ library StorageSlot {
     /**
      * @dev Returns a `Uint256Slot` with member `value` located at `slot`.
      */
-    function getUint256Slot(
-        bytes32 slot
-    ) internal pure returns (Uint256Slot storage r) {
+    function getUint256Slot(bytes32 slot) internal pure returns (Uint256Slot storage r) {
         assembly ("memory-safe") {
             r.slot := slot
         }
@@ -4551,9 +4235,7 @@ library StorageSlot {
     /**
      * @dev Returns a `Int256Slot` with member `value` located at `slot`.
      */
-    function getInt256Slot(
-        bytes32 slot
-    ) internal pure returns (Int256Slot storage r) {
+    function getInt256Slot(bytes32 slot) internal pure returns (Int256Slot storage r) {
         assembly ("memory-safe") {
             r.slot := slot
         }
@@ -4562,9 +4244,7 @@ library StorageSlot {
     /**
      * @dev Returns a `StringSlot` with member `value` located at `slot`.
      */
-    function getStringSlot(
-        bytes32 slot
-    ) internal pure returns (StringSlot storage r) {
+    function getStringSlot(bytes32 slot) internal pure returns (StringSlot storage r) {
         assembly ("memory-safe") {
             r.slot := slot
         }
@@ -4573,9 +4253,7 @@ library StorageSlot {
     /**
      * @dev Returns an `StringSlot` representation of the string storage pointer `store`.
      */
-    function getStringSlot(
-        string storage store
-    ) internal pure returns (StringSlot storage r) {
+    function getStringSlot(string storage store) internal pure returns (StringSlot storage r) {
         assembly ("memory-safe") {
             r.slot := store.slot
         }
@@ -4584,9 +4262,7 @@ library StorageSlot {
     /**
      * @dev Returns a `BytesSlot` with member `value` located at `slot`.
      */
-    function getBytesSlot(
-        bytes32 slot
-    ) internal pure returns (BytesSlot storage r) {
+    function getBytesSlot(bytes32 slot) internal pure returns (BytesSlot storage r) {
         assembly ("memory-safe") {
             r.slot := slot
         }
@@ -4595,9 +4271,7 @@ library StorageSlot {
     /**
      * @dev Returns an `BytesSlot` representation of the bytes storage pointer `store`.
      */
-    function getBytesSlot(
-        bytes storage store
-    ) internal pure returns (BytesSlot storage r) {
+    function getBytesSlot(bytes storage store) internal pure returns (BytesSlot storage r) {
         assembly ("memory-safe") {
             r.slot := store.slot
         }
@@ -4606,9 +4280,14 @@ library StorageSlot {
 
 // File: @openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (proxy/ERC1967/ERC1967Utils.sol)
 
 pragma solidity ^0.8.21;
+
+
+
+
 
 /**
  * @dev This library provides getters and event emitting update functions for
@@ -4620,8 +4299,7 @@ library ERC1967Utils {
      * This is the keccak-256 hash of "eip1967.proxy.implementation" subtracted by 1.
      */
     // solhint-disable-next-line private-vars-leading-underscore
-    bytes32 internal constant IMPLEMENTATION_SLOT =
-        0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
+    bytes32 internal constant IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
 
     /**
      * @dev The `implementation` of the proxy is invalid.
@@ -4657,9 +4335,7 @@ library ERC1967Utils {
         if (newImplementation.code.length == 0) {
             revert ERC1967InvalidImplementation(newImplementation);
         }
-        StorageSlot
-            .getAddressSlot(IMPLEMENTATION_SLOT)
-            .value = newImplementation;
+        StorageSlot.getAddressSlot(IMPLEMENTATION_SLOT).value = newImplementation;
     }
 
     /**
@@ -4669,10 +4345,7 @@ library ERC1967Utils {
      *
      * Emits an {IERC1967-Upgraded} event.
      */
-    function upgradeToAndCall(
-        address newImplementation,
-        bytes memory data
-    ) internal {
+    function upgradeToAndCall(address newImplementation, bytes memory data) internal {
         _setImplementation(newImplementation);
         emit IERC1967.Upgraded(newImplementation);
 
@@ -4688,8 +4361,7 @@ library ERC1967Utils {
      * This is the keccak-256 hash of "eip1967.proxy.admin" subtracted by 1.
      */
     // solhint-disable-next-line private-vars-leading-underscore
-    bytes32 internal constant ADMIN_SLOT =
-        0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
+    bytes32 internal constant ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
 
     /**
      * @dev Returns the current admin.
@@ -4727,8 +4399,7 @@ library ERC1967Utils {
      * This is the keccak-256 hash of "eip1967.proxy.beacon" subtracted by 1.
      */
     // solhint-disable-next-line private-vars-leading-underscore
-    bytes32 internal constant BEACON_SLOT =
-        0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50;
+    bytes32 internal constant BEACON_SLOT = 0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50;
 
     /**
      * @dev Returns the current beacon.
@@ -4764,18 +4435,12 @@ library ERC1967Utils {
      * it uses an immutable beacon without looking at the value of the ERC-1967 beacon slot for
      * efficiency.
      */
-    function upgradeBeaconToAndCall(
-        address newBeacon,
-        bytes memory data
-    ) internal {
+    function upgradeBeaconToAndCall(address newBeacon, bytes memory data) internal {
         _setBeacon(newBeacon);
         emit IERC1967.BeaconUpgraded(newBeacon);
 
         if (data.length > 0) {
-            Address.functionDelegateCall(
-                IBeacon(newBeacon).implementation(),
-                data
-            );
+            Address.functionDelegateCall(IBeacon(newBeacon).implementation(), data);
         } else {
             _checkNonPayable();
         }
@@ -4794,9 +4459,13 @@ library ERC1967Utils {
 
 // File: @openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol
 
+
 // OpenZeppelin Contracts (last updated v5.3.0) (proxy/utils/UUPSUpgradeable.sol)
 
 pragma solidity ^0.8.22;
+
+
+
 
 /**
  * @dev An upgradeability mechanism designed for UUPS proxies. The functions included here can perform an upgrade of an
@@ -4853,9 +4522,11 @@ abstract contract UUPSUpgradeable is Initializable, IERC1822Proxiable {
         _;
     }
 
-    function __UUPSUpgradeable_init() internal onlyInitializing {}
+    function __UUPSUpgradeable_init() internal onlyInitializing {
+    }
 
-    function __UUPSUpgradeable_init_unchained() internal onlyInitializing {}
+    function __UUPSUpgradeable_init_unchained() internal onlyInitializing {
+    }
     /**
      * @dev Implementation of the ERC-1822 {proxiableUUID} function. This returns the storage slot used by the
      * implementation. It is used to validate the implementation's compatibility when performing an upgrade.
@@ -4864,13 +4535,7 @@ abstract contract UUPSUpgradeable is Initializable, IERC1822Proxiable {
      * bricking a proxy that upgrades to it, by delegating to itself until out of gas. Thus it is critical that this
      * function revert if invoked through a proxy. This is guaranteed by the `notDelegated` modifier.
      */
-    function proxiableUUID()
-        external
-        view
-        virtual
-        notDelegated
-        returns (bytes32)
-    {
+    function proxiableUUID() external view virtual notDelegated returns (bytes32) {
         return ERC1967Utils.IMPLEMENTATION_SLOT;
     }
 
@@ -4884,10 +4549,7 @@ abstract contract UUPSUpgradeable is Initializable, IERC1822Proxiable {
      *
      * @custom:oz-upgrades-unsafe-allow-reachable delegatecall
      */
-    function upgradeToAndCall(
-        address newImplementation,
-        bytes memory data
-    ) public payable virtual onlyProxy {
+    function upgradeToAndCall(address newImplementation, bytes memory data) public payable virtual onlyProxy {
         _authorizeUpgrade(newImplementation);
         _upgradeToAndCallUUPS(newImplementation, data);
     }
@@ -4936,13 +4598,8 @@ abstract contract UUPSUpgradeable is Initializable, IERC1822Proxiable {
      *
      * Emits an {IERC1967-Upgraded} event.
      */
-    function _upgradeToAndCallUUPS(
-        address newImplementation,
-        bytes memory data
-    ) private {
-        try IERC1822Proxiable(newImplementation).proxiableUUID() returns (
-            bytes32 slot
-        ) {
+    function _upgradeToAndCallUUPS(address newImplementation, bytes memory data) private {
+        try IERC1822Proxiable(newImplementation).proxiableUUID() returns (bytes32 slot) {
             if (slot != ERC1967Utils.IMPLEMENTATION_SLOT) {
                 revert UUPSUnsupportedProxiableUUID(slot);
             }
@@ -4955,6 +4612,7 @@ abstract contract UUPSUpgradeable is Initializable, IERC1822Proxiable {
 }
 
 // File: @openzeppelin/contracts/token/ERC20/IERC20.sol
+
 
 // OpenZeppelin Contracts (last updated v5.4.0) (token/ERC20/IERC20.sol)
 
@@ -4976,11 +4634,7 @@ interface IERC20 {
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
      * a call to {approve}. `value` is the new allowance.
      */
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint256 value
-    );
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 
     /**
      * @dev Returns the value of tokens in existence.
@@ -5008,10 +4662,7 @@ interface IERC20 {
      *
      * This value changes when {approve} or {transferFrom} are called.
      */
-    function allowance(
-        address owner,
-        address spender
-    ) external view returns (uint256);
+    function allowance(address owner, address spender) external view returns (uint256);
 
     /**
      * @dev Sets a `value` amount of tokens as the allowance of `spender` over the
@@ -5039,18 +4690,16 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(
-        address from,
-        address to,
-        uint256 value
-    ) external returns (bool);
+    function transferFrom(address from, address to, uint256 value) external returns (bool);
 }
 
 // File: @openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (token/ERC20/extensions/IERC20Metadata.sol)
 
 pragma solidity >=0.6.2;
+
 
 /**
  * @dev Interface for the optional metadata functions from the ERC-20 standard.
@@ -5073,6 +4722,7 @@ interface IERC20Metadata is IERC20 {
 }
 
 // File: @openzeppelin/contracts/utils/Context.sol
+
 
 // OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)
 
@@ -5104,9 +4754,14 @@ abstract contract Context {
 
 // File: @openzeppelin/contracts/token/ERC20/ERC20.sol
 
+
 // OpenZeppelin Contracts (last updated v5.4.0) (token/ERC20/ERC20.sol)
 
 pragma solidity ^0.8.20;
+
+
+
+
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -5129,8 +4784,7 @@ pragma solidity ^0.8.20;
 abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
     mapping(address account => uint256) private _balances;
 
-    mapping(address account => mapping(address spender => uint256))
-        private _allowances;
+    mapping(address account => mapping(address spender => uint256)) private _allowances;
 
     uint256 private _totalSupply;
 
@@ -5204,10 +4858,7 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
     }
 
     /// @inheritdoc IERC20
-    function allowance(
-        address owner,
-        address spender
-    ) public view virtual returns (uint256) {
+    function allowance(address owner, address spender) public view virtual returns (uint256) {
         return _allowances[owner][spender];
     }
 
@@ -5221,10 +4872,7 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
      *
      * - `spender` cannot be the zero address.
      */
-    function approve(
-        address spender,
-        uint256 value
-    ) public virtual returns (bool) {
+    function approve(address spender, uint256 value) public virtual returns (bool) {
         address owner = _msgSender();
         _approve(owner, spender, value);
         return true;
@@ -5246,11 +4894,7 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
      * - the caller must have allowance for ``from``'s tokens of at least
      * `value`.
      */
-    function transferFrom(
-        address from,
-        address to,
-        uint256 value
-    ) public virtual returns (bool) {
+    function transferFrom(address from, address to, uint256 value) public virtual returns (bool) {
         address spender = _msgSender();
         _spendAllowance(from, spender, value);
         _transfer(from, to, value);
@@ -5381,12 +5025,7 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
      *
      * Requirements are the same as {_approve}.
      */
-    function _approve(
-        address owner,
-        address spender,
-        uint256 value,
-        bool emitEvent
-    ) internal virtual {
+    function _approve(address owner, address spender, uint256 value, bool emitEvent) internal virtual {
         if (owner == address(0)) {
             revert ERC20InvalidApprover(address(0));
         }
@@ -5407,19 +5046,11 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
      *
      * Does not emit an {Approval} event.
      */
-    function _spendAllowance(
-        address owner,
-        address spender,
-        uint256 value
-    ) internal virtual {
+    function _spendAllowance(address owner, address spender, uint256 value) internal virtual {
         uint256 currentAllowance = allowance(owner, spender);
         if (currentAllowance < type(uint256).max) {
             if (currentAllowance < value) {
-                revert ERC20InsufficientAllowance(
-                    spender,
-                    currentAllowance,
-                    value
-                );
+                revert ERC20InsufficientAllowance(spender, currentAllowance, value);
             }
             unchecked {
                 _approve(owner, spender, currentAllowance - value, false);
@@ -5430,9 +5061,11 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
 
 // File: @openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol
 
+
 // OpenZeppelin Contracts (last updated v4.9.0) (security/ReentrancyGuard.sol)
 
 pragma solidity ^0.8.0;
+
 
 /**
  * @dev Contract module that helps prevent reentrant calls to a function.
@@ -5520,9 +5153,16 @@ abstract contract ReentrancyGuardUpgradeable is Initializable {
 
 // File: contract.sol
 
+
 pragma solidity ^0.8.20;
 
 // Import upgradeable versions instead of regular contracts
+
+
+
+
+
+
 
 contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     constructor() {
@@ -5535,14 +5175,14 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         __UUPSUpgradeable_init();
 
         packageExpiry = 60 * 60 * 24 * 30;
-        packages.push(Package(0, 2 ether, 0, 0, 100 ether, 0, 0, 0, 0));
-        packages.push(Package(1, 15 ether, 0, 0, 300 ether, 0, 5, 2, 0));
+        packages.push(Package(0, 2 ether, 0, 0, 100 ether, 0, 0, 0, 0)); 
+        packages.push(Package(1, 15 ether, 0, 0, 300 ether, 0, 5, 2, 0)); 
         packages.push(
             Package(2, 20 ether, packageExpiry, 15, 700 ether, 0, 10, 3, 0)
-        );
+        ); 
         packages.push(
             Package(3, 25 ether, packageExpiry * 2, 40, 1200 ether, 0, 15, 4, 0)
-        );
+        ); 
         packages.push(
             Package(
                 4,
@@ -5568,7 +5208,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
                 6,
                 0
             )
-        );
+        ); 
 
         maxLevels = 25;
         percentageAtBuy = 70;
@@ -5577,18 +5217,15 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         percentageAtBuyToNFTQue = 15;
         percentageAtBuyforMaintenance = 10;
         percentageAtBuyforTTBonus = 15;
-        paymentToken = IERC20(
-            0x9e5AAC1Ba1a2e6aEd6b32689DFcF62A509Ca96f3
-            //0x2907DA57598e5dd349d768FbC0e6BC3D2CF66cB9
-        );
-        timelimit = 60 * 60 * 48;
+        paymentToken = IERC20(0x9e5AAC1Ba1a2e6aEd6b32689DFcF62A509Ca96f3);
+        timelimit = 60 * 60 * 48; 
         userRegistered[msg.sender] = true;
         Package memory tx1 = packages[1];
         tx1.purchaseTime = block.timestamp;
         userPackage[msg.sender] = tx1;
         userTradingTime[msg.sender] = block.timestamp;
         incomeWallet = 0x17425382Ad386B410A42a1Ef17789A3d38b18C57;
-        maintenanceWallet = 0xaf9525B035Cf2166e8955909654708495CE429b0;
+        maintenanceWallet =  0xaf9525B035Cf2166e8955909654708495CE429b0;
     }
 
     event Incomes(
@@ -5605,6 +5242,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     event Upgrades(uint time, uint amount, uint _type, address _user);
 
     uint public timelimit;
+    
 
     struct Package {
         uint id;
@@ -5632,7 +5270,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         address parent;
         address[] children;
         address[] indirect;
-        address[] direct;
+        address[] direct; 
     }
 
     struct queIncome {
@@ -5651,7 +5289,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     mapping(address => uint) public tradingLevelBonus;
     mapping(address => uint) public packageLevelBonus;
     mapping(address => uint) public selfTradingProfit;
-    NFT[] public nfts;
+    NFT[] public nfts; 
     mapping(address => uint) public ownerNFTindex;
     mapping(address => bool) public userRegistered;
     mapping(address => uint) public userTradingTime;
@@ -5678,10 +5316,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     address public maintenanceWallet;
 
     IERC20 public paymentToken; // ERC20 token used for payments
-    mapping(uint => uint) public idPurchasedtime;
-    mapping(address => uint) public userJoiningTime;
-    address[] usersArray;
-    uint public ownerSucked;
+
 
     function register(address _ref, address _user, uint funds) public {
         address _referrer = _ref != address(0) ? _ref : owner();
@@ -5690,7 +5325,6 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         tx1.purchaseTime = block.timestamp;
         tx1.packageUpgraded = block.timestamp;
         userPackage[_user] = tx1;
-        userJoiningTime[_user] = block.timestamp;
 
         require(funds >= amount, "insufficient funds");
         require(users[_user].referrer == address(0), "zero address");
@@ -5702,8 +5336,6 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         users[_user].referrer = _referrer;
         users[_user].parent = placement;
         users[placement].children.push(_user);
-        userTradingLimitTime[_user] = block.timestamp;
-        usersArray.push(_user);
 
         // Direct referral list
         users[_referrer].direct.push(_user);
@@ -5720,7 +5352,8 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         userRegistered[_user] = true;
 
         sendConditional(_referrer, amount / 2, 1, 0);
-        paymentToken.transfer(incomeWallet, amount / 2);
+        paymentToken.transfer(incomeWallet, amount/2);
+
 
         userTradingTime[_user] = block.timestamp;
 
@@ -5733,7 +5366,11 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         uint _type,
         uint _id
     ) internal {
-        bool eligible = _type != 1 ? userPackage[up].id > 0 : true;
+        bool eligible = _type != 1 
+
+            ? 
+            userPackage[up].id > 0
+            : true;
 
         uint8 transactionType = _type == 3 ? 0 : 1;
         if (
@@ -5785,7 +5422,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         uint8 count = 0;
 
         for (uint8 i = 0; i < maxLevels; i++) {
-            address parent = users[user].parent;
+            address parent = users[user].parent; 
             if (parent == address(0)) break;
             temp[count] = parent;
             user = parent;
@@ -5818,9 +5455,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         tx1.purchaseTime = userPackage[_user].purchaseTime;
         userPackage[_user] = tx1;
         userLimitUtilized[_user] = 0;
-        userTradingLimitTime[_user] = block.timestamp;
-
-        paymentToken.transfer(incomeWallet, (amount * 20) / 100);
+        paymentToken.transfer(incomeWallet, (amount * 10) / 100);
 
         address up = users[_user].referrer;
 
@@ -5919,15 +5554,16 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 
         paymentToken.transfer(oldOwner, _nft.premium);
 
+
         paymentToken.transfer(
             oldOwner,
-            ((amount * 10) / percentageAtBuy)
+            ((amount * percentageAtBuyToTrader) / percentageAtBuy)
         );
-        selfTradingProfit[oldOwner] += ((amount * 10) /
+        selfTradingProfit[oldOwner] += ((amount * percentageAtBuyToTrader) /
             percentageAtBuy);
         emit Incomes(
             block.timestamp,
-            ((amount * 10) / percentageAtBuy),
+            ((amount * percentageAtBuyToTrader) / percentageAtBuy),
             4,
             oldOwner,
             0,
@@ -5957,59 +5593,59 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
             ((amount * percentageAtBuyToAdmin) / percentageAtBuy)
         );
 
-        uint256 payout = (amount * 10) / percentageAtBuy;
+        if (NFTQue.length > 1 && NFTQue[nftQueIndex].income <= 45 ether) {
+            paymentToken.transfer(
+                NFTQue[nftQueIndex].user,
+                ((amount * percentageAtBuyToNFTQue) / percentageAtBuy)
+            );
+            NFTQueBalance[NFTQue[nftQueIndex].user] += ((amount *
+                percentageAtBuyToNFTQue) / percentageAtBuy);
 
-        if (NFTQue.length == 0) {
-            // Queue empty → send to income wallet
-            paymentToken.transfer(incomeWallet, payout);
+            NFTQue[nftQueIndex].income += ((amount * percentageAtBuyToNFTQue) /
+                percentageAtBuy);
+
+            emit Incomes(
+                block.timestamp,
+                ((amount * percentageAtBuyToNFTQue) / percentageAtBuy),
+                5,
+                NFTQue[nftQueIndex].user,
+                0,
+                _nft.id
+            );
         } else {
-            // Queue not empty
-            queIncome storage current = NFTQue[nftQueIndex];
+            if (NFTQue.length > 0 && nftQueIndex < NFTQue.length - 1) {
+                nftQueIndex++;
+                paymentToken.transfer(
+                    NFTQue[nftQueIndex].user,
+                    ((amount * percentageAtBuyToNFTQue) / percentageAtBuy)
+                );
+                NFTQueBalance[NFTQue[nftQueIndex].user] += ((amount *
+                    percentageAtBuyToNFTQue) / percentageAtBuy);
 
-            // Check if adding payout would exceed 45
-            if (current.income + payout <= 45 ether) {
-                // Safe to give to current index
-                paymentToken.transfer(current.user, payout);
-                NFTQueBalance[current.user] += payout;
-                current.income += payout;
+                NFTQue[nftQueIndex].income += ((amount *
+                    percentageAtBuyToNFTQue) / percentageAtBuy);
 
                 emit Incomes(
                     block.timestamp,
-                    payout,
+                    ((amount * percentageAtBuyToNFTQue) / percentageAtBuy),
                     5,
-                    current.user,
+                    NFTQue[nftQueIndex].user,
                     0,
                     _nft.id
                 );
-            } else {
-                // Move to next index
-                if (nftQueIndex < NFTQue.length - 1) {
-                    nftQueIndex++;
-                    queIncome storage next = NFTQue[nftQueIndex];
-
-                    paymentToken.transfer(next.user, payout);
-                    NFTQueBalance[next.user] += payout;
-                    next.income += payout;
-
-                    emit Incomes(
-                        block.timestamp,
-                        payout,
-                        5,
-                        next.user,
-                        0,
-                        _nft.id
-                    );
-                } else {
-                    // No more users → send to wallet
-                    paymentToken.transfer(incomeWallet, payout);
-                }
             }
+
+            // fallback: send to admin (or keep in contract) — choose behavior you want
+            paymentToken.transfer(
+                incomeWallet,
+                ((amount * percentageAtBuyToNFTQue) / percentageAtBuy)
+            );
         }
 
         paymentToken.transfer(
             //owner(),
             maintenanceWallet,
-            ((amount * 25) / percentageAtBuy)
+            ((amount * percentageAtBuyforMaintenance) / percentageAtBuy)
         );
 
         processTTBBonus(
@@ -6019,12 +5655,12 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         );
 
         // update NFT queue balance
-        idPurchasedtime[_nft.id] = block.timestamp;
+
         return amount;
     }
 
     function processTTBBonus(uint _amount, address _user, uint _id) internal {
-        paymentToken.transfer(incomeWallet, (_amount * 20) / 100);
+        paymentToken.transfer(incomeWallet, (_amount * 10) / 100);
         address up = users[_user].referrer;
         sendConditional(up, (_amount * 10) / 100, 3, _id);
 
@@ -6071,7 +5707,8 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         for (uint i = 0; i < _uplines.length; i++) {
             address up = _uplines[i];
             bool cond = _type == 2 // Package Buy
-                ? users[up].direct.length >= 2
+                ? 
+                users[up].direct.length >= 2
                 : ((userPackage[up].id == 5 && // NFT buy
                     userLimitUtilized[up] >= (userPackage[up].limit / 2)) ||
                     userPackage[up].id != 5) &&
@@ -6084,18 +5721,18 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
                 userPackage[up].id > 0
             ) {
                 if (block.timestamp - userTradingTime[up] <= (timelimit)) {
-                    paymentToken.transfer(up, ((_amount * 60) / 100) / levelD);
+                    paymentToken.transfer(up, ((_amount * 70) / 100) / levelD);
                     if (_type == 1) {
                         tradingLevelBonus[up] +=
-                            ((_amount * 60) / 100) / levelD;
+                            ((_amount * 70) / 100) / levelD;
                     } else {
                         packageLevelBonus[up] +=
-                            ((_amount * 60) / 100) / levelD;
+                            ((_amount * 70) / 100) / levelD;
                     }
 
                     emit Incomes(
                         block.timestamp,
-                        ((_amount * 60) / 100) / levelD,
+                        ((_amount * 70) / 100) / levelD,
                         transactionType,
                         up,
                         i + 1,
@@ -6111,7 +5748,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         uint validLeftOver = leftOver > levelD ? levelD : leftOver;
         paymentToken.transfer(
             incomeWallet,
-            (((_amount * 60) / 100) * (levelD - validLeftOver)) / levelD
+            (((_amount * 70) / 100) * (levelD - validLeftOver)) / levelD
         );
     }
 
@@ -6132,7 +5769,6 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         goDistribute(nftused[0], nftused[0]._owner, owner(), funds, 2);
 
         removeFirst2();
-        ownerSucked++;
 
         if (nftused.length == 0) {
             NFTMayBeCreated = false;
@@ -6167,6 +5803,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
             tx1.price = 50 ether;
             removeFirst2();
             userMint[_user].push(tx1);
+
         } else {
             tx1 = NFT(_nextTokenId, 50 ether, _user, _uri, 0, 1);
         }
@@ -6192,7 +5829,6 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         tx1 = NFT(_nextTokenId, 50 ether, _user, _uri, 0, 1);
 
         nfts.push(tx1);
-        idPurchasedtime[_nextTokenId] = block.timestamp;
     }
 
     function burn(uint index) internal {
@@ -6216,9 +5852,9 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     function getNFTs(address _user) public view returns (NFT[] memory) {
         //    require(userRegistered[user], "the user is not registered");
         NFT[] memory temp = new NFT[](nfts.length); // temporary
-        uint count = 0;
+        uint8 count = 0;
 
-        for (uint i = 0; i < nfts.length; i++) {
+        for (uint8 i = 0; i < nfts.length; i++) {
             if (nfts[i]._owner == _user) {
                 temp[count] = nfts[i];
                 count++;
@@ -6227,7 +5863,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 
         // resize to actual count
         NFT[] memory myNFTs = new NFT[](count);
-        for (uint j = 0; j < count; j++) {
+        for (uint8 j = 0; j < count; j++) {
             myNFTs[j] = temp[j];
         }
 
@@ -6246,10 +5882,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         paymentToken.transfer(owner(), paymentToken.balanceOf(address(this)));
     }
 
-    function changeWallets(
-        address _incomeWallet,
-        address _maintenanceWallet
-    ) public onlyOwner {
+    function changeWallets(address _incomeWallet, address _maintenanceWallet) public onlyOwner {
         incomeWallet = _incomeWallet;
         maintenanceWallet = _maintenanceWallet;
     }
@@ -6257,95 +5890,6 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     function _authorizeUpgrade(
         address newImplementation
     ) internal override onlyOwner {}
-
-    function getusers() public view returns (address[] memory) {
-        return usersArray;
-    }
-
-    function changePkg(uint _id, uint _time) public {
-        packages[_id].time = _time;
-    }
-}
-
-contract DataFetcherUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeable {
-
-    Helper public helper;
-
- struct NFTInfo {
-        uint256 id;
-        uint256 price;
-        address _owner;
-        string uri;
-        uint premium;
-        uint256 utilized;
-        uint256 purchasedTime;
-    }
-
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
-
-    function initialize(address _owner, address _helper) public initializer {
-        __Ownable_init(_owner);
-        __UUPSUpgradeable_init();
-
-        helper = Helper(_helper);
-    }
-
-    function updateHelper(address _helper) external onlyOwner {
-        helper = Helper(_helper);
-    }
-
-    function getAllPurchasedTimes(uint256[] memory ids)
-        external
-        view
-        returns (uint256[] memory)
-    {
-        uint256[] memory arr = new uint256[](ids.length);
-
-        for (uint i = 0; i < ids.length; i++) {
-            arr[i] = helper.idPurchasedtime(ids[i]);
-        }
-
-        return arr;
-    }
-
-    function _authorizeUpgrade(address newImpl) internal override onlyOwner {}
-
-   function getNFTs() external view returns (NFTInfo[] memory) {
-        Helper.NFT[] memory nfts = helper.getNFTs();
-        // First count how many valid NFTs (owner != 0)
-        uint256 count = 0;
-        for (uint256 i = 0; i < nfts.length; i++) {
-            if (nfts[i]._owner != address(0)) {
-                count++;
-            }
-        }
-
-        NFTInfo[] memory arr = new NFTInfo[](count);
-        uint256 j = 0;
-
-        for (uint256 i = 0; i < nfts.length; i++) {
-            if (nfts[i]._owner != address(0)) {
-                arr[j] = NFTInfo({
-                    id: nfts[i].id,
-                    price: nfts[i].price,
-                    _owner: nfts[i]._owner,
-                    uri: nfts[i].uri,
-                    premium: nfts[i].premium,
-                    utilized: nfts[i].utilized,
-                    purchasedTime: helper.idPurchasedtime(nfts[i].id)
-                });
-                j++;
-            }
-        }
-
-        return arr;
-    }
-
-    /// @notice Returns total number of NFTs in the helper contract
-
 }
 
 contract MyNFT is
@@ -6370,10 +5914,7 @@ contract MyNFT is
         __Ownable_init(initialOwner);
         __UUPSUpgradeable_init();
 
-        paymentToken = IERC20(
-            0x9e5AAC1Ba1a2e6aEd6b32689DFcF62A509Ca96f3
-            //0x2907DA57598e5dd349d768FbC0e6BC3D2CF66cB9
-        );
+        paymentToken = IERC20(0x9e5AAC1Ba1a2e6aEd6b32689DFcF62A509Ca96f3);
         _nextTokenId = 1;
         helper = Helper(_helper);
 
@@ -6385,13 +5926,15 @@ contract MyNFT is
 
     mapping(uint256 => string) private _tokenURIs;
 
-    IERC20 public paymentToken;
+    IERC20 public paymentToken; 
+
 
     function tokenURI(
         uint256 tokenId
     ) public view override returns (string memory) {
         return _tokenURIs[tokenId];
     }
+
 
     function register(address _referrer) public {
         uint before = paymentToken.balanceOf(address(helper));
@@ -6432,6 +5975,7 @@ contract MyNFT is
         _tokenURIs[_nextTokenId] = _uri;
         _nextTokenId++;
     }
+
 
     function ownerMint(string memory _uri) public {
         require(

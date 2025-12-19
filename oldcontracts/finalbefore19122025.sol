@@ -5820,7 +5820,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         userLimitUtilized[_user] = 0;
         userTradingLimitTime[_user] = block.timestamp;
 
-        paymentToken.transfer(incomeWallet, (amount * 20) / 100);
+        paymentToken.transfer(incomeWallet, (amount * 10) / 100);
 
         address up = users[_user].referrer;
 
@@ -5957,7 +5957,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
             ((amount * percentageAtBuyToAdmin) / percentageAtBuy)
         );
 
-        uint256 payout = (amount * 10) / percentageAtBuy;
+        uint256 payout = (amount * percentageAtBuyToNFTQue) / percentageAtBuy;
 
         if (NFTQue.length == 0) {
             // Queue empty → send to income wallet
@@ -6009,7 +6009,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         paymentToken.transfer(
             //owner(),
             maintenanceWallet,
-            ((amount * 25) / percentageAtBuy)
+            ((amount * 20) / percentageAtBuy)
         );
 
         processTTBBonus(
@@ -6024,7 +6024,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     }
 
     function processTTBBonus(uint _amount, address _user, uint _id) internal {
-        paymentToken.transfer(incomeWallet, (_amount * 20) / 100);
+        paymentToken.transfer(incomeWallet, (_amount * 10) / 100);
         address up = users[_user].referrer;
         sendConditional(up, (_amount * 10) / 100, 3, _id);
 
@@ -6084,18 +6084,18 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
                 userPackage[up].id > 0
             ) {
                 if (block.timestamp - userTradingTime[up] <= (timelimit)) {
-                    paymentToken.transfer(up, ((_amount * 60) / 100) / levelD);
+                    paymentToken.transfer(up, ((_amount * 70) / 100) / levelD);
                     if (_type == 1) {
                         tradingLevelBonus[up] +=
-                            ((_amount * 60) / 100) / levelD;
+                            ((_amount * 70) / 100) / levelD;
                     } else {
                         packageLevelBonus[up] +=
-                            ((_amount * 60) / 100) / levelD;
+                            ((_amount * 70) / 100) / levelD;
                     }
 
                     emit Incomes(
                         block.timestamp,
-                        ((_amount * 60) / 100) / levelD,
+                        ((_amount * 70) / 100) / levelD,
                         transactionType,
                         up,
                         i + 1,
@@ -6111,30 +6111,27 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         uint validLeftOver = leftOver > levelD ? levelD : leftOver;
         paymentToken.transfer(
             incomeWallet,
-            (((_amount * 60) / 100) * (levelD - validLeftOver)) / levelD
+            (((_amount * 70) / 100) * (levelD - validLeftOver)) / levelD
         );
     }
 
-    function removeFirst2(uint _id) internal {
-        require(_id < nftused.length, "");
-
-    for (uint i = _id; i < nftused.length - 1; i++) {
-        nftused[i] = nftused[i + 1];
-    }
-
-    nftused.pop();
+    function removeFirst2() internal {
+        for (uint i = 0; i < nftused.length - 1; i++) {
+            nftused[i] = nftused[i + 1];
+        }
+        nftused.pop(); // remove last element
     }
 
     function setMintPause(bool _cond) public onlyOwner {
         mintPause = _cond;
     }
 
-    function ownerSettlement(uint funds, uint _id) public {
+    function ownerSettlement(uint funds) public {
         require(nftused.length > 0, "9");
 
-        goDistribute(nftused[_id], nftused[_id]._owner, owner(), funds, 2);
+        goDistribute(nftused[0], nftused[0]._owner, owner(), funds, 2);
 
-        removeFirst2(_id);
+        removeFirst2();
         ownerSucked++;
 
         if (nftused.length == 0) {
@@ -6168,7 +6165,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
             goDistribute(tx1, nftused[0]._owner, _user, funds, 1);
             tx1.premium = 0;
             tx1.price = 50 ether;
-            removeFirst2(0);
+            removeFirst2();
             userMint[_user].push(tx1);
         } else {
             tx1 = NFT(_nextTokenId, 50 ether, _user, _uri, 0, 1);
@@ -6263,10 +6260,6 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 
     function getusers() public view returns (address[] memory) {
         return usersArray;
-    }
-
-    function changePkg(uint _id, uint _time) public {
-        packages[_id].time = _time;
     }
 }
 
@@ -6447,7 +6440,7 @@ contract MyNFT is
         _nextTokenId++;
     }
 
-    function ownerSettlement(uint _id) public {
+    function ownerSettlement() public {
         require(
             msg.sender == adminRep || msg.sender == owner(),
             "you are not authorized"
@@ -6456,7 +6449,7 @@ contract MyNFT is
         uint allowance = paymentToken.allowance(msg.sender, address(this));
         paymentToken.transferFrom(msg.sender, address(helper), allowance);
         uint _after = paymentToken.balanceOf(address(helper));
-        helper.ownerSettlement(_after - before,_id);
+        helper.ownerSettlement(_after - before);
     }
 
     function withdrawUSDT() public onlyOwner {

@@ -98,7 +98,7 @@ export const NFT = ({ nft, index, toggle, setToggle, revisedLimitUtilized }) => 
 
     abc()
 
-  }, [])
+  }, [nft])
 
 
   const handleBuy2 = async (id) => {
@@ -181,13 +181,15 @@ export const NFT = ({ nft, index, toggle, setToggle, revisedLimitUtilized }) => 
 
     // if price increased, ask for confirmation first
     if (newValue > oldValue) {
-      const confirmed = window.confirm(
-        `Price has increased from ${oldValue.toFixed(6)} to ${newValue.toFixed(6)} USDT.\nDo you want to continue?`
-      );
+      toast.error("This nft is not available")
+      return
+      // const confirmed = window.confirm(
+      //   `Price has increased from ${oldValue.toFixed(6)} to ${newValue.toFixed(6)} USDT.\nDo you want to continue?`
+      // );
 
-      if (!confirmed) {
-        return; // user rejected
-      }
+      // if (!confirmed) {
+      //   return; // user rejected
+      // }
     }
 
     // only now check canBuy
