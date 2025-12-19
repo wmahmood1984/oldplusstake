@@ -251,7 +251,7 @@ export default function Dashboard() {
 
                                 durationInSeconds={Math.max(
                                     0,
-                                    Number(Package.packageUpgraded) + Number(packageExpiryLimit) - Math.floor(Date.now() / 1000)
+                                    Number(Package.packageUpgraded) + Number(packageExpiryLimit)+60*60*24*15 - Math.floor(Date.now() / 1000)
                                 )}
 
                             />
