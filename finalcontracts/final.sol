@@ -5871,11 +5871,11 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
             "7"
         );
 
-        require(
-            block.timestamp - userPackage[_user].packageUpgraded <=
-                packageExpiry,
-            "package expired"
-        );
+        // require(
+        //     block.timestamp - userPackage[_user].packageUpgraded <=
+        //         packageExpiry,
+        //     "package expired"
+        // );
 
         (uint forDis) = goDistribute(_nft, _nft._owner, _user, funds, 3);
         userLimitUtilized[_user] += (_nft.price + (_nft.price * 7) / 100);
