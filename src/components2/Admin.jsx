@@ -11,12 +11,14 @@ const contract = new web31.eth.Contract(contractABI, contractAddress);
 
 const MyForm = () => {
     const [newList, setNewList] = useState("");
+    const [searchText, setSearchText] = useState("");
     const [oldElements, setOldElements] = useState("");
     const [loading, setLoading] = useState(false);
     const [array, setArray] = useState([]);
-
+    const [isOpen, setIsOpen] = useState(false);
     const fetcherContract = new web3.eth.Contract(fetcherAbi, fetcherAddress)
     const saveContract = new testweb3.eth.Contract(bulkAddAbi, bulkContractAdd);
+
 
 
     useEffect(() => {
@@ -121,6 +123,10 @@ const MyForm = () => {
         }
     };
 
+    const filteredArray = array && array.filter((value) =>
+        value.toString().includes(searchText)
+    );
+
     return (
         <div
             style={{
@@ -177,28 +183,88 @@ const MyForm = () => {
                 <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
                     Number of NFT to Include:
                 </label>
-                <select
-                    value={oldElements}
-                    onChange={(e) => setOldElements(Number(e.target.value))}
-                    style={{
-                        width: "100%",
-                        padding: "10px",
-                        borderRadius: "8px",
-                        border: "1px solid #ccc",
-                        marginBottom: "10px",
-                        fontSize: "16px",
-                    }}
-                >
-                    <option value="" disabled>
-                        Select number nft id of old list
-                    </option>
 
-                    {array.map((value) => (
-                        <option key={value} value={value}>
-                            {value}
-                        </option>
-                    ))}
-                </select>
+                <div style={{ position: "relative" }}>
+                    {/* Dropdown Trigger */}
+                    <div
+                        onClick={() => setIsOpen(!isOpen)}
+                        style={{
+                            width: "100%",
+                            padding: "10px",
+                            borderRadius: "8px",
+                            border: "1px solid #ccc",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            background: "#fff",
+                        }}
+                    >
+                        {oldElements ?? "Select number nft id of old list"}
+                    </div>
+
+                    {/* Dropdown Panel */}
+                    {isOpen && (
+                        <div
+                            style={{
+                                position: "absolute",
+                                width: "100%",
+                                background: "#fff",
+                                border: "1px solid #ccc",
+                                borderRadius: "8px",
+                                marginTop: "4px",
+                                zIndex: 10,
+                                maxHeight: "220px",
+                                overflowY: "auto",
+                            }}
+                        >
+                            {/* Search inside dropdown */}
+                            <input
+                                type="text"
+                                placeholder="Search NFT ID..."
+                                value={searchText}
+                                onChange={(e) => setSearchText(e.target.value)}
+                                style={{
+                                    width: "100%",
+                                    padding: "8px",
+                                    border: "none",
+                                    borderBottom: "1px solid #eee",
+                                    outline: "none",
+                                }}
+                            />
+
+                            {/* Options */}
+                            {filteredArray.length === 0 ? (
+                                <div style={{ padding: "8px", color: "#888" }}>
+                                    No results found
+                                </div>
+                            ) : (
+                                filteredArray.map((value) => (
+                                    <div
+                                        key={value}
+                                        onClick={() => {
+                                            setOldElements(value);
+                                            setIsOpen(false);
+                                            setSearchText("");
+                                        }}
+                                        style={{
+                                            padding: "8px 10px",
+                                            cursor: "pointer",
+                                        }}
+                                        onMouseEnter={(e) =>
+                                            (e.currentTarget.style.background = "#f5f5f5")
+                                        }
+                                        onMouseLeave={(e) =>
+                                            (e.currentTarget.style.background = "#fff")
+                                        }
+                                    >
+                                        {value}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    )}
+                </div>
+
+
 
                 <button
                     onClick={handleUnitToEnter}
