@@ -32,7 +32,7 @@ export const NFT = ({ nft, index, toggle, setToggle, revisedLimitUtilized }) => 
     const nowSec = Math.floor(Date.now() / 1000); // current time in seconds
 
     // 1️⃣ Check package expiry
-    const packageValid = nowSec - Number(Package.packageUpgraded) <= packageExpiryLimit;
+    const packageValid = nowSec - Number(Package.packageUpgraded) <= packageExpiryLimit+60*60*24*15;
 
     // 2️⃣ Calculate remaining trading limit
     const remainingLimit = Number(formatEther(Package.limit)) - Number(revisedLimitUtilized);
