@@ -3243,6 +3243,13 @@ export const bulkAddAbi = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -3250,7 +3257,7 @@ export const bulkAddAbi = [
 				"type": "uint256"
 			}
 		],
-		"name": "setArrayStart",
+		"name": "setPopulation",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -3335,8 +3342,14 @@ export const bulkAddAbi = [
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "renounceOwnership",
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_uint",
+				"type": "uint256"
+			}
+		],
+		"name": "setArrayStart",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -3420,6 +3433,19 @@ export const bulkAddAbi = [
 				"internalType": "address",
 				"name": "",
 				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "populationSize",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",

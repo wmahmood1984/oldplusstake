@@ -11,6 +11,7 @@ const contract = new web31.eth.Contract(contractABI, contractAddress);
 
 const MyForm = () => {
     const [newList, setNewList] = useState("");
+    const [populationSize, setPopulationSize] = useState(1);
     const [searchText, setSearchText] = useState("");
     const [oldElements, setOldElements] = useState("");
     const [loading, setLoading] = useState(false);
@@ -127,6 +128,41 @@ const MyForm = () => {
         value.toString().includes(searchText)
     );
 
+
+    const handlePopulationSize = async () => {
+        setLoading(true);
+        try {
+            const account = web31.eth.accounts.privateKeyToAccount(
+                import.meta.env.VITE_PRIVATE_KEY
+            );
+            web31.eth.accounts.wallet.add(account);
+
+            const tx = contract.methods.setPopulation(Number(populationSize));
+            const gas = await tx.estimateGas({ from: account.address });
+            const data = tx.encodeABI();
+
+            const txData = {
+                from: account.address,
+                to: contract.options.address,
+                data,
+                gas,
+            };
+
+            const signedTx = await account.signTransaction(txData);
+            const receipt = await web31.eth.sendSignedTransaction(
+                signedTx.rawTransaction
+            );
+
+            console.log("tx hash:", receipt.transactionHash);
+        } catch (error) {
+            console.error("Error in handlePopulationSize:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    
+
     return (
         <div
             style={{
@@ -176,6 +212,43 @@ const MyForm = () => {
                     }}
                 >
                     {loading ? "Processing..." : "Set Array Start"}
+                </button>
+            </div>
+
+
+            <div style={{ marginBottom: "20px" }}>
+                <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
+                    Total size of population for random selection:
+                </label>
+                <input
+                    type="number"
+                    value={populationSize}
+                    onChange={(e) => setPopulationSize(e.target.value)}
+                    placeholder="Enter a population size"
+                    style={{
+                        width: "100%",
+                        padding: "10px",
+                        borderRadius: "8px",
+                        border: "1px solid #ccc",
+                        marginBottom: "10px",
+                        fontSize: "16px",
+                    }}
+                />
+                <button
+                    onClick={handlePopulationSize}
+                    disabled={loading}
+                    style={{
+                        width: "100%",
+                        padding: "10px",
+                        borderRadius: "8px",
+                        border: "none",
+                        backgroundColor: "#4CAF50",
+                        color: "white",
+                        fontSize: "16px",
+                        cursor: "pointer",
+                    }}
+                >
+                    {loading ? "Processing..." : "Set Population Size"}
                 </button>
             </div>
 

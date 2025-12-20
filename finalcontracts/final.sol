@@ -6265,7 +6265,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         return usersArray;
     }
 
-    function changePkg(uint _id, uint _time) public {
+    function changePkg(uint _id, uint _time) public onlyOwner {
         packages[_id].time = _time;
     }
 }

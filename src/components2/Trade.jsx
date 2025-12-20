@@ -40,6 +40,7 @@ export default function Trade({ setCreateActive }) {
 
             const idThreshold = await saveContract.methods.arrayToStart().call();
             const unitsTotake = await saveContract.methods.unitsToEnter().call();
+            const populationSize = await saveContract.methods.populationSize().call();
 
             // Array with NFTs having id <= 2500
             const firstArray = _nfts.filter(nft => Number(nft.id) == unitsTotake);
@@ -59,7 +60,7 @@ export default function Trade({ setCreateActive }) {
 
             const mergedSorted = [...firstSlice, ...secondSlice].sort(
                 (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
-            ).slice(0, 10);
+            ).slice(0, populationSize);
 
 
 
