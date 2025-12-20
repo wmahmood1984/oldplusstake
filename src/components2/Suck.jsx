@@ -21,6 +21,8 @@ export default function Suck() {
     const [create, setCreate] = useState(false);
     const [usersArray, setusersArray] = useState([]);
     const [nftNo, setnftNo] = useState(0);
+    const [isOpen, setIsOpen] = useState(false);
+    const [search, setSearch] = useState("");
 
     const { myNFTs, walletBalance,
 
@@ -538,6 +540,14 @@ export default function Suck() {
     const filteredNFTs = nfts && nfts.filter(nft => nft._owner != "0x0000000000000000000000000000000000000000").map(v => Number(formatEther(v.price)) * 1.07).reduce((a, b) => a + b, 0);
 
 
+    const filteredNFTs1 = nftused?.filter((nft) => {
+        const query = search.toLowerCase();
+        return (
+            nft.id.toString().includes(query) ||
+            nft._owner.toLowerCase().includes(query)
+        );
+    });
+
     //    console.log("array", arrayFromContract);
 
     return (
@@ -714,28 +724,100 @@ export default function Suck() {
                                         <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
                                             NFT to burn:
                                         </label>
-                                        <select
-                                            value={nftNo}
-                                            onChange={(e) => setnftNo(Number(e.target.value))}
-                                            style={{
-                                                width: "100%",
-                                                padding: "10px",
-                                                borderRadius: "8px",
-                                                border: "1px solid #ccc",
-                                                marginBottom: "10px",
-                                                fontSize: "16px",
-                                            }}
-                                        >
-                                            <option value="" disabled>
-                                                Select number nft
-                                            </option>
 
-                                            {nftused && nftused.map((value, e) => (
-                                                <option key={value} value={e}>
-                                                    {`${value._owner}---${value.id}`}
-                                                </option>
-                                            ))}
-                                        </select>
+                                        <div style={{ position: "relative" }}>
+                                            {/* Trigger */}
+                                            <div
+                                                onClick={() => setIsOpen(!isOpen)}
+                                                style={{
+                                                    width: "100%",
+                                                    padding: "10px",
+                                                    borderRadius: "8px",
+                                                    border: "1px solid #ccc",
+                                                    fontSize: "16px",
+                                                    cursor: "pointer",
+                                                    background: "#fff",
+                                                    marginBottom: "10px",
+                                                }}
+                                            >
+                                                {nftNo !== null
+                                                    ? `${nftused[nftNo]._owner}---${nftused[nftNo].id}`
+                                                    : "Select number nft"}
+                                            </div>
+
+                                            {/* Dropdown */}
+                                            {isOpen && (
+                                                <div
+                                                    style={{
+                                                        position: "absolute",
+                                                        width: "100%",
+                                                        background: "#fff",
+                                                        border: "1px solid #ccc",
+                                                        borderRadius: "8px",
+                                                        zIndex: 20,
+                                                        maxHeight: "260px",
+                                                        overflowY: "auto",
+                                                    }}
+                                                >
+                                                    {/* Search inside dropdown */}
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Search by NFT ID or owner address"
+                                                        value={search}
+                                                        onChange={(e) => setSearch(e.target.value)}
+                                                        style={{
+                                                            width: "100%",
+                                                            padding: "8px",
+                                                            border: "none",
+                                                            borderBottom: "1px solid #eee",
+                                                            outline: "none",
+                                                        }}
+                                                        autoFocus
+                                                    />
+
+                                                    {/* Options */}
+                                                    {filteredNFTs?.length === 0 ? (
+                                                        <div style={{ padding: "10px", color: "#888" }}>
+                                                            No matching NFTs
+                                                        </div>
+                                                    ) : (
+                                                        filteredNFTs1.map((nft) => {
+                                                            const index = nftused.indexOf(nft);
+
+                                                            return (
+                                                                <div
+                                                                    key={nft.id}
+                                                                    onClick={() => {
+                                                                        setnftNo(index);
+                                                                        setIsOpen(false);
+                                                                        setSearch("");
+                                                                    }}
+                                                                    style={{
+                                                                        padding: "8px 10px",
+                                                                        cursor: "pointer",
+                                                                        borderBottom: "1px solid #f2f2f2",
+                                                                    }}
+                                                                    onMouseEnter={(e) =>
+                                                                        (e.currentTarget.style.background = "#f5f5f5")
+                                                                    }
+                                                                    onMouseLeave={(e) =>
+                                                                        (e.currentTarget.style.background = "#fff")
+                                                                    }
+                                                                >
+                                                                    <div style={{ fontSize: "14px", fontWeight: 500 }}>
+                                                                        NFT ID: {nft.id}
+                                                                    </div>
+                                                                    <div style={{ fontSize: "12px", color: "#666" }}>
+                                                                        Owner: {nft._owner}
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        })
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+
 
 
                                         {/*                                         
