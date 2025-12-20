@@ -159,7 +159,7 @@ export default function Suck() {
     }, [address]);
 
 
-    const filteredTrades = Trades && Trades.filter(t => t.returnValues._type == "1").map(t => Number(formatEther(t.returnValues.amount))).reduce((a, b) => a + b, 0);
+    const filteredTrades = Trades && Trades.filter(t => t.returnValues._type == "1").map(t => Number(formatEther(t.returnValues.amount))+50).reduce((a, b) => a + b, 0);
 
 
     function secondsToHMS(seconds) {
