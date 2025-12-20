@@ -740,7 +740,10 @@ export default function Suck() {
                                                     marginBottom: "10px",
                                                 }}
                                             >
-                                                {nftNo !== null
+                                                {Array.isArray(nftused) &&
+                                                    typeof nftNo === "number" &&
+                                                    nftNo >= 0 &&
+                                                    nftNo < nftused.length
                                                     ? `${nftused[nftNo]._owner}---${nftused[nftNo].id}`
                                                     : "Select number nft"}
                                             </div>
