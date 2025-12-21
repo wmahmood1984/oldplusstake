@@ -121,7 +121,7 @@ export default function Suck() {
 
     }, [loading])
 
-    console.log("nfst ", nftNo);
+
     useEffect(() => {
         const bringTransaction = async () => {
             const latestBlock = await web3.eth.getBlockNumber();
@@ -159,7 +159,88 @@ export default function Suck() {
     }, [address]);
 
 
-    const filteredTrades = Trades && Trades.filter(t => t.returnValues._type == "1").map(t => Number(formatEther(t.returnValues.amount))+50).reduce((a, b) => a + b, 0);
+    const now = Math.floor(Date.now() / 1000);
+
+    const todayStart = () => {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        return Math.floor(d.getTime() / 1000);
+    };
+
+    const yesterdayStart = () => {
+        const d = new Date();
+        d.setDate(d.getDate() - 1);
+        d.setHours(0, 0, 0, 0);
+        return Math.floor(d.getTime() / 1000);
+    };
+
+    //const TTV24Hrs = Trades && Trades.filter(t => t.returnValues._type == "1").map(t => Number(formatEther(t.returnValues.amount)) + 50).reduce((a, b) => a + b, 0);
+
+    const TTV24Hrs =
+        Trades &&
+        Trades
+            .filter(t =>
+                t.returnValues._type === "1" &&
+                Number(t.returnValues.time) >= now - 24 * 60 * 60
+            )
+            .map(t => Number(formatEther(t.returnValues.amount)) + 50)
+            .reduce((a, b) => a + b, 0);
+
+
+    console.log("nfst ", Trades && Trades);
+
+    const TTV12Hrs =
+        Trades &&
+        Trades
+            .filter(t =>
+                t.returnValues._type === "1" &&
+                Number(t.returnValues.time) >= now - 12 * 60 * 60
+            )
+            .map(t => Number(formatEther(t.returnValues.amount)) + 50)
+            .reduce((a, b) => a + b, 0);
+
+    const TTV6Hrs =
+        Trades &&
+        Trades
+            .filter(t =>
+                t.returnValues._type === "1" &&
+                Number(t.returnValues.time) >= now - 6 * 60 * 60
+            )
+            .map(t => Number(formatEther(t.returnValues.amount)) + 50)
+            .reduce((a, b) => a + b, 0);
+
+    const TTV1Hr =
+        Trades &&
+        Trades
+            .filter(t =>
+                t.returnValues._type === "1" &&
+                Number(t.returnValues.time) >= now - 1 * 60 * 60
+            )
+            .map(t => Number(formatEther(t.returnValues.amount)) + 50)
+            .reduce((a, b) => a + b, 0);
+
+    const TTVToday =
+        Trades &&
+        Trades
+            .filter(t =>
+                t.returnValues._type === "1" &&
+                Number(t.returnValues.time) >= todayStart()
+            )
+            .map(t => Number(formatEther(t.returnValues.amount)) + 50)
+            .reduce((a, b) => a + b, 0);
+
+    const TTVYesterday =
+        Trades &&
+        Trades
+            .filter(t =>
+                t.returnValues._type === "1" &&
+                Number(t.returnValues.time) >= yesterdayStart() &&
+                Number(t.returnValues.time) < todayStart()
+            )
+            .map(t => Number(formatEther(t.returnValues.amount)) + 50)
+            .reduce((a, b) => a + b, 0);
+
+
 
 
     function secondsToHMS(seconds) {
@@ -889,10 +970,50 @@ export default function Suck() {
                                     </div>
                                     <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
                                         <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
-                                            {Number(filteredTrades).toFixed(0)}
+                                            {Number(TTV24Hrs).toFixed(0)}
                                         </div>
                                         <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            Total Trading Volume
+                                            TTV- 24 hours
+                                        </div>
+                                    </div>
+                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
+                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
+                                            {Number(TTV12Hrs).toFixed(0)}
+                                        </div>
+                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
+                                            TTV- 12 hours
+                                        </div>
+                                    </div>
+                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
+                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
+                                            {Number(TTV6Hrs).toFixed(0)}
+                                        </div>
+                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
+                                            TTV- 6 hours
+                                        </div>
+                                    </div>
+                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
+                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
+                                            {Number(TTV1Hr).toFixed(0)}
+                                        </div>
+                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
+                                            TTV- 1 hour
+                                        </div>
+                                    </div>
+                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
+                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
+                                            {Number(TTVToday).toFixed(0)}
+                                        </div>
+                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
+                                            TTV- Today
+                                        </div>
+                                    </div>
+                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
+                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
+                                            {Number(TTVYesterday).toFixed(0)}
+                                        </div>
+                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
+                                            TTV- yesterday
                                         </div>
                                     </div>
                                     <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
