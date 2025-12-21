@@ -295,13 +295,13 @@ export default function Suck() {
     
     const selectedFiltered = Trades && Trades.filter(ev => ev.returnValues.id === selected.id);
 
-    const previous = selectedFiltered && selectedFiltered[selectedFiltered.length - 2];
+    const previous = selectedFiltered && selectedFiltered[selectedFiltered.length - 3];
 
     const diffSeconds = Number(selected?.purchasedTime) - Number(previous?.returnValues?.time);
 
     const lastTraded = secondsToHMS(diffSeconds);
         
-    console.log("seconds",lastTraded);
+    console.log("nfts",nfts,"nftsburnt",nftBurnt);
 
     const removeNFT = async () => {
         setLoading(true)
@@ -805,7 +805,7 @@ export default function Suck() {
                                     </div>
                                     <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
                                         <div id="in-marketplace" class="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600">
-                                            {nfts && nfts.length - nftBurnt}
+                                            {nfts && nfts.length}
                                         </div>
                                         <div class="text-xs sm:text-sm text-gray-600 font-medium">
                                             In Marketplace
