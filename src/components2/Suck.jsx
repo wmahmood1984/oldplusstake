@@ -299,7 +299,14 @@ export default function Suck() {
 
     const diffSeconds = Number(selected?.purchasedTime) - Number(previous?.returnValues?.time);
 
-    const lastTraded = secondsToHMS(diffSeconds);
+   let lastTraded;
+
+if (Number.isFinite(diffSeconds)) {
+    lastTraded = secondsToHMS(diffSeconds);
+} else {
+    lastTraded = "More than 24 hours ago.";
+}
+
         
     console.log("nfts",nfts,"nftsburnt",nftBurnt);
 
