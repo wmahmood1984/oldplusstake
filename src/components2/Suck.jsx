@@ -5,7 +5,7 @@ import { useConfig } from 'wagmi';
 import { useDispatch, useSelector } from 'react-redux';
 import { readName } from '../slices/contractSlice';
 import toast from 'react-hot-toast';
-import { bulkAddAbi, bulkContractAdd, helperAbi, helperAddress, mlmcontractaddress, testweb3, usdtContract, web3 } from '../config';
+import { bulkAddAbi, bulkContractAdd, fetcherAbi, fetcherAddress, helperAbi, helperAddress, mlmcontractaddress, testweb3, usdtContract, web3 } from '../config';
 import { formatEther, parseEther } from 'ethers';
 import Spinner from './Spinner';
 import { useAppKitAccount } from '@reown/appkit/react';
@@ -71,7 +71,7 @@ export default function Suck() {
 
 
     const helperContract = new web3.eth.Contract(helperAbi, helperAddress)
-
+    const fetcherContract = new web3.eth.Contract(fetcherAbi, fetcherAddress)
     useEffect(() => {
 
 
@@ -84,7 +84,7 @@ export default function Suck() {
 
             setDateNFTUsed(_alfadatenftused)
 
-            const _nfts = await helperContract.methods.getNFTs().call()
+            const _nfts = await fetcherContract.methods.getNFTs().call()
             setNFTs(_nfts)
 
             const _nftsBurnt = await helperContract.methods.nftBurnt().call()
@@ -187,7 +187,7 @@ export default function Suck() {
             .reduce((a, b) => a + b, 0);
 
 
-    console.log("nfst ", Trades && Trades);
+
 
     const TTV12Hrs =
         Trades &&
@@ -244,6 +244,7 @@ export default function Suck() {
 
 
     function secondsToHMS(seconds) {
+
         seconds = Number(seconds);
 
         const h = Math.floor(seconds / 3600);
@@ -278,46 +279,29 @@ export default function Suck() {
 
         const diffSeconds = Number(selected?.returnValues?.time) - Number(previous?.returnValues?.time);
 
+
         const diffFormatted = secondsToHMS(diffSeconds);
 
         return diffFormatted
 
-        // 2. Get the last (most recent) transaction
-        // const lastTx = sorted[sorted.length - 1];
-        // const nftId = lastTx.returnValues.id;
-        // const lastTime = Number(lastTx.returnValues.time);
-
-        // // 3. Find previous transaction of the same NFT ID
-        // const prevTx = [...sorted]
-        //     .filter(ev => ev.returnValues.id === nftId)
-        //     .slice(0, -1)                // drop the last one
-        //     .pop();                      // get the previous one
-
-        // if (!prevTx) {
-        //     return {
-        //         nftId,
-        //         lastTransactionTime: lastTime,
-        //         message: "No previous transaction found for this NFT."
-        //     };
-        // }
-
-        // const prevTime = Number(prevTx.returnValues.time);
-
-        // // 4. Time difference
-        // const diffSeconds = lastTime - prevTime;
-
-        // return {
-        //     nftId,
-        //     lastTransaction: lastTx,
-        //     previousTransaction: prevTx,
-        //     timeDifferenceSeconds: diffSeconds,
-        //     timeDifferenceHours: (diffSeconds / 3600).toFixed(2),
-        //     timeDifferenceDays: (diffSeconds / 86400).toFixed(2)
-        // };
     }
+ 
 
-    const lastTraded = Trades && analyzeLastNFTTransaction(Trades);
+    const lastTraded1 = nfts && [...nfts].sort((a, b) =>
+            Number(a.purchasedTime) - Number(b.purchasedTime)
+        )  // && analyzeLastNFTTransaction(Trades);
+    
+    const selected = nfts && lastTraded1[lastTraded1.length - 1]; // most recent event
+    
+    const selectedFiltered = Trades && Trades.filter(ev => ev.returnValues.id === selected.id);
 
+    const previous = selectedFiltered && selectedFiltered[selectedFiltered.length - 2];
+
+    const diffSeconds = Number(selected?.purchasedTime) - Number(previous?.returnValues?.time);
+
+    const lastTraded = secondsToHMS(diffSeconds);
+        
+    console.log("seconds",lastTraded);
 
     const removeNFT = async () => {
         setLoading(true)
