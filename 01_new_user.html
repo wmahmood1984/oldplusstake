@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User List Demo</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full w-full m-0 p-0">
+  <div id="app" class="h-full w-full overflow-auto" style="background: linear-gradient(to bottom right, #f8fafc, #e2e8f0);"></div>
+  <script>
+    // Default configuration
+    const defaultConfig = {
+      page_title: "User List Demo",
+      table_header: "Active Users",
+      primary_color: "#2563eb",
+      background_color: "#f1f5f9",
+      surface_color: "#ffffff",
+      text_color: "#0f172a",
+      accent_color: "#3b82f6",
+      font_family: "Inter",
+      font_size: 16
+    };
+
+    // Generate 100 sample users
+    const allUsers = Array.from({ length: 100 }, (_, i) => {
+      const packages = [
+        { name: 'Welcome', price: '$2' },
+        { name: 'DI', price: '$15' },
+        { name: 'TRI', price: '$20' },
+        { name: 'TETRA', price: '$25' },
+        { name: 'PENTA', price: '$30' },
+        { name: 'HEXA', price: '$35' }
+      ];
+      const statuses = ['Active', 'Expired'];
+      const randomDate = new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+      const selectedPackage = packages[Math.floor(Math.random() * packages.length)];
+      
+      return {
+        id: i + 1,
+        address: `0x${Math.random().toString(16).substr(2, 8)}${Math.random().toString(16).substr(2, 32)}`,
+        referredBy: `0x${Math.random().toString(16).substr(2, 8)}${Math.random().toString(16).substr(2, 32)}`,
+        package: `${selectedPackage.name} (${selectedPackage.price})`,
+        joinDate: randomDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+        volume: `$${(Math.random() * 50000).toFixed(2)}`,
+        status: statuses[Math.floor(Math.random() * statuses.length)]
+      };
+    });
+
+    let currentPage = 1;
+    const usersPerPage = 50;
+    let searchQuery = '';
+    let selectedPackage = 'all';
+    let filteredUsers = allUsers;
+
+    function renderUserList() {
+      const config = window.elementSdk?.config || defaultConfig;
+      const startIndex = (currentPage - 1) * usersPerPage;
+      const endIndex = startIndex + usersPerPage;
+      const currentUsers = filteredUsers.slice(startIndex, endIndex);
+      const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+      // Calculate statistics
+      const totalUsers = filteredUsers.length;
+      const activeUsers = filteredUsers.filter(u => u.status === 'Active').length;
+      
+      // Count users by package
+      const packageCounts = {
+        'Welcome': 0,
+        'DI': 0,
+        'TRI': 0,
+        'TETRA': 0,
+        'PENTA': 0,
+        'HEXA': 0
+      };
+      
+      filteredUsers.forEach(user => {
+        const packageName = user.package.split(' ')[0];
+        if (packageCounts.hasOwnProperty(packageName)) {
+          packageCounts[packageName]++;
+        }
+      });
+
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const baseFontStack = 'system-ui, -apple-system, sans-serif';
+
+      const app = document.getElementById('app');
+      app.style.background = `linear-gradient(to bottom right, ${config.background_color}, ${config.surface_color})`;
+      
+      app.innerHTML = `
+        <div class="min-h-full w-full p-4 md:p-8">
+          <div class="max-w-7xl mx-auto">
+            <div class="mb-6 md:mb-8 pb-4 md:pb-6 border-b-2" style="border-color: ${config.primary_color};">
+              <h1 id="pageTitle" class="font-bold mb-2" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 1.75}px; color: ${config.text_color}; letter-spacing: -0.025em;">
+                ${config.page_title}
+              </h1>
+              <p id="tableHeader" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.875}px; color: #64748b; font-weight: 500;">
+                ${config.table_header}
+              </p>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="mb-4 md:mb-6">
+              <div class="relative">
+                <input 
+                  type="text" 
+                  id="searchInput" 
+                  placeholder="🔍 Search by address..." 
+                  class="w-full px-4 md:px-6 py-3 md:py-4 rounded-xl border-2 transition-all focus:outline-none"
+                  style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.875}px; border-color: ${config.primary_color}30; background: ${config.surface_color}; color: ${config.text_color}; padding-right: 80px;"
+                  onfocus="this.style.borderColor='${config.primary_color}'; this.style.boxShadow='0 4px 12px ${config.primary_color}20';"
+                  onblur="this.style.borderColor='${config.primary_color}30'; this.style.boxShadow='none';"
+                />
+                <button 
+                  id="clearSearch"
+                  class="absolute right-2 top-1/2 px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-all"
+                  style="transform: translateY(-50%); background: ${config.primary_color}; color: #ffffff; font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.75}px; font-weight: 600; border: none; cursor: pointer; display: none;"
+                  onmouseover="this.style.opacity='0.9';"
+                  onmouseout="this.style.opacity='1';"
+                >
+                  Clear
+                </button>
+              </div>
+              <div id="searchResults" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.875}px; color: #64748b; margin-top: 8px; font-weight: 500;"></div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+              <!-- Total Users Card -->
+              <div class="rounded-xl p-4 md:p-6" style="background: linear-gradient(135deg, ${config.primary_color}, ${config.accent_color}); box-shadow: 0 8px 20px ${config.primary_color}30;">
+                <div style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.875}px; color: #ffffff; font-weight: 600; opacity: 0.9; margin-bottom: 8px;">
+                  👥 Total Users
+                </div>
+                <div style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 2.5}px; color: #ffffff; font-weight: 800;">
+                  ${totalUsers}
+                </div>
+              </div>
+
+              <!-- Active Users Card -->
+              <div class="rounded-xl p-4 md:p-6" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 20px #10b98130;">
+                <div style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.875}px; color: #ffffff; font-weight: 600; opacity: 0.9; margin-bottom: 8px;">
+                  ✓ Active Users
+                </div>
+                <div style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 2.5}px; color: #ffffff; font-weight: 800;">
+                  ${activeUsers}
+                </div>
+              </div>
+            </div>
+
+            <!-- Package Statistics -->
+            <div class="rounded-2xl p-4 md:p-6 mb-6 md:mb-8" style="background: ${config.surface_color}; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);">
+              <div class="flex items-center justify-between mb-4">
+                <h3 style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 1.25}px; color: ${config.text_color}; font-weight: 700;">
+                  📦 Package Distribution
+                </h3>
+                ${selectedPackage !== 'all' ? `
+                  <button 
+                    id="clearPackageFilter"
+                    class="px-4 py-2 rounded-lg transition-all"
+                    style="background: ${config.primary_color}; color: #ffffff; font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.875}px; font-weight: 600; border: none; cursor: pointer;"
+                    onmouseover="this.style.opacity='0.9';"
+                    onmouseout="this.style.opacity='1';"
+                  >
+                    ✕ Clear Filter
+                  </button>
+                ` : ''}
+              </div>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                ${Object.entries(packageCounts).map(([packageName, count]) => {
+                  const isSelected = selectedPackage === packageName;
+                  return `
+                  <button 
+                    class="package-filter-btn rounded-lg p-4 border-2 transition-all text-left w-full"
+                    data-package="${packageName}"
+                    style="
+                      background: ${isSelected ? `linear-gradient(135deg, ${config.primary_color}, ${config.accent_color})` : `linear-gradient(135deg, ${config.primary_color}08, ${config.accent_color}10)`}; 
+                      border-color: ${isSelected ? config.primary_color : `${config.primary_color}30`};
+                      cursor: pointer;
+                      transform: ${isSelected ? 'scale(1.05)' : 'scale(1)'};
+                      box-shadow: ${isSelected ? `0 4px 12px ${config.primary_color}40` : 'none'};
+                    "
+                    onmouseover="if('${isSelected}' !== 'true') this.style.transform='scale(1.05)';"
+                    onmouseout="if('${isSelected}' !== 'true') this.style.transform='scale(1)';"
+                  >
+                    <div style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.875}px; color: ${isSelected ? '#ffffff' : config.primary_color}; font-weight: 700; margin-bottom: 6px;">
+                      ${packageName}
+                    </div>
+                    <div style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 1.75}px; color: ${isSelected ? '#ffffff' : config.text_color}; font-weight: 800;">
+                      ${count} <span style="font-size: ${baseSize * 0.875}px; color: ${isSelected ? '#ffffffcc' : '#64748b'}; font-weight: 500;">users</span>
+                    </div>
+                  </button>
+                `;
+                }).join('')}
+              </div>
+              ${selectedPackage !== 'all' ? `
+                <div style="margin-top: 16px; padding: 16px; background: linear-gradient(135deg, ${config.primary_color}10, ${config.accent_color}15); border-radius: 12px; border: 2px solid ${config.primary_color}30;">
+                  <div style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 1}px; color: ${config.primary_color}; font-weight: 700; margin-bottom: 12px; text-align: center;">
+                    📋 ${selectedPackage} Package Users (${packageCounts[selectedPackage]})
+                  </div>
+                  <div style="max-height: 300px; overflow-y: auto; background: ${config.surface_color}; border-radius: 8px; padding: 12px;">
+                    ${filteredUsers.map((user, idx) => `
+                      <div style="padding: 8px 12px; margin-bottom: 6px; background: ${idx % 2 === 0 ? '#f8fafc' : '#ffffff'}; border-radius: 6px; border-left: 3px solid ${config.primary_color};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                          <div style="flex: 1; min-width: 200px;">
+                            <div style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.75}px; color: #64748b; font-weight: 600; margin-bottom: 4px;">
+                              User #${user.id}
+                            </div>
+                            <div style="font-family: 'Courier New', monospace; font-size: ${baseSize * 0.65}px; color: #0f172a; font-weight: 600; word-break: break-all;">
+                              ${user.address}
+                            </div>
+                          </div>
+                          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <span style="padding: 4px 8px; border-radius: 6px; font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.65}px; font-weight: 600; background: ${user.status === 'Active' ? '#10b98120' : '#ef444420'}; color: ${user.status === 'Active' ? '#059669' : '#dc2626'}; white-space: nowrap;">
+                              ${user.status}
+                            </span>
+                            <span style="padding: 4px 8px; border-radius: 6px; font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.65}px; font-weight: 700; background: #10b98120; color: #059669; white-space: nowrap;">
+                              ${user.volume}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="rounded-xl md:rounded-2xl overflow-hidden" style="background: ${config.surface_color}; box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);">
+              <div class="overflow-x-auto" style="max-width: 100%; -webkit-overflow-scrolling: touch;">
+                <table class="w-full" style="min-width: 900px;">
+                  <thead style="background: linear-gradient(to bottom, ${config.primary_color}, ${config.accent_color}); border-bottom: 3px solid ${config.primary_color};">
+                    <tr>
+                      <th class="px-3 md:px-6 py-3 md:py-5 text-left font-bold uppercase tracking-wider" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.7}px; color: #ffffff; letter-spacing: 0.05em;">#</th>
+                      <th class="px-3 md:px-6 py-3 md:py-5 text-left font-bold uppercase tracking-wider" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.7}px; color: #ffffff; letter-spacing: 0.05em;">Address</th>
+                      <th class="px-3 md:px-6 py-3 md:py-5 text-left font-bold uppercase tracking-wider" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.7}px; color: #ffffff; letter-spacing: 0.05em;">Referred By</th>
+                      <th class="px-3 md:px-6 py-3 md:py-5 text-left font-bold uppercase tracking-wider" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.7}px; color: #ffffff; letter-spacing: 0.05em;">Package</th>
+                      <th class="px-3 md:px-6 py-3 md:py-5 text-left font-bold uppercase tracking-wider" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.7}px; color: #ffffff; letter-spacing: 0.05em;">Join Date</th>
+                      <th class="px-3 md:px-6 py-3 md:py-5 text-left font-bold uppercase tracking-wider" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.7}px; color: #ffffff; letter-spacing: 0.05em;">Volume (24h)</th>
+                      <th class="px-3 md:px-6 py-3 md:py-5 text-left font-bold uppercase tracking-wider" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.7}px; color: #ffffff; letter-spacing: 0.05em;">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${currentUsers.map((user, index) => `
+                      <tr class="border-b transition-all hover:bg-blue-50" style="border-color: #e2e8f0; background: ${index % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+                        <td class="px-3 md:px-6 py-3 md:py-5 font-semibold" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.875}px; color: ${config.text_color};">${user.id}</td>
+                        <td class="px-3 md:px-6 py-3 md:py-5">
+                          <div class="flex items-center gap-1 md:gap-2">
+                            <span class="font-mono" style="font-family: 'Courier New', monospace; font-size: ${baseSize * 0.7}px; color: #0f172a; font-weight: 700; word-break: break-all;">${user.address}</span>
+                            <button class="copy-btn px-1.5 py-1 md:px-2 md:py-1 rounded transition-all hover:bg-blue-100 flex-shrink-0" style="background: #e0e7ff; color: ${config.primary_color}; font-size: ${baseSize * 0.7}px; font-weight: 600; border: none; cursor: pointer;" data-address="${user.address}" title="Copy address">
+                              📋
+                            </button>
+                          </div>
+                        </td>
+                        <td class="px-3 md:px-6 py-3 md:py-5">
+                          <div class="flex items-center gap-1 md:gap-2">
+                            <span class="font-mono" style="font-family: 'Courier New', monospace; font-size: ${baseSize * 0.7}px; color: #0f172a; font-weight: 700; word-break: break-all;">${user.referredBy}</span>
+                            <button class="copy-btn px-1.5 py-1 md:px-2 md:py-1 rounded transition-all hover:bg-blue-100 flex-shrink-0" style="background: #e0e7ff; color: ${config.primary_color}; font-size: ${baseSize * 0.7}px; font-weight: 600; border: none; cursor: pointer;" data-address="${user.referredBy}" title="Copy address">
+                              📋
+                            </button>
+                          </div>
+                        </td>
+                        <td class="px-3 md:px-6 py-3 md:py-5" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.875}px; color: ${config.text_color};">
+                          <span class="px-2 md:px-4 py-1.5 md:py-2 rounded-lg font-bold whitespace-nowrap" style="background: linear-gradient(135deg, ${config.primary_color}15, ${config.accent_color}20); color: ${config.primary_color}; border: 1.5px solid ${config.primary_color}30; display: inline-block; font-size: ${baseSize * 0.75}px;">
+                            ${user.package}
+                          </span>
+                        </td>
+                        <td class="px-3 md:px-6 py-3 md:py-5" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.8}px; color: #475569; font-weight: 500; white-space: nowrap;">${user.joinDate}</td>
+                        <td class="px-3 md:px-6 py-3 md:py-5 font-bold" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.875}px; color: #10b981; white-space: nowrap;">${user.volume}</td>
+                        <td class="px-3 md:px-6 py-3 md:py-5">
+                          <span class="px-2 md:px-4 py-1.5 md:py-2 rounded-lg font-bold inline-flex items-center gap-1.5 md:gap-2" style="background: ${user.status === 'Active' ? '#10b981' : '#ef4444'}; color: #ffffff; box-shadow: 0 2px 8px ${user.status === 'Active' ? '#10b98130' : '#ef444430'}; font-size: ${baseSize * 0.75}px; white-space: nowrap;">
+                            <span style="width: 5px; height: 5px; border-radius: 50%; background: #ffffff;"></span>
+                            ${user.status}
+                          </span>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="px-4 md:px-8 py-4 md:py-6 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-0 border-t-2" style="border-color: #e2e8f0; background: linear-gradient(to bottom, #f8fafc, #ffffff);">
+                <div style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.8125}px; color: #64748b; font-weight: 500; text-align: center;">
+                  Showing <span class="font-bold" style="color: ${config.text_color};">${startIndex + 1}</span> to <span class="font-bold" style="color: ${config.text_color};">${Math.min(endIndex, filteredUsers.length)}</span> of <span class="font-bold" style="color: ${config.text_color};">${filteredUsers.length}</span> users
+                </div>
+                <div class="flex gap-2 md:gap-3 items-center">
+                  <button 
+                    id="prevBtn" 
+                    class="px-4 md:px-6 py-2 md:py-3 rounded-lg font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+                    style="background: ${config.primary_color}; color: #ffffff; font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.8125}px; box-shadow: 0 4px 12px ${config.primary_color}40;"
+                    onmouseover="if(!this.disabled) this.style.transform='translateY(-2px)'; if(!this.disabled) this.style.boxShadow='0 6px 20px ${config.primary_color}50';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px ${config.primary_color}40';"
+                    ${currentPage === 1 ? 'disabled' : ''}
+                  >
+                    ← Prev
+                  </button>
+                  <div class="flex items-center px-3 md:px-6 py-2 md:py-3 rounded-lg" style="font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.875}px; color: ${config.text_color}; background: #f1f5f9; font-weight: 600;">
+                    <span style="color: #64748b;">Page</span> <span class="mx-2" style="color: ${config.primary_color}; font-size: ${baseSize * 1}px;">${currentPage}</span> <span style="color: #64748b;">of ${totalPages}</span>
+                  </div>
+                  <button 
+                    id="nextBtn" 
+                    class="px-4 md:px-6 py-2 md:py-3 rounded-lg font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+                    style="background: ${config.primary_color}; color: #ffffff; font-family: ${customFont}, ${baseFontStack}; font-size: ${baseSize * 0.8125}px; box-shadow: 0 4px 12px ${config.primary_color}40;"
+                    onmouseover="if(!this.disabled) this.style.transform='translateY(-2px)'; if(!this.disabled) this.style.boxShadow='0 6px 20px ${config.primary_color}50';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px ${config.primary_color}40';"
+                    ${currentPage === totalPages ? 'disabled' : ''}
+                  >
+                    Next →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Add event listeners
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          if (currentPage > 1) {
+            currentPage--;
+            renderUserList();
+          }
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderUserList();
+          }
+        });
+      }
+
+      // Add copy functionality with popup
+      const copyButtons = document.querySelectorAll('.copy-btn');
+      copyButtons.forEach(btn => {
+        btn.onclick = function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const address = this.getAttribute('data-address');
+          
+          // Create textarea for copying
+          const textarea = document.createElement('textarea');
+          textarea.value = address;
+          textarea.style.position = 'fixed';
+          textarea.style.left = '-9999px';
+          document.body.appendChild(textarea);
+          textarea.select();
+          
+          try {
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            // Show success popup
+            const popup = document.createElement('div');
+            popup.textContent = '✓ Address copied!';
+            popup.style.cssText = `
+              position: fixed;
+              top: 20px;
+              left: 50%;
+              transform: translateX(-50%);
+              background: #10b981;
+              color: white;
+              padding: 16px 32px;
+              border-radius: 12px;
+              font-family: ${customFont}, ${baseFontStack};
+              font-size: ${baseSize}px;
+              font-weight: 700;
+              box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+              z-index: 10000;
+            `;
+            document.body.appendChild(popup);
+            
+            // Change button appearance
+            const originalContent = this.innerHTML;
+            const originalBg = this.style.background;
+            const originalColor = this.style.color;
+            this.innerHTML = '✓';
+            this.style.background = '#10b981';
+            this.style.color = '#ffffff';
+            
+            setTimeout(() => {
+              popup.remove();
+              this.innerHTML = originalContent;
+              this.style.background = originalBg;
+              this.style.color = originalColor;
+            }, 2000);
+          } catch (err) {
+            document.body.removeChild(textarea);
+            
+            // Show error popup
+            const popup = document.createElement('div');
+            popup.textContent = '✗ Failed to copy';
+            popup.style.cssText = `
+              position: fixed;
+              top: 20px;
+              left: 50%;
+              transform: translateX(-50%);
+              background: #ef4444;
+              color: white;
+              padding: 16px 32px;
+              border-radius: 12px;
+              font-family: ${customFont}, ${baseFontStack};
+              font-size: ${baseSize}px;
+              font-weight: 700;
+              box-shadow: 0 8px 20px rgba(239, 68, 68, 0.5);
+              z-index: 10000;
+            `;
+            document.body.appendChild(popup);
+            
+            setTimeout(() => {
+              popup.remove();
+            }, 2000);
+          }
+        };
+      });
+
+      // Filter function that applies both search and package filters
+      function applyFilters() {
+        filteredUsers = allUsers;
+        
+        // Apply package filter
+        if (selectedPackage !== 'all') {
+          filteredUsers = filteredUsers.filter(user => 
+            user.package.startsWith(selectedPackage)
+          );
+        }
+        
+        // Apply search filter
+        if (searchQuery.length > 0) {
+          filteredUsers = filteredUsers.filter(user => 
+            user.address.toLowerCase().includes(searchQuery) || 
+            user.referredBy.toLowerCase().includes(searchQuery)
+          );
+        }
+        
+        currentPage = 1;
+        renderUserList();
+      }
+
+      // Add search functionality
+      const searchInput = document.getElementById('searchInput');
+      const clearSearchBtn = document.getElementById('clearSearch');
+      const searchResults = document.getElementById('searchResults');
+
+      if (searchInput) {
+        searchInput.value = searchQuery;
+        
+        searchInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value.toLowerCase();
+          
+          if (searchQuery.length > 0) {
+            clearSearchBtn.style.display = 'block';
+          } else {
+            clearSearchBtn.style.display = 'none';
+          }
+          
+          applyFilters();
+        });
+      }
+
+      if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', () => {
+          searchQuery = '';
+          applyFilters();
+        });
+      }
+
+      // Update search results display
+      if (searchResults) {
+        if (searchQuery.length > 0) {
+          if (filteredUsers.length === 0) {
+            searchResults.innerHTML = `<span style="color: #ef4444;">No users found matching "${searchQuery}"</span>`;
+          } else {
+            searchResults.innerHTML = `Found <span style="color: ${config.primary_color}; font-weight: 700;">${filteredUsers.length}</span> user${filteredUsers.length === 1 ? '' : 's'}`;
+          }
+        } else {
+          searchResults.innerHTML = '';
+        }
+      }
+
+      // Add package filter functionality
+      const packageFilterBtns = document.querySelectorAll('.package-filter-btn');
+      packageFilterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const packageName = btn.getAttribute('data-package');
+          selectedPackage = packageName;
+          applyFilters();
+        });
+      });
+
+      const clearPackageFilterBtn = document.getElementById('clearPackageFilter');
+      if (clearPackageFilterBtn) {
+        clearPackageFilterBtn.addEventListener('click', () => {
+          selectedPackage = 'all';
+          applyFilters();
+        });
+      }
+    }
+
+    // Element SDK implementation
+    async function onConfigChange(config) {
+      renderUserList();
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              config.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (value) => {
+              config.primary_color = value;
+              window.elementSdk.setConfig({ primary_color: value });
+            }
+          },
+          {
+            get: () => config.accent_color || defaultConfig.accent_color,
+            set: (value) => {
+              config.accent_color = value;
+              window.elementSdk.setConfig({ accent_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["page_title", config.page_title || defaultConfig.page_title],
+        ["table_header", config.table_header || defaultConfig.table_header]
+      ]);
+    }
+
+    // Initialize
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+
+    renderUserList();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b160f3640a145af',t:'MTc2NjMwNjI2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

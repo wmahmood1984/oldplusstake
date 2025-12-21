@@ -123,6 +123,13 @@ export default function Nav({ setCreateActive, createActive }) {
                     >
                       Admin form
                     </Link>
+                    <Link
+                      to="/lists"
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+                    >
+                      Lists
+                    </Link>
 
                   </>}
                 {address == bulkAdd && <Link to="/bulk" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Bulk Upload</Link>}
@@ -203,6 +210,14 @@ export default function Nav({ setCreateActive, createActive }) {
                       className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
                     >
                       Admin form
+                    </Link>
+
+                                        <Link
+                      to="/lists"
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+                    >
+                      Lists
                     </Link>
 
                   </>

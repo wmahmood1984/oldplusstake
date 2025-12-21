@@ -68,3 +68,31 @@ export     function shuffleArray(arr) {
 
         return array;
     }
+
+export     function secondsToHMSDiff(seconds) {
+
+        seconds = Number(seconds);
+
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+
+        // Format: HH:MM:SS
+        return (
+            String(h).padStart(2, "0") + " hrs : " +
+            String(m).padStart(2, "0") + " min ago"
+            // +
+            // String(s).padStart(2, "0") + " seconds ago"
+        );
+    }
+
+
+export function secondsToDMY(seconds) {
+    const date = new Date(Number(seconds) * 1000); // convert to milliseconds
+
+    return date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+    });
+}

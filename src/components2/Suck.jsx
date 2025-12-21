@@ -285,30 +285,30 @@ export default function Suck() {
         return diffFormatted
 
     }
- 
+
 
     const lastTraded1 = nfts && [...nfts].sort((a, b) =>
-            Number(a.purchasedTime) - Number(b.purchasedTime)
-        )  // && analyzeLastNFTTransaction(Trades);
-    
+        Number(a.purchasedTime) - Number(b.purchasedTime)
+    )  // && analyzeLastNFTTransaction(Trades);
+
     const selected = nfts && lastTraded1[lastTraded1.length - 1]; // most recent event
-    
+
     const selectedFiltered = Trades && Trades.filter(ev => ev.returnValues.id === selected.id);
 
     const previous = selectedFiltered && selectedFiltered[selectedFiltered.length - 3];
 
     const diffSeconds = Number(selected?.purchasedTime) - Number(previous?.returnValues?.time);
 
-   let lastTraded;
+    let lastTraded;
 
-if (Number.isFinite(diffSeconds)) {
-    lastTraded = secondsToHMS(diffSeconds);
-} else {
-    lastTraded = "More than 24 hours ago.";
-}
+    if (Number.isFinite(diffSeconds)) {
+        lastTraded = secondsToHMS(diffSeconds);
+    } else {
+        lastTraded = "More than 24 hours ago.";
+    }
 
-        
-    console.log("nfts",nfts,"nftsburnt",nftBurnt);
+
+    console.log("nfts", nfts, "nftsburnt", nftBurnt);
 
     const removeNFT = async () => {
         setLoading(true)
@@ -784,7 +784,7 @@ if (Number.isFinite(diffSeconds)) {
                         </div>
                         <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-8 sm:mb-12 border border-indigo-200">
                             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                                
+
                                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
                                     <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
                                         <div id="total-nfts" class="text-xl sm:text-2xl lg:text-3xl font-bold text-indigo-600">
@@ -923,18 +923,18 @@ if (Number.isFinite(diffSeconds)) {
 
 
                         <div class="text-center lg:text-left">
-                                    <div class="flex flex-col sm:flex-row gap-3 mb-2">
-                                        <button
+                            <div class="flex flex-col sm:flex-row gap-3 mb-2">
+                                <button
 
 
-                                            // id="show-create-btn"
-                                            onClick={() => { setCreate(true) }}
-                                            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-105">
-                                            🎨 Create NFT </button>
+                                    // id="show-create-btn"
+                                    onClick={() => { setCreate(true) }}
+                                    class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-105">
+                                    🎨 Create NFT </button>
 
-                                    </div>
-                                    <p class="text-sm text-gray-600">Create your own NFTs or browse the marketplace</p>
-                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600">Create your own NFTs or browse the marketplace</p>
+                        </div>
 
                         <>
                             <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
