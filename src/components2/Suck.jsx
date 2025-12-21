@@ -793,19 +793,7 @@ export default function Suck() {
                         </div>
                         <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-8 sm:mb-12 border border-indigo-200">
                             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                                <div class="text-center lg:text-left">
-                                    <div class="flex flex-col sm:flex-row gap-3 mb-2">
-                                        <button
-
-
-                                            // id="show-create-btn"
-                                            onClick={() => { setCreate(true) }}
-                                            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-105">
-                                            🎨 Create NFT </button>
-
-                                    </div>
-                                    <p class="text-sm text-gray-600">Create your own NFTs or browse the marketplace</p>
-                                </div>
+                                
                                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
                                     <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
                                         <div id="total-nfts" class="text-xl sm:text-2xl lg:text-3xl font-bold text-indigo-600">
@@ -941,6 +929,21 @@ export default function Suck() {
                                 </div>
                             </div>
                         </div>
+
+
+                        <div class="text-center lg:text-left">
+                                    <div class="flex flex-col sm:flex-row gap-3 mb-2">
+                                        <button
+
+
+                                            // id="show-create-btn"
+                                            onClick={() => { setCreate(true) }}
+                                            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-105">
+                                            🎨 Create NFT </button>
+
+                                    </div>
+                                    <p class="text-sm text-gray-600">Create your own NFTs or browse the marketplace</p>
+                                </div>
 
                         <>
                             <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
