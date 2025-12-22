@@ -2736,6 +2736,24 @@ export const fetcherAbi = [
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newImplementation",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
+		],
+		"name": "upgradeToAndCall",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "UUPSUnauthorizedCallContext",
 		"type": "error"
@@ -2799,24 +2817,6 @@ export const fetcherAbi = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "newImplementation",
-				"type": "address"
-			},
-			{
-				"internalType": "bytes",
-				"name": "data",
-				"type": "bytes"
-			}
-		],
-		"name": "upgradeToAndCall",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "uint256[]",
 				"name": "ids",
 				"type": "uint256[]"
@@ -2836,6 +2836,56 @@ export const fetcherAbi = [
 	{
 		"inputs": [],
 		"name": "getNFTs",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "price",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "uri",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "premium",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "utilized",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "purchasedTime",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct DataFetcherUpgradeable.NFTInfo[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getNFTUsed",
 		"outputs": [
 			{
 				"components": [
