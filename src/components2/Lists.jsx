@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import UserListDemo from "./UserListDemo";
 import Burning from "./Burning";
+import TradingQue from "./TradingQue";
 
 export default function Lists() {
     const [activeTab, setActiveTab] = useState("users");
@@ -9,6 +10,16 @@ export default function Lists() {
         <div>
             {/* Tabs */}
             <div className="flex gap-4 mb-6">
+                <button
+                    onClick={() => setActiveTab("tradingQue")}
+                    className={`px-5 py-2 rounded-lg font-semibold transition-all ${
+                        activeTab === "tradingQue"
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-200 text-gray-700"
+                    }`}
+                >
+                    Trading Que
+                </button>
                 <button
                     onClick={() => setActiveTab("users")}
                     className={`px-5 py-2 rounded-lg font-semibold transition-all ${
@@ -33,6 +44,7 @@ export default function Lists() {
             </div>
 
             {/* Tab Content */}
+            {activeTab === "tradingQue" && <TradingQue />}
             {activeTab === "users" && <UserListDemo />}
             {activeTab === "burning" && <Burning />}
         </div>

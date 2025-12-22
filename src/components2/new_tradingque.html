@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT Trading Queue</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 16px 24px;
+            padding-right: 100px;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            font-size: 14px;
+            background: white;
+            color: #0f172a;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .clear-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        
+        .clear-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            padding: 24px;
+            border-radius: 16px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            margin-bottom: 30px;
+        }
+        
+        /* NEW: Total Value Stats Card */
+        .stats-card-value {
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            padding: 24px;
+            border-radius: 16px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+            margin-bottom: 30px;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+        }
+        
+        .table-cell {
+            padding: 16px 20px;
+        }
+        
+        .token-badge {
+            display: inline-block;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .token-badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .time-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #f59e0b;
+            color: white;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        
+        .copy-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: opacity 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .copy-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .address-cell {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .address-text {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #1e293b;
+            font-weight: 700;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+        
+        .pagination {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            border-top: 2px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        @media (min-width: 640px) {
+            .pagination {
+                flex-direction: row;
+            }
+        }
+        
+        .pagination-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            transition: all 0.2s ease;
+        }
+        
+        .pagination-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .page-info {
+            padding: 8px 16px;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            font-size: 12px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+        
+        /* NFT Modal Styles */
+        .nft-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .nft-modal.active {
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .nft-modal-content {
+            animation: zoomIn 0.3s ease;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90%;
+            overflow-y: auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .modal-close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .modal-close-btn:hover {
+            background: rgba(239, 68, 68, 0.9);
+            transform: rotate(90deg);
+        }
+        
+        .rarity-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .rarity-common { background: #94a3b8; }
+        .rarity-rare { background: #3b82f6; }
+        .rarity-epic { background: #a855f7; }
+        .rarity-legendary { background: #f59e0b; }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .info-box {
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        .modal-section {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+        }
+        
+        .modal-action-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .modal-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+        
+        .nft-image {
+            width: 100%;
+            height: 300px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            table {
+                min-width: 800px;
+            }
+        }
+        
+        /* NEW: Stats grid layout */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 style="font-size: 2.5rem; color: #0f172a; font-weight: 900; margin-bottom: 12px; text-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                NFT Trading Queue
+            </h1>
+            <p style="font-size: 1.125rem; color: #0f172a; opacity: 0.8; font-weight: 500;">
+                Active NFT Listings
+            </p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-box">
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="🔍 Search by token number or owner address..." 
+                class="search-input"
+            />
+            <button id="clearSearch" class="clear-btn" style="display: none;">
+                Clear
+            </button>
+        </div>
+        <div id="searchResults" style="font-size: 14px; color: #0f172a; opacity: 0.7; margin-top: 8px;"></div>
+
+        <!-- Statistics Grid -->
+        <div class="stats-grid">
+            <!-- Total NFTs in Marketplace Card -->
+            <div class="stats-card">
+                <div style="font-size: 14px; color: white; opacity: 0.9; margin-bottom: 8px; font-weight: 600;">
+                    🎨 Total NFTs in Marketplace
+                </div>
+                <div style="font-size: 3rem; color: white; font-weight: 900;">
+                    100
+                </div>
+            </div>
+
+            <!-- NEW: Total Value of NFTs in Marketplace Card -->
+            <div class="stats-card-value">
+                <div style="font-size: 14px; color: white; opacity: 0.9; margin-bottom: 8px; font-weight: 600;">
+                    💰 Total Value of NFTs in Marketplace
+                </div>
+                <div style="font-size: 3rem; color: white; font-weight: 900;">
+                    $6,280.86
+                </div>
+            </div>
+        </div>
+
+        <!-- NFTs Table -->
+        <div class="table-container">
+            <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                <table style="width: 100%; min-width: 320px;">
+                    <thead class="table-header">
+                        <tr>
+                            <th class="table-cell" style="font-size: 11px; letter-spacing: 0.05em;">Queue</th>
+                            <th class="table-cell" style="font-size: 11px; letter-spacing: 0.05em;">NFT Token</th>
+                            <th class="table-cell" style="font-size: 11px; letter-spacing: 0.05em;">Buy Time</th>
+                            <th class="table-cell" style="font-size: 11px; letter-spacing: 0.05em;">Trade Time</th>
+                            <th class="table-cell" style="font-size: 11px; letter-spacing: 0.05em;">Owner</th>
+                            <th class="table-cell" style="font-size: 11px; letter-spacing: 0.05em;">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- NFT 1 -->
+                        <tr class="border-b" style="border-color: rgba(59, 130, 246, 0.3); background: white;">
+                            <td class="table-cell" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                                #1
+                            </td>
+                            <td class="table-cell">
+                                <span class="token-badge" data-token="1">
+                                    NFT-1001
+                                </span>
+                            </td>
+                            <td class="table-cell" style="font-size: 11px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                                Jan 15, 2023, 10:30 AM
+                            </td>
+                            <td class="table-cell">
+                                <span class="time-badge">
+                                    ⏱️ 120h
+                                </span>
+                            </td>
+                            <td class="table-cell">
+                                <div class="address-cell">
+                                    <span class="address-text">
+                                        0x7a3b9c8d1e2f4a5b6c7d8e9f0a
+                                    </span>
+                                    <button class="copy-btn" data-address="0x7a3b9c8d1e2f4a5b6c7d8e9f0a">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="table-cell" style="font-size: 13px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                                $53.50
+                            </td>
+                        </tr>
+
+                        <!-- NFT 2 -->
+                        <tr class="border-b" style="border-color: rgba(59, 130, 246, 0.3); background: rgba(248, 250, 252, 0.8);">
+                            <td class="table-cell" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                                #2
+                            </td>
+                            <td class="table-cell">
+                                <span class="token-badge" data-token="2">
+                                    NFT-1002
+                                </span>
+                            </td>
+                            <td class="table-cell" style="font-size: 11px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                                Jan 16, 2023, 02:15 PM
+                            </td>
+                            <td class="table-cell">
+                                <span class="time-badge">
+                                    ⏱️ 96h
+                                </span>
+                            </td>
+                            <td class="table-cell">
+                                <div class="address-cell">
+                                    <span class="address-text">
+                                        0x9f0a1b2c3d4e5f6a7b8c9d0e1f
+                                    </span>
+                                    <button class="copy-btn" data-address="0x9f0a1b2c3d4e5f6a7b8c9d0e1f">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="table-cell" style="font-size: 13px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                                $57.24
+                            </td>
+                        </tr>
+
+                        <!-- NFT 3 -->
+                        <tr class="border-b" style="border-color: rgba(59, 130, 246, 0.3); background: white;">
+                            <td class="table-cell" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                                #3
+                            </td>
+                            <td class="table-cell">
+                                <span class="token-badge" data-token="3">
+                                    NFT-1003
+                                </span>
+                            </td>
+                            <td class="table-cell" style="font-size: 11px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                                Jan 17, 2023, 09:45 AM
+                            </td>
+                            <td class="table-cell">
+                                <span class="time-badge">
+                                    ⏱️ 72h
+                                </span>
+                            </td>
+                            <td class="table-cell">
+                                <div class="address-cell">
+                                    <span class="address-text">
+                                        0x2a4b6c8d0e2f4a6b8c0d2e4f6a
+                                    </span>
+                                    <button class="copy-btn" data-address="0x2a4b6c8d0e2f4a6b8c0d2e4f6a">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="table-cell" style="font-size: 13px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                                $61.24
+                            </td>
+                        </tr>
+
+                        <!-- NFT 4 -->
+                        <tr class="border-b" style="border-color: rgba(59, 130, 246, 0.3); background: rgba(248, 250, 252, 0.8);">
+                            <td class="table-cell" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                                #4
+                            </td>
+                            <td class="table-cell">
+                                <span class="token-badge" data-token="4">
+                                    NFT-1004
+                                </span>
+                            </td>
+                            <td class="table-cell" style="font-size: 11px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                                Jan 18, 2023, 11:20 PM
+                            </td>
+                            <td class="table-cell">
+                                <span class="time-badge">
+                                    ⏱️ 48h
+                                </span>
+                            </td>
+                            <td class="table-cell">
+                                <div class="address-cell">
+                                    <span class="address-text">
+                                        0x8c0d2e4f6a8b0d2e4f6a8b0d2e
+                                    </span>
+                                    <button class="copy-btn" data-address="0x8c0d2e4f6a8b0d2e4f6a8b0d2e">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="table-cell" style="font-size: 13px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                                $65.04
+                            </td>
+                        </tr>
+
+                        <!-- NFT 5 -->
+                        <tr class="border-b" style="border-color: rgba(59, 130, 246, 0.3); background: white;">
+                            <td class="table-cell" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                                #5
+                            </td>
+                            <td class="table-cell">
+                                <span class="token-badge" data-token="5">
+                                    NFT-1005
+                                </span>
+                            </td>
+                            <td class="table-cell" style="font-size: 11px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                                Jan 19, 2023, 03:50 PM
+                            </td>
+                            <td class="table-cell">
+                                <span class="time-badge">
+                                    ⏱️ 24h
+                                </span>
+                            </td>
+                            <td class="table-cell">
+                                <div class="address-cell">
+                                    <span class="address-text">
+                                        0x3b5d7f9a1c3e5b7d9f1a3c5e7b
+                                    </span>
+                                    <button class="copy-btn" data-address="0x3b5d7f9a1c3e5b7d9f1a3c5e7b">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="table-cell" style="font-size: 13px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                                $75.28
+                            </td>
+                        </tr>
+
+                        <!-- NFT 6 -->
+                        <tr class="border-b" style="border-color: rgba(59, 130, 246, 0.3); background: rgba(248, 250, 252, 0.8);">
+                            <td class="table-cell" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                                #6
+                            </td>
+                            <td class="table-cell">
+                                <span class="token-badge" data-token="6">
+                                    NFT-1006
+                                </span>
+                            </td>
+                            <td class="table-cell" style="font-size: 11px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                                Jan 20, 2023, 08:10 AM
+                            </td>
+                            <td class="table-cell">
+                                <span class="time-badge">
+                                    ⏱️ 168h
+                                </span>
+                            </td>
+                            <td class="table-cell">
+                                <div class="address-cell">
+                                    <span class="address-text">
+                                        0x1a3c5e7b9d1f3a5c7e9b1d3f5a
+                                    </span>
+                                    <button class="copy-btn" data-address="0x1a3c5e7b9d1f3a5c7e9b1d3f5a">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="table-cell" style="font-size: 13px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                                $53.50
+                            </td>
+                        </tr>
+
+                        <!-- NFT 7 -->
+                        <tr class="border-b" style="border-color: rgba(59, 130, 246, 0.3); background: white;">
+                            <td class="table-cell" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                                #7
+                            </td>
+                            <td class="table-cell">
+                                <span class="token-badge" data-token="7">
+                                    NFT-1007
+                                </span>
+                            </td>
+                            <td class="table-cell" style="font-size: 11px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                                Jan 21, 2023, 01:30 PM
+                            </td>
+                            <td class="table-cell">
+                                <span class="time-badge">
+                                    ⏱️ 144h
+                                </span>
+                            </td>
+                            <td class="table-cell">
+                                <div class="address-cell">
+                                    <span class="address-text">
+                                        0x4c6e8a0b2d4f6a8c0e2a4c6e8a
+                                    </span>
+                                    <button class="copy-btn" data-address="0x4c6e8a0b2d4f6a8c0e2a4c6e8a">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="table-cell" style="font-size: 13px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                                $57.24
+                            </td>
+                        </tr>
+
+                        <!-- NFT 8 -->
+                        <tr class="border-b" style="border-color: rgba(59, 130, 246, 0.3); background: rgba(248, 250, 252, 0.8);">
+                            <td class="table-cell" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                                #8
+                            </td>
+                            <td class="table-cell">
+                                <span class="token-badge" data-token="8">
+                                    NFT-1008
+                                </span>
+                            </td>
+                            <td class="table-cell" style="font-size: 11px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                                Jan 22, 2023, 06:45 PM
+                            </td>
+                            <td class="table-cell">
+                                <span class="time-badge">
+                                    ⏱️ 120h
+                                </span>
+                            </td>
+                            <td class="table-cell">
+                                <div class="address-cell">
+                                    <span class="address-text">
+                                        0x2b4d6f8a0c2e4a6c8e0a2b4d6f
+                                    </span>
+                                    <button class="copy-btn" data-address="0x2b4d6f8a0c2e4a6c8e0a2b4d6f">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="table-cell" style="font-size: 13px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                                $61.24
+                            </td>
+                        </tr>
+
+                        <!-- NFT 9 -->
+                        <tr class="border-b" style="border-color: rgba(59, 130, 246, 0.3); background: white;">
+                            <td class="table-cell" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                                #9
+                            </td>
+                            <td class="table-cell">
+                                <span class="token-badge" data-token="9">
+                                    NFT-1009
+                                </span>
+                            </td>
+                            <td class="table-cell" style="font-size: 11px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                                Jan 23, 2023, 10:15 AM
+                            </td>
+                            <td class="table-cell">
+                                <span class="time-badge">
+                                    ⏱️ 96h
+                                </span>
+                            </td>
+                            <td class="table-cell">
+                                <div class="address-cell">
+                                    <span class="address-text">
+                                        0x5d7f9a1c3e5b7d9f1a3c5e7b9d
+                                    </span>
+                                    <button class="copy-btn" data-address="0x5d7f9a1c3e5b7d9f1a3c5e7b9d">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="table-cell" style="font-size: 13px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                                $65.04
+                            </td>
+                        </tr>
+
+                        <!-- NFT 10 -->
+                        <tr class="border-b" style="border-color: rgba(59, 130, 246, 0.3); background: rgba(248, 250, 252, 0.8);">
+                            <td class="table-cell" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                                #10
+                            </td>
+                            <td class="table-cell">
+                                <span class="token-badge" data-token="10">
+                                    NFT-1010
+                                </span>
+                            </td>
+                            <td class="table-cell" style="font-size: 11px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                                Jan 24, 2023, 04:20 PM
+                            </td>
+                            <td class="table-cell">
+                                <span class="time-badge">
+                                    ⏱️ 72h
+                                </span>
+                            </td>
+                            <td class="table-cell">
+                                <div class="address-cell">
+                                    <span class="address-text">
+                                        0x3c5e7b9d1f3a5c7e9b1d3f5a7c
+                                    </span>
+                                    <button class="copy-btn" data-address="0x3c5e7b9d1f3a5c7e9b1d3f5a7c">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="table-cell" style="font-size: 13px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                                $75.28
+                            </td>
+                        </tr>
+
+                        <!-- Add more rows similarly up to 50... -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <div style="font-size: 12px; color: #0f172a; opacity: 0.8; text-align: center;">
+                    <strong>1</strong>-<strong>10</strong> of <strong>100</strong>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button id="prevBtn" class="pagination-btn" disabled>
+                        ← Prev
+                    </button>
+                    <div class="page-info">
+                        1/10
+                    </div>
+                    <button id="nextBtn" class="pagination-btn">
+                        Next →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NFT Modal -->
+    <div id="nftModal" class="nft-modal">
+        <div class="nft-modal-content">
+            <div style="position: relative;">
+                <button class="modal-close-btn" id="closeModal">
+                    ×
+                </button>
+                
+                <div class="nft-image">
+                    <svg width="100%" height="300" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#4ECDC4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#45B7D1;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="400" height="400" fill="url(#grad-1)"/>
+                        <circle cx="200" cy="150" r="80" fill="rgba(255,255,255,0.2)"/>
+                        <circle cx="150" cy="250" r="60" fill="rgba(255,255,255,0.15)"/>
+                        <circle cx="280" cy="280" r="70" fill="rgba(255,255,255,0.15)"/>
+                        <text x="200" y="350" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="white" text-anchor="middle">
+                            NFT-1001
+                        </text>
+                    </svg>
+                </div>
+                
+                <div style="padding: 24px; background: linear-gradient(to bottom, white, #f8fafc);">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                        <div>
+                            <h2 style="font-size: 1.75rem; color: #0f172a; font-weight: 800; margin: 0 0 8px 0;">
+                                NFT-1001
+                            </h2>
+                            <div class="rarity-badge rarity-rare" style="background: #3b82f6">
+                                ✨ Rare
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 12px; color: #0f172a; opacity: 0.7; margin-bottom: 4px;">
+                                Value
+                            </div>
+                            <div style="font-size: 1.5rem; color: #10b981; font-weight: 800;">
+                                $53.50
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-section">
+                        <div style="font-size: 14px; color: #0f172a; opacity: 0.8; margin-bottom: 8px; font-weight: 600;">
+                            📍 Queue Position
+                        </div>
+                        <div style="font-size: 1.25rem; color: #3b82f6; font-weight: 700;">
+                            #1
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 14px; color: #0f172a; opacity: 0.8; margin-bottom: 8px; font-weight: 600;">
+                            👤 Owner Address
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                            <span style="font-family: 'Courier New', monospace; font-size: 11px; color: #0f172a; word-break: break-all; flex: 1;">
+                                0x7a3b9c8d1e2f4a5b6c7d8e9f0a
+                            </span>
+                            <button 
+                                class="copy-btn modal-copy-btn"
+                                data-address="0x7a3b9c8d1e2f4a5b6c7d8e9f0a"
+                                style="background: #3b82f6; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; flex-shrink: 0;"
+                            >
+                                📋 Copy
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="info-grid" style="margin-bottom: 20px;">
+                        <div class="info-box">
+                            <div style="font-size: 12px; color: #0f172a; opacity: 0.7; margin-bottom: 4px;">
+                                🕐 Buy Time
+                            </div>
+                            <div style="font-size: 13px; color: #0f172a; font-weight: 600;">
+                                Jan 15, 2023, 10:30 AM
+                            </div>
+                        </div>
+                        
+                        <div class="info-box">
+                            <div style="font-size: 12px; color: #0f172a; opacity: 0.7; margin-bottom: 4px;">
+                                ⏱️ Trade Time
+                            </div>
+                            <div style="font-size: 13px; color: #f59e0b; font-weight: 700;">
+                                120 hours
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <div style="font-size: 14px; color: #0f172a; opacity: 0.8; margin-bottom: 8px; font-weight: 600;">
+                            👥 Total Value of NFT Holders
+                        </div>
+                        <div style="font-size: 1.5rem; color: #3b82f6; font-weight: 700;">
+                            $5,350.00
+                        </div>
+                        <div style="font-size: 12px; color: #0f172a; opacity: 0.6; margin-top: 4px;">
+                            100 holders × $53.50
+                        </div>
+                    </div>
+                    
+                    <button class="modal-action-btn" id="hideModalBtn">
+                        🙈 Hide NFT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Copy functionality with popup
+        document.addEventListener('DOMContentLoaded', function() {
+            // Copy buttons in table
+            document.addEventListener('click', function(e) {
+                // Table copy buttons
+                if (e.target.classList.contains('copy-btn') && !e.target.classList.contains('modal-copy-btn')) {
+                    const address = e.target.getAttribute('data-address');
+                    
+                    // Create textarea for copying
+                    const textarea = document.createElement('textarea');
+                    textarea.value = address;
+                    textarea.style.position = 'fixed';
+                    textarea.style.left = '-9999px';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    
+                    try {
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        
+                        // Show success popup
+                        const popup = document.createElement('div');
+                        popup.textContent = '✓ Address copied!';
+                        popup.style.cssText = `
+                            position: fixed;
+                            top: 20px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            background: #10b981;
+                            color: white;
+                            padding: 16px 32px;
+                            border-radius: 12px;
+                            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+                            font-size: 16px;
+                            font-weight: 700;
+                            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+                            z-index: 10000;
+                        `;
+                        document.body.appendChild(popup);
+                        
+                        // Change button appearance
+                        const originalText = e.target.innerHTML;
+                        e.target.innerHTML = '✓';
+                        e.target.style.background = '#10b981';
+                        
+                        setTimeout(() => {
+                            popup.remove();
+                            e.target.innerHTML = originalText;
+                            e.target.style.background = '#3b82f6';
+                        }, 2000);
+                    } catch (err) {
+                        document.body.removeChild(textarea);
+                        
+                        // Show error popup
+                        const popup = document.createElement('div');
+                        popup.textContent = '✗ Failed to copy';
+                        popup.style.cssText = `
+                            position: fixed;
+                            top: 20px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            background: #ef4444;
+                            color: white;
+                            padding: 16px 32px;
+                            border-radius: 12px;
+                            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+                            font-size: 16px;
+                            font-weight: 700;
+                            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.5);
+                            z-index: 10000;
+                        `;
+                        document.body.appendChild(popup);
+                        
+                        setTimeout(() => {
+                            popup.remove();
+                        }, 2000);
+                    }
+                }
+                
+                // Modal copy button
+                if (e.target.classList.contains('modal-copy-btn')) {
+                    const address = e.target.getAttribute('data-address');
+                    navigator.clipboard.writeText(address).then(() => {
+                        const originalText = e.target.innerHTML;
+                        e.target.innerHTML = '✓ Copied!';
+                        e.target.style.background = '#10b981';
+                        
+                        setTimeout(() => {
+                            e.target.innerHTML = originalText;
+                            e.target.style.background = '#3b82f6';
+                        }, 2000);
+                    });
+                }
+                
+                // Token badge clicks
+                if (e.target.classList.contains('token-badge')) {
+                    const nftModal = document.getElementById('nftModal');
+                    nftModal.classList.add('active');
+                }
+                
+                // Close modal button
+                if (e.target.id === 'closeModal' || e.target.id === 'hideModalBtn') {
+                    const nftModal = document.getElementById('nftModal');
+                    nftModal.classList.remove('active');
+                }
+                
+                // Close modal on background click
+                if (e.target.classList.contains('nft-modal')) {
+                    e.target.classList.remove('active');
+                }
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            const clearSearchBtn = document.getElementById('clearSearch');
+            const searchResults = document.getElementById('searchResults');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const query = e.target.value.toLowerCase();
+                    
+                    if (query.length > 0) {
+                        clearSearchBtn.style.display = 'block';
+                        searchResults.innerHTML = `Searching for "${query}"...`;
+                    } else {
+                        clearSearchBtn.style.display = 'none';
+                        searchResults.innerHTML = '';
+                    }
+                });
+
+                searchInput.addEventListener('focus', function() {
+                    this.style.boxShadow = '0 4px 20px rgba(59, 130, 246, 0.4)';
+                });
+
+                searchInput.addEventListener('blur', function() {
+                    this.style.boxShadow = 'none';
+                });
+            }
+
+            if (clearSearchBtn) {
+                clearSearchBtn.addEventListener('click', function() {
+                    searchInput.value = '';
+                    searchResults.innerHTML = '';
+                    this.style.display = 'none';
+                });
+
+                clearSearchBtn.addEventListener('mouseover', function() {
+                    this.style.opacity = '0.8';
+                });
+
+                clearSearchBtn.addEventListener('mouseout', function() {
+                    this.style.opacity = '1';
+                });
+            }
+
+            // Token badge hover effects
+            const tokenBadges = document.querySelectorAll('.token-badge');
+            tokenBadges.forEach(badge => {
+                badge.addEventListener('mouseover', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                });
+
+                badge.addEventListener('mouseout', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                });
+            });
+
+            // Button hover effects
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            [prevBtn, nextBtn].forEach(btn => {
+                if (btn) {
+                    btn.addEventListener('mouseover', function() {
+                        if (!this.disabled) {
+                            this.style.transform = 'translateY(-2px)';
+                        }
+                    });
+
+                    btn.addEventListener('mouseout', function() {
+                        this.style.transform = 'translateY(0)';
+                    });
+                }
+            });
+
+            // Modal close button hover
+            const closeModalBtn = document.getElementById('closeModal');
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('mouseover', function() {
+                    this.style.background = 'rgba(239, 68, 68, 0.9)';
+                    this.style.transform = 'rotate(90deg)';
+                });
+
+                closeModalBtn.addEventListener('mouseout', function() {
+                    this.style.background = 'rgba(0, 0, 0, 0.7)';
+                    this.style.transform = 'rotate(0deg)';
+                });
+            }
+
+            // Modal action button hover
+            const hideModalBtn = document.getElementById('hideModalBtn');
+            if (hideModalBtn) {
+                hideModalBtn.addEventListener('mouseover', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.6)';
+                });
+
+                hideModalBtn.addEventListener('mouseout', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

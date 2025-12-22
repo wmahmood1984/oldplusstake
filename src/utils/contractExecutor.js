@@ -46,12 +46,15 @@ export function formatAddress(add) {
 }
 
 export function formatWithCommas(value, decimals = 2) {
-  if (value === null || value === undefined || value === "") return "";
-  
-  const num = Number(value).toFixed(decimals);
-  if (isNaN(num)) return value; // return original if not a valid number
+    if (value === null || value === undefined || value === "") return "";
 
-  return num.toLocaleString("en-US");
+    const num = Number(value);
+    if (isNaN(num)) return value;
+
+    return num.toLocaleString("en-US", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+    });
 }
 
 export function formatDate(dat) {

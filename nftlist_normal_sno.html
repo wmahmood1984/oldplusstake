@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFT Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    .nft-image-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .nft-image-container.active {
+      display: flex;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes zoomIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .nft-card {
+      animation: zoomIn 0.3s ease;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90%;
+      overflow-y: auto;
+    }
+    
+    .token-clickable {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .token-clickable:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    
+    .table-row:hover {
+      background-color: rgba(59, 130, 246, 0.05) !important;
+    }
+    
+    @media (max-width: 768px) {
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      table {
+        min-width: 320px;
+      }
+      
+      .price-filter-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+</head>
+<body class="h-full w-full m-0 p-0" style="background: linear-gradient(to bottom right, #f8fafc, #e2e8f0); font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+  <div class="min-h-full w-full p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+      <!-- Header -->
+      <div class="mb-6 md:mb-8 text-center">
+        <h1 style="font-size: 40px; color: #0f172a; font-weight: 900; margin-bottom: 12px; text-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+          NFT Marketplace
+        </h1>
+        <p style="font-size: 18px; color: #0f172a; opacity: 0.8; font-weight: 500;">
+          Active NFT Listings
+        </p>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="mb-6">
+        <div class="relative">
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="🔍 Search by token number or owner address..." 
+            class="w-full px-6 py-4 rounded-xl border-2 transition-all focus:outline-none"
+            style="border-color: #3b82f6; background: #ffffff; color: #0f172a; padding-right: 100px;"
+          />
+          <button 
+            id="clearSearch"
+            class="absolute right-2 top-1/2 px-4 py-2 rounded-lg transition-all"
+            style="transform: translateY(-50%); background: #3b82f6; color: #ffffff; font-weight: 600; border: none; cursor: pointer; display: none;"
+          >
+            Clear
+          </button>
+        </div>
+        <div id="searchResults" style="font-size: 14px; color: #0f172a; margin-top: 8px; opacity: 0.7;"></div>
+      </div>
+
+      <!-- Statistics -->
+      <div class="mb-8 rounded-2xl p-6" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);">
+        <div style="font-size: 14px; color: white; opacity: 0.9; margin-bottom: 8px; font-weight: 600;">
+          🎨 Total NFTs in Marketplace
+        </div>
+        <div style="font-size: 48px; color: white; font-weight: 900;">
+          100
+        </div>
+      </div>
+
+      <!-- Price Filter Boxes -->
+      <div class="mb-8">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="font-size: 16px; color: #0f172a; font-weight: 700;">
+            💰 Filter by Price
+          </div>
+        </div>
+        <div class="price-filter-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;">
+          <!-- $53.50 Filter -->
+          <div class="price-filter-card rounded-lg p-4 border-2 transition-all" 
+               style="background: #ffffff; border: 3px solid #3b82f6; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+            <div style="font-size: 20px; color: #3b82f6; font-weight: 900; margin-bottom: 8px;">
+              $53.50
+            </div>
+            <div style="font-size: 12px; color: #0f172a; opacity: 0.7; font-weight: 600;">
+              👥 20 NFTs
+            </div>
+          </div>
+
+          <!-- $57.24 Filter -->
+          <div class="price-filter-card rounded-lg p-4 border-2 transition-all" 
+               style="background: #ffffff; border: 3px solid #3b82f6; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+            <div style="font-size: 20px; color: #3b82f6; font-weight: 900; margin-bottom: 8px;">
+              $57.24
+            </div>
+            <div style="font-size: 12px; color: #0f172a; opacity: 0.7; font-weight: 600;">
+              👥 20 NFTs
+            </div>
+          </div>
+
+          <!-- $61.24 Filter -->
+          <div class="price-filter-card rounded-lg p-4 border-2 transition-all" 
+               style="background: #ffffff; border: 3px solid #3b82f6; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+            <div style="font-size: 20px; color: #3b82f6; font-weight: 900; margin-bottom: 8px;">
+              $61.24
+            </div>
+            <div style="font-size: 12px; color: #0f172a; opacity: 0.7; font-weight: 600;">
+              👥 20 NFTs
+            </div>
+          </div>
+
+          <!-- $65.04 Filter -->
+          <div class="price-filter-card rounded-lg p-4 border-2 transition-all" 
+               style="background: #ffffff; border: 3px solid #3b82f6; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+            <div style="font-size: 20px; color: #3b82f6; font-weight: 900; margin-bottom: 8px;">
+              $65.04
+            </div>
+            <div style="font-size: 12px; color: #0f172a; opacity: 0.7; font-weight: 600;">
+              👥 20 NFTs
+            </div>
+          </div>
+
+          <!-- $75.28 Filter -->
+          <div class="price-filter-card rounded-lg p-4 border-2 transition-all" 
+               style="background: #ffffff; border: 3px solid #3b82f6; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+            <div style="font-size: 20px; color: #3b82f6; font-weight: 900; margin-bottom: 8px;">
+              $75.28
+            </div>
+            <div style="font-size: 12px; color: #0f172a; opacity: 0.7; font-weight: 600;">
+              👥 20 NFTs
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NFT Table -->
+      <div class="rounded-2xl overflow-hidden" style="background: #ffffff; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);">
+        <div class="table-container overflow-x-auto" style="-webkit-overflow-scrolling: touch;">
+          <table class="w-full" style="min-width: 320px;">
+            <thead style="background: linear-gradient(135deg, #3b82f6, #8b5cf6);">
+              <tr>
+                <th class="px-3 py-4 text-left font-bold uppercase" style="font-size: 10.4px; color: white; letter-spacing: 0.05em;">S.no</th>
+                <th class="px-3 py-4 text-left font-bold uppercase" style="font-size: 10.4px; color: white; letter-spacing: 0.05em;">NFT Token</th>
+                <th class="px-3 py-4 text-left font-bold uppercase" style="font-size: 10.4px; color: white; letter-spacing: 0.05em;">Buy Time</th>
+                <th class="px-3 py-4 text-left font-bold uppercase" style="font-size: 10.4px; color: white; letter-spacing: 0.05em;">Trade Time</th>
+                <th class="px-3 py-4 text-left font-bold uppercase" style="font-size: 10.4px; color: white; letter-spacing: 0.05em;">Owner</th>
+                <th class="px-3 py-4 text-left font-bold uppercase" style="font-size: 10.4px; color: white; letter-spacing: 0.05em;">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- NFT Rows -->
+              <tr class="table-row border-b transition-all" style="border-color: rgba(59, 130, 246, 0.3); background: #ffffff;">
+                <td class="px-3 py-4" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                  #1
+                </td>
+                <td class="px-3 py-4">
+                  <span 
+                    class="token-clickable"
+                    style="display: inline-block; padding: 8px 12px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border-radius: 8px; font-size: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);"
+                  >
+                    NFT-1001
+                  </span>
+                </td>
+                <td class="px-3 py-4" style="font-size: 11.2px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                  Jan 15, 2024, 14:30
+                </td>
+                <td class="px-3 py-4">
+                  <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #f59e0b; color: white; border-radius: 6px; font-size: 10.4px; font-weight: 700; white-space: nowrap;">
+                    ⏱️ 120h
+                  </span>
+                </td>
+                <td class="px-3 py-4">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="font-family: 'Courier New', monospace; font-size: 10.4px; color: #1e293b; font-weight: 700; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                      0x7a3b9c8d1e2f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8
+                    </div>
+                    <button 
+                      class="copy-table-btn"
+                      data-address="0x7a3b9c8d1e2f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8"
+                      style="background: #3b82f6; color: white; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 10.4px; font-weight: 600; white-space: nowrap; transition: all 0.2s; flex-shrink: 0;"
+                    >
+                      📋
+                    </button>
+                  </div>
+                </td>
+                <td class="px-3 py-4" style="font-size: 13.6px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                  $53.50
+                </td>
+              </tr>
+
+              <tr class="table-row border-b transition-all" style="border-color: rgba(59, 130, 246, 0.3); background: #f8fafc;">
+                <td class="px-3 py-4" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                  #2
+                </td>
+                <td class="px-3 py-4">
+                  <span 
+                    class="token-clickable"
+                    style="display: inline-block; padding: 8px 12px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border-radius: 8px; font-size: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);"
+                  >
+                    NFT-1002
+                  </span>
+                </td>
+                <td class="px-3 py-4" style="font-size: 11.2px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                  Feb 28, 2024, 09:15
+                </td>
+                <td class="px-3 py-4">
+                  <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #f59e0b; color: white; border-radius: 6px; font-size: 10.4px; font-weight: 700; white-space: nowrap;">
+                    ⏱️ 96h
+                  </span>
+                </td>
+                <td class="px-3 py-4">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="font-family: 'Courier New', monospace; font-size: 10.4px; color: #1e293b; font-weight: 700; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                      0x2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0b
+                    </div>
+                    <button 
+                      class="copy-table-btn"
+                      data-address="0x2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0b"
+                      style="background: #3b82f6; color: white; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 10.4px; font-weight: 600; white-space: nowrap; transition: all 0.2s; flex-shrink: 0;"
+                    >
+                      📋
+                    </button>
+                  </div>
+                </td>
+                <td class="px-3 py-4" style="font-size: 13.6px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                  $57.24
+                </td>
+              </tr>
+
+              <!-- Add more rows as needed... -->
+
+              <tr class="table-row border-b transition-all" style="border-color: rgba(59, 130, 246, 0.3); background: #ffffff;">
+                <td class="px-3 py-4" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+                  #20
+                </td>
+                <td class="px-3 py-4">
+                  <span 
+                    class="token-clickable"
+                    style="display: inline-block; padding: 8px 12px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border-radius: 8px; font-size: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);"
+                  >
+                    NFT-1020
+                  </span>
+                </td>
+                <td class="px-3 py-4" style="font-size: 11.2px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+                  Aug 24, 2024, 09:35
+                </td>
+                <td class="px-3 py-4">
+                  <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #f59e0b; color: white; border-radius: 6px; font-size: 10.4px; font-weight: 700; white-space: nowrap;">
+                    ⏱️ 24h
+                  </span>
+                </td>
+                <td class="px-3 py-4">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="font-family: 'Courier New', monospace; font-size: 10.4px; color: #1e293b; font-weight: 700; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                      0x0a2b4d6f8a0c2e4a6c8e0a2b4d6f8a0c2e4a6c
+                    </div>
+                    <button 
+                      class="copy-table-btn"
+                      data-address="0x0a2b4d6f8a0c2e4a6c8e0a2b4d6f8a0c2e4a6c"
+                      style="background: #3b82f6; color: white; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 10.4px; font-weight: 600; white-space: nowrap; transition: all 0.2s; flex-shrink: 0;"
+                    >
+                      📋
+                    </button>
+                  </div>
+                </td>
+                <td class="px-3 py-4" style="font-size: 13.6px; color: #10b981; font-weight: 800; white-space: nowrap;">
+                  $75.28
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-4 md:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 border-t-2" style="border-color: rgba(59, 130, 246, 0.3);">
+          <div style="font-size: 12px; color: #0f172a; opacity: 0.8; text-align: center;">
+            <strong>1</strong>-<strong>20</strong> of <strong>100</strong>
+          </div>
+          <div class="flex gap-2 items-center">
+            <button 
+              id="prevBtn" 
+              class="px-4 py-2 rounded-lg font-bold transition-all"
+              style="background: #3b82f6; color: white; font-size: 12px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);"
+            >
+              ← Prev
+            </button>
+            <div style="padding: 8px 16px; background: rgba(59, 130, 246, 0.2); border-radius: 8px; font-size: 12px; color: #0f172a; font-weight: 700;">
+              1/5
+            </div>
+            <button 
+              id="nextBtn" 
+              class="px-4 py-2 rounded-lg font-bold transition-all"
+              style="background: #3b82f6; color: white; font-size: 12px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- NFT Image Modal -->
+  <div id="nftModal" class="nft-image-container">
+    <div class="nft-card rounded-2xl overflow-hidden" style="background: white;">
+      <div id="nftModalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // Generate SVG NFT image
+    function generateNFTImage(tokenNo, queueNo) {
+      const nftColors = [
+        ['#FF6B6B', '#4ECDC4', '#45B7D1'],
+        ['#A8E6CF', '#FFD93D', '#6BCF7F'],
+        ['#F38181', '#AA96DA', '#FCBAD3'],
+        ['#95E1D3', '#F38181', '#EAFFD0'],
+        ['#FEC8D8', '#957DAD', '#D291BC'],
+        ['#74B9FF', '#A29BFE', '#FD79A8'],
+        ['#FDCB6E', '#6C5CE7', '#00B894'],
+        ['#FF7675', '#74B9FF', '#55EFC4'],
+        ['#FD79A8', '#FDCB6E', '#E17055'],
+        ['#A29BFE', '#00B894', '#FF7675']
+      ];
+      
+      const [color1, color2, color3] = nftColors[queueNo % nftColors.length];
+      return `
+        <svg width="100%" height="300" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad-${queueNo}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:${color1};stop-opacity:1" />
+              <stop offset="50%" style="stop-color:${color2};stop-opacity:1" />
+              <stop offset="100%" style="stop-color:${color3};stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <rect width="400" height="400" fill="url(#grad-${queueNo})"/>
+          <circle cx="200" cy="150" r="80" fill="rgba(255,255,255,0.2)"/>
+          <circle cx="150" cy="250" r="60" fill="rgba(255,255,255,0.15)"/>
+          <circle cx="280" cy="280" r="70" fill="rgba(255,255,255,0.15)"/>
+          <text x="200" y="350" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="white" text-anchor="middle">
+            ${tokenNo}
+          </text>
+        </svg>
+      `;
+    }
+
+    function copyToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      
+      try {
+        document.execCommand('copy');
+        return true;
+      } catch (err) {
+        return false;
+      } finally {
+        document.body.removeChild(textarea);
+      }
+    }
+
+    function showPopup(message, isSuccess = true) {
+      const popup = document.createElement('div');
+      popup.textContent = message;
+      popup.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: ${isSuccess ? '#10b981' : '#ef4444'};
+        color: white;
+        padding: 16px 32px;
+        border-radius: 12px;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        box-shadow: 0 8px 20px ${isSuccess ? 'rgba(16, 185, 129, 0.5)' : 'rgba(239, 68, 68, 0.5)'};
+        z-index: 10000;
+      `;
+      document.body.appendChild(popup);
+      
+      setTimeout(() => {
+        popup.remove();
+      }, 2000);
+    }
+
+    function showNFTModal(nftData) {
+      const modal = document.getElementById('nftModal');
+      const modalContent = document.getElementById('nftModalContent');
+      
+      const rarityColors = {
+        'Common': '#94a3b8',
+        'Rare': '#3b82f6',
+        'Epic': '#a855f7',
+        'Legendary': '#f59e0b'
+      };
+      
+      modalContent.innerHTML = `
+        <div style="position: relative;">
+          <button 
+            id="closeModal" 
+            style="position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 24px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: all 0.2s;"
+          >
+            ×
+          </button>
+          
+          <div>
+            ${generateNFTImage(nftData.tokenNo, nftData.queueNo)}
+          </div>
+          
+          <div style="padding: 24px; background: linear-gradient(to bottom, #ffffff, #f8fafc);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+              <div>
+                <h2 style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 28px; color: #0f172a; font-weight: 800; margin: 0 0 8px 0;">
+                  ${nftData.tokenNo}
+                </h2>
+                <div style="display: inline-block; padding: 6px 12px; border-radius: 8px; background: ${rarityColors[nftData.rarity]}; color: white; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; font-weight: 700;">
+                  ✨ ${nftData.rarity}
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; color: #0f172a; opacity: 0.7; margin-bottom: 4px;">
+                  Value
+                </div>
+                <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 24px; color: #10b981; font-weight: 800;">
+                  ${nftData.value}
+                </div>
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 20px; padding: 16px; background: rgba(0,0,0,0.2); border-radius: 12px;">
+              <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #0f172a; opacity: 0.8; margin-bottom: 8px; font-weight: 600;">
+                📍 Queue Position
+              </div>
+              <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 20px; color: #3b82f6; font-weight: 700;">
+                #${nftData.queueNo}
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #0f172a; opacity: 0.8; margin-bottom: 8px; font-weight: 600;">
+                👤 Owner Address
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <span style="font-family: 'Courier New', monospace; font-size: 11.2px; color: #0f172a; word-break: break-all; flex: 1;">
+                  ${nftData.ownerAddress}
+                </span>
+                <button 
+                  class="copy-address-btn"
+                  data-address="${nftData.ownerAddress}"
+                  style="background: #3b82f6; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; flex-shrink: 0; transition: all 0.2s;"
+                >
+                  📋 Copy
+                </button>
+              </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+              <div style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; color: #0f172a; opacity: 0.7; margin-bottom: 4px;">
+                  🕐 Buy Time
+                </div>
+                <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12.8px; color: #0f172a; font-weight: 600;">
+                  ${nftData.buyTime}
+                </div>
+              </div>
+              
+              <div style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; color: #0f172a; opacity: 0.7; margin-bottom: 4px;">
+                  ⏱️ Trade Time
+                </div>
+                <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12.8px; color: #f59e0b; font-weight: 700;">
+                  ${nftData.tradeTime}
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 20px; padding: 16px; background: rgba(0,0,0,0.2); border-radius: 12px;">
+              <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #0f172a; opacity: 0.8; margin-bottom: 8px; font-weight: 600;">
+                👥 Total Value of NFT Holders
+              </div>
+              <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 24px; color: #3b82f6; font-weight: 700;">
+                ${nftData.totalValue}
+              </div>
+              <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; color: #0f172a; opacity: 0.6; margin-top: 4px;">
+                ${nftData.holders} holders × ${nftData.value}
+              </div>
+            </div>
+            
+            <button 
+              id="hideModalBtn"
+              style="width: 100%; padding: 16px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border: none; border-radius: 12px; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);"
+            >
+              🙈 Hide NFT
+            </button>
+          </div>
+        </div>
+      `;
+      
+      modal.classList.add('active');
+      
+      // Add event listeners
+      document.getElementById('closeModal').onclick = () => {
+        modal.classList.remove('active');
+      };
+      
+      document.getElementById('closeModal').addEventListener('mouseover', function() {
+        this.style.background = 'rgba(239,68,68,0.9)';
+        this.style.transform = 'rotate(90deg)';
+      });
+      
+      document.getElementById('closeModal').addEventListener('mouseout', function() {
+        this.style.background = 'rgba(0,0,0,0.7)';
+        this.style.transform = 'rotate(0deg)';
+      });
+      
+      document.getElementById('hideModalBtn').onclick = () => {
+        modal.classList.remove('active');
+      };
+      
+      document.getElementById('hideModalBtn').addEventListener('mouseover', function() {
+        this.style.transform = 'translateY(-2px)';
+        this.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.6)';
+      });
+      
+      document.getElementById('hideModalBtn').addEventListener('mouseout', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+      });
+      
+      // Close on background click
+      modal.onclick = (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      };
+      
+      // Copy address functionality
+      const copyBtn = document.querySelector('.copy-address-btn');
+      if (copyBtn) {
+        copyBtn.onclick = function() {
+          const address = this.getAttribute('data-address');
+          if (copyToClipboard(address)) {
+            showPopup('✓ Address copied!', true);
+            
+            const originalText = this.innerHTML;
+            this.innerHTML = '✓ Copied!';
+            this.style.background = '#10b981';
+            
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = '#3b82f6';
+            }, 2000);
+          } else {
+            showPopup('✗ Failed to copy', false);
+          }
+        };
+        
+        copyBtn.addEventListener('mouseover', function() {
+          this.style.opacity = '0.8';
+        });
+        
+        copyBtn.addEventListener('mouseout', function() {
+          this.style.opacity = '1';
+        });
+      }
+    }
+
+    // NFT data for modal
+    const nftModalData = {
+      1: { tokenNo: 'NFT-1001', queueNo: 1, value: '$53.50', rarity: 'Epic', ownerAddress: '0x7a3b9c8d1e2f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8', buyTime: 'Jan 15, 2024, 14:30', tradeTime: '120h', holders: 42, totalValue: '$2,247.00' },
+      2: { tokenNo: 'NFT-1002', queueNo: 2, value: '$57.24', rarity: 'Rare', ownerAddress: '0x2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0b', buyTime: 'Feb 28, 2024, 09:15', tradeTime: '96h', holders: 67, totalValue: '$3,835.08' },
+      3: { tokenNo: 'NFT-1003', queueNo: 3, value: '$61.24', rarity: 'Legendary', ownerAddress: '0x3b5d7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7e9b', buyTime: 'Mar 10, 2024, 16:45', tradeTime: '84h', holders: 23, totalValue: '$1,408.52' },
+      4: { tokenNo: 'NFT-1004', queueNo: 4, value: '$65.04', rarity: 'Common', ownerAddress: '0x4c6e8a0b2d4f6a8c0e2a4c6e8a0b2d4f6a8c0e2', buyTime: 'Apr 5, 2024, 11:20', tradeTime: '72h', holders: 89, totalValue: '$5,788.56' },
+      5: { tokenNo: 'NFT-1005', queueNo: 5, value: '$75.28', rarity: 'Rare', ownerAddress: '0x5d7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7e9b1d', buyTime: 'May 20, 2024, 19:30', tradeTime: '48h', holders: 56, totalValue: '$4,215.68' },
+      6: { tokenNo: 'NFT-1006', queueNo: 6, value: '$53.50', rarity: 'Epic', ownerAddress: '0x6e8a0b2d4f6a8c0e2a4c6e8a0b2d4f6a8c0e2a4', buyTime: 'Jun 15, 2024, 08:15', tradeTime: '36h', holders: 34, totalValue: '$1,819.00' },
+      7: { tokenNo: 'NFT-1007', queueNo: 7, value: '$57.24', rarity: 'Common', ownerAddress: '0x7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7e9b1d3f', buyTime: 'Jul 8, 2024, 22:10', tradeTime: '24h', holders: 78, totalValue: '$4,464.72' },
+      8: { tokenNo: 'NFT-1008', queueNo: 8, value: '$61.24', rarity: 'Legendary', ownerAddress: '0x8a0b2d4f6a8c0e2a4c6e8a0b2d4f6a8c0e2a4c6', buyTime: 'Aug 22, 2024, 13:45', tradeTime: '12h', holders: 45, totalValue: '$2,755.80' },
+      9: { tokenNo: 'NFT-1009', queueNo: 9, value: '$65.04', rarity: 'Rare', ownerAddress: '0x9b1d3f5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b', buyTime: 'Sep 30, 2024, 17:20', tradeTime: '6h', holders: 91, totalValue: '$5,918.64' },
+      10: { tokenNo: 'NFT-1010', queueNo: 10, value: '$75.28', rarity: 'Epic', ownerAddress: '0x0c2e4a6c8e0a2b4d6f8a0c2e4a6c8e0a2b4d6f', buyTime: 'Oct 12, 2024, 10:05', tradeTime: '3h', holders: 62, totalValue: '$4,667.36' },
+      11: { tokenNo: 'NFT-1011', queueNo: 11, value: '$53.50', rarity: 'Common', ownerAddress: '0x1d3f5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b7d', buyTime: 'Nov 5, 2024, 15:40', tradeTime: '240h', holders: 28, totalValue: '$1,498.00' },
+      12: { tokenNo: 'NFT-1012', queueNo: 12, value: '$57.24', rarity: 'Rare', ownerAddress: '0x2e4a6c8e0a2b4d6f8a0c2e4a6c8e0a2b4d6f8a', buyTime: 'Dec 18, 2024, 20:25', tradeTime: '180h', holders: 73, totalValue: '$4,178.52' },
+      13: { tokenNo: 'NFT-1013', queueNo: 13, value: '$61.24', rarity: 'Legendary', ownerAddress: '0x3f5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f', buyTime: 'Jan 3, 2024, 11:10', tradeTime: '168h', holders: 39, totalValue: '$2,388.36' },
+      14: { tokenNo: 'NFT-1014', queueNo: 14, value: '$65.04', rarity: 'Epic', ownerAddress: '0x4a6c8e0a2b4d6f8a0c2e4a6c8e0a2b4d6f8a0c', buyTime: 'Feb 14, 2024, 14:55', tradeTime: '144h', holders: 84, totalValue: '$5,463.36' },
+      15: { tokenNo: 'NFT-1015', queueNo: 15, value: '$75.28', rarity: 'Common', ownerAddress: '0x5b7d9f1a3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b', buyTime: 'Mar 25, 2024, 19:30', tradeTime: '120h', holders: 51, totalValue: '$3,839.28' },
+      16: { tokenNo: 'NFT-1016', queueNo: 16, value: '$53.50', rarity: 'Rare', ownerAddress: '0x6c8e0a2b4d6f8a0c2e4a6c8e0a2b4d6f8a0c2e', buyTime: 'Apr 7, 2024, 08:45', tradeTime: '96h', holders: 67, totalValue: '$3,584.50' },
+      17: { tokenNo: 'NFT-1017', queueNo: 17, value: '$57.24', rarity: 'Legendary', ownerAddress: '0x7d9f1a3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b3d', buyTime: 'May 19, 2024, 22:20', tradeTime: '72h', holders: 42, totalValue: '$2,404.08' },
+      18: { tokenNo: 'NFT-1018', queueNo: 18, value: '$61.24', rarity: 'Epic', ownerAddress: '0x8e0a2b4d6f8a0c2e4a6c8e0a2b4d6f8a0c2e4a', buyTime: 'Jun 30, 2024, 16:05', tradeTime: '48h', holders: 89, totalValue: '$5,450.36' },
+      19: { tokenNo: 'NFT-1019', queueNo: 19, value: '$65.04', rarity: 'Common', ownerAddress: '0x9f1a3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b3d5f', buyTime: 'Jul 11, 2024, 12:50', tradeTime: '36h', holders: 31, totalValue: '$2,016.24' },
+      20: { tokenNo: 'NFT-1020', queueNo: 20, value: '$75.28', rarity: 'Rare', ownerAddress: '0x0a2b4d6f8a0c2e4a6c8e0a2b4d6f8a0c2e4a6c', buyTime: 'Aug 24, 2024, 09:35', tradeTime: '24h', holders: 76, totalValue: '$5,721.28' }
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Copy functionality
+      const copyButtons = document.querySelectorAll('.copy-table-btn');
+      
+      copyButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const address = this.getAttribute('data-address');
+          
+          if (copyToClipboard(address)) {
+            showPopup('✓ Address copied!', true);
+            
+            const originalContent = this.innerHTML;
+            const originalBg = this.style.background;
+            this.innerHTML = '✓';
+            this.style.background = '#10b981';
+            
+            setTimeout(() => {
+              this.innerHTML = originalContent;
+              this.style.background = originalBg;
+            }, 2000);
+          } else {
+            showPopup('✗ Failed to copy', false);
+          }
+        });
+        
+        btn.addEventListener('mouseover', function() {
+          this.style.opacity = '0.8';
+        });
+        
+        btn.addEventListener('mouseout', function() {
+          this.style.opacity = '1';
+        });
+      });
+
+      // Token click functionality
+      const tokenButtons = document.querySelectorAll('.token-clickable');
+      tokenButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const tokenText = this.textContent;
+          const tokenNumber = parseInt(tokenText.split('-')[1]) - 1000 + 1;
+          const nftData = nftModalData[tokenNumber];
+          if (nftData) {
+            showNFTModal(nftData);
+          }
+        });
+        
+        btn.addEventListener('mouseover', function() {
+          this.style.transform = 'scale(1.05)';
+          this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+        });
+        
+        btn.addEventListener('mouseout', function() {
+          this.style.transform = 'scale(1)';
+          this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+        });
+      });
+
+      // Price filter hover effects
+      const priceFilterCards = document.querySelectorAll('.price-filter-card');
+      priceFilterCards.forEach(card => {
+        card.addEventListener('mouseover', function() {
+          this.style.transform = 'translateY(-4px)';
+          this.style.boxShadow = '0 6px 20px rgba(0,0,0,0.3)';
+        });
+        
+        card.addEventListener('mouseout', function() {
+          this.style.transform = 'translateY(0)';
+          this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+        });
+      });
+
+      // Search functionality
+      const searchInput = document.getElementById('searchInput');
+      const clearSearchBtn = document.getElementById('clearSearch');
+      const searchResults = document.getElementById('searchResults');
+
+      if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+          const query = e.target.value.toLowerCase();
+          
+          if (query.length > 0) {
+            clearSearchBtn.style.display = 'block';
+            searchResults.innerHTML = `Found <span style="color: #3b82f6; font-weight: 700;">20</span> NFTs`;
+          } else {
+            clearSearchBtn.style.display = 'none';
+            searchResults.innerHTML = '';
+          }
+        });
+
+        searchInput.addEventListener('focus', function() {
+          this.style.boxShadow = '0 4px 20px rgba(59, 130, 246, 0.4)';
+        });
+
+        searchInput.addEventListener('blur', function() {
+          this.style.boxShadow = 'none';
+        });
+      }
+
+      if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', function() {
+          searchInput.value = '';
+          searchResults.innerHTML = '';
+          this.style.display = 'none';
+        });
+
+        clearSearchBtn.addEventListener('mouseover', function() {
+          this.style.opacity = '0.9';
+        });
+
+        clearSearchBtn.addEventListener('mouseout', function() {
+          this.style.opacity = '1';
+        });
+      }
+
+      // Button hover effects
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      [prevBtn, nextBtn].forEach(btn => {
+        if (btn) {
+          btn.addEventListener('mouseover', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.6)';
+          });
+
+          btn.addEventListener('mouseout', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
