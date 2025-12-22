@@ -39,33 +39,33 @@ export default function Trade({ setCreateActive }) {
             const _nfts = await fetcherContract.methods.getNFTs().call();
 
             const idThreshold = await saveContract.methods.arrayToStart().call();
-            const unitsTotake = await saveContract.methods.unitsToEnter().call();
+            const unitsTotake = await saveContract.methods.getUnitArray().call();
             const populationSize = await saveContract.methods.populationSize().call();
 
-            // Array with NFTs having id <= 2500
-            const firstArray = _nfts.filter(nft => Number(nft.id) == unitsTotake);
+            // Normalize once
+            const unitsSet = new Set(unitsTotake.map(String));
 
-            // Array with NFTs having id > 2500
-            const secondArray = _nfts.filter(nft => Number(nft.id) > idThreshold).sort(
-                (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
-            );
+            // NFTs with id > threshold
+            const firstArrayy = _nfts.filter(nft => Number(nft.id) > Number(idThreshold));
 
-            const firstSlice = firstArray.filter(nft => Number(nft.id) == unitsTotake)     //.slice(0, unitsTotake);
-            const secondSlice = secondArray.slice(0, 14); // 15 items
+            // NFTs whose id exists in unitsTotake
+            const secondArray = _nfts
+                .filter(nft => unitsTotake.includes(String(nft.id)))
+                ;
 
-            console.log("_nfts", _nfts, idThreshold);
-            console.log("First array:", firstArray);
-            console.log("Second array:", secondSlice);
+            // console.log("_nfts", _nfts, unitsTotake,unitsSet);
+            // console.log("First array:", firstArrayy);
+            // console.log("Second array:", secondArray);
 
 
-            const mergedSorted = [...firstSlice, ...secondSlice].sort(
+            const mergedSorted = [...firstArrayy, ...secondArray].sort(
                 (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
             ).slice(0, populationSize);
 
 
 
 
-            console.log("nft call", mergedSorted);
+
 
             // Save to state
             const randomIndex = Math.floor(Math.random() * mergedSorted.length);
@@ -169,7 +169,7 @@ export default function Trade({ setCreateActive }) {
 
     const isLoading = !nfts || !Package
 
-
+            console.log("nft call", nfts);
 
     if (isLoading) {
         // show a waiting/loading screen
@@ -189,8 +189,8 @@ export default function Trade({ setCreateActive }) {
     const duration = Number(userTradingLimitTime) + 60 * 60 * 24 - now > 0 ? Number(userTradingLimitTime) + 60 * 60 * 24 - now : 0
 
     const randomeNFTs = nfts
-        ? [...nfts].sort((a, b) => a.purchasedTime - b.purchasedTime)
-        : [];//nfts && shuffleArray(nfts)
+        // ? [...nfts].sort((a, b) => a.purchasedTime - b.purchasedTime)
+        // : [];//nfts && shuffleArray(nfts)
 
 
 

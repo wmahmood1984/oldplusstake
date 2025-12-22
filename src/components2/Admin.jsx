@@ -28,26 +28,33 @@ const MyForm = () => {
             try {
                 const arrayStart = await contract.methods.arrayToStart().call();
                 setNewList(arrayStart)
-                const oldEle = await contract.methods.unitsToEnter().call();
-                setOldElements(oldEle)
+                const oldEle = await contract.methods.getUnitArray().call();
+                const removedOldElement = oldEle.slice(10);
+
 
 
                 const _nfts = await fetcherContract.methods.getNFTs().call();
 
-
-
                 const idThreshold = await saveContract.methods.arrayToStart().call();
-                const unitsTotake = await saveContract.methods.unitsToEnter().call();
-
-                // Array with NFTs having id <= 2500
 
 
-                // Array with NFTs having id > 2500
-                const secondArray = _nfts.filter(nft => Number(nft.id) < idThreshold).sort(
-                    (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
-                ).map(nft => nft.id);
+                // Convert removedOldElement to a Set for O(1) lookup
+                const removedSet = removedOldElement.map(id => String(id));
 
-                console.log("admin", secondArray);
+                const secondArray = _nfts
+                    .filter(nft =>
+                        Number(nft.id) < Number(idThreshold) &&
+                        !removedSet.includes(String(nft.id))
+                    )
+                    .sort((a, b) => Number(a.purchasedTime) - Number(b.purchasedTime))
+                    .map(nft => nft.id);
+
+
+
+                console.log("Filtered secondArray:", secondArray, removedOldElement);
+
+
+
 
                 setArray(secondArray)
 
@@ -59,7 +66,7 @@ const MyForm = () => {
 
         abc();
 
-    }, []);
+    }, [loading]);
 
     const handleSetArrayStart = async () => {
         setLoading(true);
@@ -162,7 +169,7 @@ const MyForm = () => {
         }
     };
 
-    
+
 
     return (
         <div
@@ -180,7 +187,7 @@ const MyForm = () => {
                 NFT Array Manager
             </h2>
 
-            <div style={{ marginBottom: "20px" }}>
+            {/* <div style={{ marginBottom: "20px" }}>
                 <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
                     New List to Start With:
                 </label>
@@ -214,7 +221,7 @@ const MyForm = () => {
                 >
                     {loading ? "Processing..." : "Set Array Start"}
                 </button>
-            </div>
+            </div> */}
 
 
             <div style={{ marginBottom: "20px" }}>
@@ -255,7 +262,7 @@ const MyForm = () => {
 
             <div style={{ marginBottom: "20px" }}>
                 <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
-                    Number of NFT to Include:
+                    Number of NFT to Include in new list:
                 </label>
 
                 <div style={{ position: "relative" }}>
@@ -272,7 +279,7 @@ const MyForm = () => {
                             background: "#fff",
                         }}
                     >
-                        {oldElements ?? "Select number nft id of old list"}
+                        {oldElements ? oldElements : "Select number nft id of old list"}
                     </div>
 
                     {/* Dropdown Panel */}

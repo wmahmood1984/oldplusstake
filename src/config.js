@@ -3392,7 +3392,7 @@ export const bulkAddAbi = [
 				"type": "uint256"
 			}
 		],
-		"name": "setPopulation",
+		"name": "setArrayStart",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -3400,12 +3400,12 @@ export const bulkAddAbi = [
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "_uint",
-				"type": "uint256"
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
 			}
 		],
-		"name": "unitToEnter",
+		"name": "transferOwnership",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -3484,7 +3484,7 @@ export const bulkAddAbi = [
 				"type": "uint256"
 			}
 		],
-		"name": "setArrayStart",
+		"name": "setPopulation",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -3492,12 +3492,12 @@ export const bulkAddAbi = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "_uint",
+				"type": "uint256"
 			}
 		],
-		"name": "transferOwnership",
+		"name": "unitToEnter",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -3562,6 +3562,19 @@ export const bulkAddAbi = [
 	},
 	{
 		"inputs": [],
+		"name": "getUnitArray",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "owner",
 		"outputs": [
 			{
@@ -3602,6 +3615,25 @@ export const bulkAddAbi = [
 	{
 		"inputs": [],
 		"name": "unitsToEnter",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "unitsToEnterArray",
 		"outputs": [
 			{
 				"internalType": "uint256",
