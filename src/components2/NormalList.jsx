@@ -111,13 +111,13 @@ export default function NormalList() {
         toast.success("copied to clipboard");
     };
 
-const PRICE_BUCKETS_CENTS = {
-    5350: 0,   // 53.50
-    5724: 0,   // 57.24
-    6124: 0,   // 61.24
-    6504: 0,   // 65.04
-    7528: 0,   // 75.28
-};
+    const PRICE_BUCKETS_CENTS = {
+        5350: 0,   // 53.50
+        5724: 0,   // 57.24
+        6124: 0,   // 61.24
+        6504: 0,   // 65.04
+        7528: 0,   // 75.28
+    };
 
 
 
@@ -125,12 +125,13 @@ const PRICE_BUCKETS_CENTS = {
     const _5325 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 53.50 && Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) <= 57.24).length;
     const _5724 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 57.24 && Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) <= 61.24).length;
     const _6124 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 61.24 && Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) <= 65.04).length;
-    const _6504 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 64 && Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) <= 75.03).length;
+    const _6504 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 64 && Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) <= 70.12).length;
+    const _7012 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 70.12 && Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) <= 75.03).length;
     const _7528 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 75.03).length;
     const totalpages = nfts && Math.ceil(filteredUsers.length / pageSize);
 
 
-    console.log("object",filteredUsers);
+    console.log("object", filteredUsers);
 
 
     const isLoading = !nfts;
@@ -252,7 +253,17 @@ const PRICE_BUCKETS_CENTS = {
                                     👥 {_6504} NFTs
                                 </div>
                             </div>
-
+                            <div
+                                onClick={() => { setPriceSelected("70.12") }}
+                                class="price-filter-card rounded-lg p-4 border-2 transition-all"
+                                style={{ background: "#ffffff", border: "3px solid #3b82f6", borderRadius: "12px", cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}>
+                                <div style={{ fontSize: "20px", color: "#3b82f6", fontWeight: "900", marginBottom: "8px" }}>
+                                    $70.12
+                                </div>
+                                <div style={{ fontSize: "12px", color: "#0f172a", opacity: "0.7", fontWeight: "600" }}>
+                                    👥 {_7012} NFTs
+                                </div>
+                            </div>
                             <div
                                 onClick={() => { setPriceSelected("75.25") }}
                                 class="price-filter-card rounded-lg p-4 border-2 transition-all"
