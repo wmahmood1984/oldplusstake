@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import UserListDemo from "./UserListDemo";
 import Burning from "./Burning";
 import TradingQue from "./TradingQue";
+import NormalList from "./NormalList";
 
 export default function Lists() {
-    const [activeTab, setActiveTab] = useState("users");
+    const [activeTab, setActiveTab] = useState("normal");
 
     return (
         <div>
@@ -41,10 +42,22 @@ export default function Lists() {
                 >
                     Burning
                 </button>
+
+                                <button
+                    onClick={() => setActiveTab("normal")}
+                    className={`px-5 py-2 rounded-lg font-semibold transition-all ${
+                        activeTab === "normal"
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-200 text-gray-700"
+                    }`}
+                >
+                    Normal List
+                </button>
             </div>
 
             {/* Tab Content */}
             {activeTab === "tradingQue" && <TradingQue />}
+                        {activeTab === "normal" && <NormalList />}
             {activeTab === "users" && <UserListDemo />}
             {activeTab === "burning" && <Burning />}
         </div>
