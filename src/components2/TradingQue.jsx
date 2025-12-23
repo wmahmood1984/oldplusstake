@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import "./TradingQue.css"
-import { fetcherAbi, fetcherAddress, web3 } from '../config'
+import { bulkAddAbi, bulkContractAdd, fetcherAbi, fetcherAddress, testweb3, web3 } from '../config'
 import { formatAddress, formatWithCommas, secondsToDHMSDiff, secondsToDMY } from '../utils/contractExecutor';
 import toast from 'react-hot-toast';
 
@@ -9,6 +9,7 @@ export default function TradingQue() {
     const [nfts, setnfts] = useState()
 
     const fetcherContract = new web3.eth.Contract(fetcherAbi, fetcherAddress);
+    const saveContract = new testweb3.eth.Contract(bulkAddAbi, bulkContractAdd);
     const [page, setPage] = useState(1);
     const [searchText, setSearchText] = useState("")
     const [sortOrder, setSortOrder] = useState("default")
@@ -19,7 +20,22 @@ export default function TradingQue() {
     useEffect(() => {
         const abc = async () => {
             const _nfts = await fetcherContract.methods.getNFTs().call()
-            setnfts(_nfts)
+
+            const oldEle = await saveContract.methods.getUnitArray().call();
+            const removedOldElement = oldEle.slice(10);
+            const idThreshold = await saveContract.methods.arrayToStart().call();
+            const removedSet = removedOldElement.map(id => String(id));
+
+            const secondArray = _nfts
+                .filter(nft =>
+                    Number(nft.id) < Number(idThreshold) &&
+                    !removedSet.includes(String(nft.id))
+                )
+                .sort((a, b) => Number(a.purchasedTime) - Number(b.purchasedTime))
+
+
+
+            setnfts(secondArray)
 
 
         }
@@ -36,17 +52,17 @@ export default function TradingQue() {
 
 
 
-const filteredUsers1 = useMemo(() => {
-    if (!nfts) return [];
+    const filteredUsers1 = useMemo(() => {
+        if (!nfts) return [];
 
-    const search = searchText.toLowerCase().trim();
+        const search = searchText.toLowerCase().trim();
 
-    return nfts.filter(u =>
-        !search ||
-        u._owner?.toLowerCase().includes(search) ||
-        String(u.id).toLowerCase().includes(search)
-    );
-}, [nfts, searchText]);
+        return nfts.filter(u =>
+            !search ||
+            u._owner?.toLowerCase().includes(search) ||
+            String(u.id).toLowerCase().includes(search)
+        );
+    }, [nfts, searchText]);
 
 
     const filteredUsers = useMemo(() => {
@@ -98,7 +114,7 @@ const filteredUsers1 = useMemo(() => {
     const totalpages = nfts && Math.ceil(filteredUsers.length / pageSize);
 
 
-    console.log("object",nfts);
+    console.log("object", nfts);
 
 
     const isLoading = !nfts;
@@ -221,7 +237,7 @@ const filteredUsers1 = useMemo(() => {
                                                 </td>
                                                 <td class="table-cell">
                                                     <span class="time-badge">
-                                                        ⏱️ {secondsToDHMSDiff(now -  nft.purchasedTime)}
+                                                        ⏱️ {secondsToDHMSDiff(now - nft.purchasedTime)}
                                                     </span>
                                                 </td>
                                                 <td class="table-cell">
@@ -238,7 +254,7 @@ const filteredUsers1 = useMemo(() => {
                                                     </div>
                                                 </td>
                                                 <td class="table-cell" style={{ fontSize: "13px", color: "#10b981", fontWeight: "800", whiteSpace: "nowrap" }}>
-                                                    ${Number(web3.utils.fromWei(nft.price, 'ether')* 1.07).toFixed(2) }
+                                                    ${Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2)}
                                                 </td>
                                             </tr>
                                         )
@@ -261,7 +277,7 @@ const filteredUsers1 = useMemo(() => {
                                         setPage(prev => prev - 1);
                                     }
                                 }}
-                                id="prevBtn" class="pagination-btn" disabled>
+                                id="prevBtn" class="pagination-btn">
                                 ← Prev
                             </button>
                             <div class="page-info">
