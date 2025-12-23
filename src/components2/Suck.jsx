@@ -293,7 +293,7 @@ export default function Suck() {
 
     const selected = nfts && lastTraded1[lastTraded1.length - 1]; // most recent event
 
-    const selectedFiltered = Trades && Trades.filter(ev => ev.returnValues.id === selected.id);
+    const selectedFiltered = Trades && Trades.filter(ev => ev.returnValues.id === selected?.id);
 
     const previous = selectedFiltered && selectedFiltered[selectedFiltered.length - 3];
 
