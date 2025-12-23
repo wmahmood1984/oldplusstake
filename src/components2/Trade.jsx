@@ -76,7 +76,7 @@ export default function Trade({ setCreateActive }) {
         };
 
         fetchNFTs();
-        intervalId = setInterval(fetchNFTs, 10000);
+        intervalId = setInterval(fetchNFTs, 30000);
 
         return () => clearInterval(intervalId);
     }, [toggle]);
