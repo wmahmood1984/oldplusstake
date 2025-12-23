@@ -12,7 +12,7 @@ const contract = new web31.eth.Contract(contractABI, contractAddress);
 
 const MyForm = () => {
     const [newList, setNewList] = useState("");
-    const [populationSize, setPopulationSize] = useState(1);
+    const [populationSize, setPopulationSize] = useState(0);
     const [searchText, setSearchText] = useState("");
     const [oldElements, setOldElements] = useState("");
     const [loading, setLoading] = useState(false);
@@ -31,9 +31,11 @@ const MyForm = () => {
                 const oldEle = await contract.methods.getUnitArray().call();
                 const removedOldElement = oldEle.slice(10);
 
-
+                
 
                 const _nfts = await fetcherContract.methods.getNFTs().call();
+                const populationSizeFromContract = await saveContract.methods.populationSize().call();
+                setPopulationSize(populationSizeFromContract);
 
                 const idThreshold = await saveContract.methods.arrayToStart().call();
 
