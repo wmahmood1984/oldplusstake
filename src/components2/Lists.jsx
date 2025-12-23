@@ -3,6 +3,7 @@ import UserListDemo from "./UserListDemo";
 import Burning from "./Burning";
 import TradingQue from "./TradingQue";
 import NormalList from "./NormalList";
+import NewList from "./NewList";
 
 export default function Lists() {
     const [activeTab, setActiveTab] = useState("normal");
@@ -19,7 +20,17 @@ export default function Lists() {
                             : "bg-gray-200 text-gray-700"
                     }`}
                 >
-                    Trading Que
+                    Old List
+                </button>
+                <button
+                    onClick={() => setActiveTab("newlist")}
+                    className={`px-5 py-2 rounded-lg font-semibold transition-all ${
+                        activeTab === "newlist"
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-200 text-gray-700"
+                    }`}
+                >
+                    New List
                 </button>
                 <button
                     onClick={() => setActiveTab("users")}
@@ -57,6 +68,7 @@ export default function Lists() {
 
             {/* Tab Content */}
             {activeTab === "tradingQue" && <TradingQue />}
+                        {activeTab === "newlist" && <NewList />}
                         {activeTab === "normal" && <NormalList />}
             {activeTab === "users" && <UserListDemo />}
             {activeTab === "burning" && <Burning />}
