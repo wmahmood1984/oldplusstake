@@ -668,7 +668,7 @@ export default function Suck() {
                                 </div>
                             </div>
 
-                            {/* {preview ? ( */}
+
                             <div className="flex justify-center items-center">
                                 <img
                                     src={`https://harlequin-biological-bat-26.mypinata.cloud/ipfs/${arrayFromContract[0]}`}
@@ -676,54 +676,6 @@ export default function Suck() {
                                     className="w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 object-cover rounded-xl shadow-lg"
                                 />
                             </div>
-                            {/* ) : (
-                                <div
-                                    id="upload-area"
-                                    className="relative border-2 border-dashed border-indigo-300 rounded-xl sm:rounded-2xl p-4 sm:p-8 lg:p-12 text-center hover:border-indigo-400 transition-all duration-300 cursor-pointer bg-gradient-to-br from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 group"
-                                >
-                                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-xl sm:rounded-2xl group-hover:from-indigo-500/10 group-hover:to-purple-500/10 transition-all duration-300"></div>
-                                    <div className="relative">
-                                        <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 lg:mb-6 group-hover:scale-110 transition-transform duration-300">
-                                            <svg
-                                                className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white mx-auto block"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                                                />
-                                            </svg>
-                                        </div>
-
-                                        <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">
-                                            Drop your files here
-                                        </h3>
-                                        <p className="text-gray-600 mb-3 sm:mb-4 lg:mb-6 text-xs sm:text-sm lg:text-base">
-                                            PNG, JPG, GIF, WEBP, MP4, MP3. Max 100MB
-                                        </p>
-
-                                        <button
-                                            type="button"
-                                            onClick={handleButtonClick}
-                                            className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 rounded-lg sm:rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-sm lg:text-base"
-                                        >
-                                            Choose File
-                                        </button>
-
-                                        <input
-                                            ref={fileInputRef}
-                                            type="file"
-                                            className="hidden"
-                                            accept="image/*,video/*,audio/*"
-                                            onChange={handleFileChange}
-                                        />
-                                    </div>
-                                </div>
-                            )} */}
                         </div>
 
                         <div class="bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-2xl border border-white/20 p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
@@ -778,148 +730,7 @@ export default function Suck() {
                 <section id="marketplace" class={`py-12 sm:py-20 bg-white ${create && `hidden`}`}>
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                        <div class="text-center mb-8 sm:mb-12">
-                            <h3 id="marketplace-title" class="text-3xl sm:text-4xl lg:text-5xl font-bold font-display text-gray-900 mb-4">NFT Marketplace</h3>
-                            <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">Discover and trade unique digital assets from creators worldwide</p>
-                        </div>
-                        <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-8 sm:mb-12 border border-indigo-200">
-                            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-
-                                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-nfts" class="text-xl sm:text-2xl lg:text-3xl font-bold text-indigo-600">
-                                            {nfts && nfts.length}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            Total NFTs
-                                        </div>
-                                    </div>
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-burned" class="text-xl sm:text-2xl lg:text-3xl font-bold text-red-600">
-                                            {nftBurnt}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            Total Burned
-                                        </div>
-                                    </div>
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="burning-process" class="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-600">
-                                            {usersArray.length}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            Total Users
-                                        </div>
-                                    </div>
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="in-marketplace" class="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600">
-                                            {nfts && nfts.length}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            In Marketplace
-                                        </div>
-                                    </div>
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
-                                            {nftused && nftused.length}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            In Burning Process
-                                        </div>
-                                    </div>
-
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
-                                            {ownerSucked}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            Buy / Burn
-                                        </div>
-                                    </div>
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
-                                            {Number(TTV24Hrs).toFixed(0)}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            TTV- 24 hours
-                                        </div>
-                                    </div>
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
-                                            {Number(TTV12Hrs).toFixed(0)}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            TTV- 12 hours
-                                        </div>
-                                    </div>
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
-                                            {Number(TTV6Hrs).toFixed(0)}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            TTV- 6 hours
-                                        </div>
-                                    </div>
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
-                                            {Number(TTV1Hr).toFixed(0)}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            TTV- 1 hour
-                                        </div>
-                                    </div>
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
-                                            {Number(TTVToday).toFixed(0)}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            TTV- Today
-                                        </div>
-                                    </div>
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
-                                            {Number(TTVYesterday).toFixed(0)}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            TTV- yesterday
-                                        </div>
-                                    </div>
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-created" class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">
-                                            {totalTradingLimit}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            Total Trading Limit
-                                        </div>
-                                    </div>
-
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-created" class="text-xl sm:text-1xl lg:text-1xl font-bold text-purple-600">
-                                            {lastTraded}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            Last Trading Duration
-                                        </div>
-                                    </div>
-
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-created" class="text-xl sm:text-1xl lg:text-1xl font-bold text-purple-600">
-                                            {formatWithCommas(filteredNFTs, 2)}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            Total NFT Value
-                                        </div>
-                                    </div>
-                                    <div class="text-center p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50">
-                                        <div id="total-created" class="text-xl sm:text-1xl lg:text-1xl font-bold text-purple-600">
-                                            {dateNftused}
-                                        </div>
-                                        <div class="text-xs sm:text-sm text-gray-600 font-medium">
-                                            Burning NFT time
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                       
 
 
                         <div class="text-center lg:text-left">

@@ -3664,6 +3664,8 @@ export const bulkAddAbi = [
 //export const erc20Add = "0x2907DA57598e5dd349d768FbC0e6BC3D2CF66cB9"; //op bnb
 export const erc20Add = "0x9e5AAC1Ba1a2e6aEd6b32689DFcF62A509Ca96f3"; //op bnb mainnet
 
+export const admin = "0xB066Ce4653576C310e9A8502e269fc54E32B28ab"  //bulk / lists / admin / suck 
+
 export const mlmContract = {
 	address: mlmcontractaddress,
 	abi: mlmabi,
