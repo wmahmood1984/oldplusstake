@@ -15,7 +15,9 @@ contract Save is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
     string[] public array;
     uint public arrayToStart;
-    uint public unitsToEnter; 
+    uint public unitsToEnter;
+    uint[] public unitsToEnterArray;
+    uint public populationSize; 
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -51,10 +53,17 @@ contract Save is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     }
 
     function unitToEnter (uint _uint) public {
-        unitsToEnter = _uint;
+        unitsToEnterArray.push(_uint);
     }
 
     function _authorizeUpgrade(address newImpl) internal override onlyOwner {}
 
+    function getUnitArray () public view returns (uint[] memory){
+        return unitsToEnterArray;
+    }
+
+    function setPopulation(uint _uint) public {
+        populationSize = _uint;
+    }
 
 }

@@ -44,7 +44,10 @@ interface IHelper {
 
     );
 
+    function userJoiningTime(address user) external view returns(uint);
+
     function getNFTs() external view returns (NFT[] memory);
+    function getNFTused() external view returns (NFT[] memory);
     function idPurchasedtime(uint256 id) external view returns (uint256);
     function getusers() external view returns (address[] memory);
 }
@@ -164,7 +167,7 @@ function getUsers() external view returns (User[] memory) {
         ) = helper.userPackage(users[i]);
 
         (address referrer, ) = helper.users(users[i]);
-
+        uint _joining = helper.userJoiningTime(users[i]);
         arr[i] = User({
             _address: users[i],
             packageId: id,
@@ -177,7 +180,7 @@ function getUsers() external view returns (User[] memory) {
             directrequired: directrequired,
             packageUpgraded: packageUpgraded,
             referrer: referrer,
-            joiningDate: 0,
+            joiningDate: _joining,
             extra1: 0,
             extra2: 0
         });
@@ -185,5 +188,32 @@ function getUsers() external view returns (User[] memory) {
 
     return arr;
 }
+
+
+    function getNFTUsed() external view returns (NFTInfo[] memory) {
+        IHelper.NFT[] memory nfts = helper.getNFTused();
+
+        // First count how many valid NFTs (owner != 0)
+
+        NFTInfo[] memory arr = new NFTInfo[](nfts.length);
+
+
+        for (uint256 i = 0; i < nfts.length; i++) {
+
+                arr[i] = NFTInfo({
+                    id: nfts[i].id,
+                    price: nfts[i].price,
+                    _owner: nfts[i]._owner,
+                    uri: nfts[i].uri,
+                    premium: nfts[i].premium,
+                    utilized: nfts[i].utilized,
+                    purchasedTime: helper.idPurchasedtime(nfts[i].id)
+                });
+            
+            
+        }
+
+        return arr;
+    }
 
 }
