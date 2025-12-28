@@ -163,7 +163,7 @@ export default function NoteMarquee() {
                 }
                 onClick={togglePause}
               >
-                📢 The Hexa team is pleased to announce that all updates have been completed. These new updates are for the betterment of the community, and any existing funds will be gradually released to those who complete their trades.. •{" "}
+                📢 Please purchase a visible NFT to begin your trading journey... •{" "}
                 {Array(9).fill(
                   "📢 IMPORTANT NOTE: The system is undergoing some updates for the benefit of the community and for long-term planning, so please wait a bit. Trading will be live soon with excellent smoothness. So we are going to go live after a break. • "
                 )}
