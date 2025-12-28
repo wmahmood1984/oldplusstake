@@ -111,7 +111,7 @@ export default function Trade({ setCreateActive }) {
             // Save to state
             const randomIndex = Math.floor(Math.random() * mergedSorted.length);
             const randomNFT = mergedSorted[randomIndex];
-            const nftToTake = purchaseOf75$.length >1? mergedSortedpricewise[0] : randomNFT
+            const nftToTake = purchaseOf75$.length >1? randomNFT: mergedSortedpricewise[0]  
 
             // Save as array of length 1
             setNFTs([nftToTake]);
