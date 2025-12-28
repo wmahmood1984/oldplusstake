@@ -4,9 +4,11 @@ import Burning from "./Burning";
 import TradingQue from "./TradingQue";
 import NormalList from "./NormalList";
 import NewList from "./NewList";
+import AdminCreation from "./AdminCreation";
+import Tally from "./Tally";
 
 export default function Lists() {
-    const [activeTab, setActiveTab] = useState("normal");
+    const [activeTab, setActiveTab] = useState("tally");
 
     return (
         <div>
@@ -64,10 +66,35 @@ export default function Lists() {
                 >
                     Normal List
                 </button>
+
+                                     <button
+                    onClick={() => setActiveTab("adminCreate")}
+                    className={`px-5 py-2 rounded-lg font-semibold transition-all ${
+                        activeTab === "adminCreate"
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-200 text-gray-700"
+                    }`}
+                >
+                    Admin Create
+                </button>
+
+                                                     <button
+                    onClick={() => setActiveTab("tally")}
+                    className={`px-5 py-2 rounded-lg font-semibold transition-all ${
+                        activeTab === "tally"
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-200 text-gray-700"
+                    }`}
+                >
+                    Tally
+                </button>
+                
             </div>
 
             {/* Tab Content */}
             {activeTab === "tradingQue" && <TradingQue />}
+                        {activeTab === "tally" && <Tally />}
+                        {activeTab === "adminCreate" && <AdminCreation />}
                         {activeTab === "newlist" && <NewList />}
                         {activeTab === "normal" && <NormalList />}
             {activeTab === "users" && <UserListDemo />}

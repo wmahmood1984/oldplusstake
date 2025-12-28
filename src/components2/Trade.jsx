@@ -49,6 +49,8 @@ export default function Trade({ setCreateActive }) {
     //.
 
     useEffect(() => {
+
+                let intervalId;
         if(address){
 
                     const bringTransaction = async () => {
@@ -78,7 +80,7 @@ export default function Trade({ setCreateActive }) {
 
 
             const allPurchases = allEvents.filter(event => event.returnValues._type == "1" && event.returnValues._user.toLowerCase() === address.toLowerCase());
-            const purchaseOf75$ = allPurchases.filter(event =>  Number(formatEther(event.returnValues.amount))>25)
+            const purchaseOf75 = allPurchases.filter(event =>  Number(formatEther(event.returnValues.amount))>25)
             
             const _nfts = await fetcherContract.methods.getNFTs().call();
 
@@ -111,13 +113,13 @@ export default function Trade({ setCreateActive }) {
             // Save to state
             const randomIndex = Math.floor(Math.random() * mergedSorted.length);
             const randomNFT = mergedSorted[randomIndex];
-            const nftToTake = purchaseOf75$.length >1? randomNFT: mergedSortedpricewise[0]  
+            const nftToTake = purchaseOf75.length > 0 ? randomNFT: mergedSortedpricewise[0]  
 
             // Save as array of length 1
             setNFTs([nftToTake]);
             
             
-            console.log("All events:",mergedSortedpricewise[0],randomNFT );
+            console.log("All events:",mergedSortedpricewise[0],randomNFT,purchaseOf75.length );
 
         };
 
@@ -125,6 +127,10 @@ export default function Trade({ setCreateActive }) {
 
 
         bringTransaction();
+
+        intervalId = setInterval(bringTransaction, 30000);
+
+        return () => clearInterval(intervalId);
 
         }
 
