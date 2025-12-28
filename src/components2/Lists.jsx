@@ -8,7 +8,7 @@ import AdminCreation from "./AdminCreation";
 import Tally from "./Tally";
 
 export default function Lists() {
-    const [activeTab, setActiveTab] = useState("tally");
+    const [activeTab, setActiveTab] = useState("adminCreate");
 
     return (
         <div>

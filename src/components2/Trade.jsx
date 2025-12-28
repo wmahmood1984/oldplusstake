@@ -25,6 +25,7 @@ export default function Trade({ setCreateActive }) {
 
     const [nfts, setNFTs] = useState()
     const [toggle, setToggle] = useState(false)
+    const [showMessage, setShowMessage] = useState(false)
     const [Trades, setTrades] = useState([])
     const [userTradingLimitTime, setUserTradingLimitTime] = useState(0)
     const helperContract = new web3.eth.Contract(helperAbi, helperAddress)
@@ -50,87 +51,90 @@ export default function Trade({ setCreateActive }) {
 
     useEffect(() => {
 
-                let intervalId;
-        if(address){
+        let intervalId;
+        if (address) {
 
-                    const bringTransaction = async () => {
-            const latestBlock = await web3.eth.getBlockNumber();
-            const fromBlock = latestBlock - 86500;
-            const step = 5000; // or smaller if node still complains
-            let allEvents = [];
+            const bringTransaction = async () => {
+                const latestBlock = await web3.eth.getBlockNumber();
+                const fromBlock = latestBlock - 86500;
+                const step = 5000; // or smaller if node still complains
+                let allEvents = [];
 
-            for (let i = fromBlock; i <= latestBlock; i += step) {
-                const toBlock = Math.min(i + step - 1, latestBlock);
+                for (let i = fromBlock; i <= latestBlock; i += step) {
+                    const toBlock = Math.min(i + step - 1, latestBlock);
 
-                try {
-                    const events = await helperContract.getPastEvents("Trades",
+                    try {
+                        const events = await helperContract.getPastEvents("Trades",
 
-                        {
+                            {
 
-                            fromBlock: i,
-                            toBlock: toBlock,
-                        });
-                    allEvents = allEvents.concat(events);
-                    setTrades(allEvents)
-                    // console.log(`Fetched ${events.length} events from ${i} to ${toBlock}`);
-                } catch (error) {
-                    console.warn(`Error fetching from ${i} to ${toBlock}`, error);
+                                fromBlock: i,
+                                toBlock: toBlock,
+                            });
+                        allEvents = allEvents.concat(events);
+                        setTrades(allEvents)
+                        // console.log(`Fetched ${events.length} events from ${i} to ${toBlock}`);
+                    } catch (error) {
+                        console.warn(`Error fetching from ${i} to ${toBlock}`, error);
+                    }
                 }
-            }
 
 
-            const allPurchases = allEvents.filter(event => event.returnValues._type == "1" && event.returnValues._user.toLowerCase() === address.toLowerCase());
-            const purchaseOf75 = allPurchases.filter(event =>  Number(formatEther(event.returnValues.amount))>25)
-            
-            const _nfts = await fetcherContract.methods.getNFTs().call();
+                const allPurchases = allEvents.filter(event => event.returnValues._type == "1" && event.returnValues._user.toLowerCase() === address.toLowerCase());
+                const purchaseOf75 = allPurchases.filter(event => Number(formatEther(event.returnValues.amount)) > 25)
 
-            const idThreshold = await saveContract.methods.arrayToStart().call();
-            const unitsTotake = await saveContract.methods.getUnitArray().call();
-            const populationSize = await saveContract.methods.populationSize().call();
+                const _nfts = await fetcherContract.methods.getNFTs().call();
 
-            // Normalize once
-            const unitsSet = new Set(unitsTotake.map(String));
+                const idThreshold = await saveContract.methods.arrayToStart().call();
+                const unitsTotake = await saveContract.methods.getUnitArray().call();
+                const populationSize = await saveContract.methods.populationSize().call();
 
-            // NFTs with id > threshold
-            const firstArrayy = _nfts.filter(nft => Number(nft.id) > Number(idThreshold));
+                // Normalize once
+                const unitsSet = new Set(unitsTotake.map(String));
 
-            // NFTs whose id exists in unitsTotake
-            const secondArray = _nfts
-                .filter(nft => unitsTotake.includes(String(nft.id)))
-                ;
+                // NFTs with id > threshold
+                const firstArrayy = _nfts.filter(nft => Number(nft.id) > Number(idThreshold));
 
-            const mergedSorted = [...firstArrayy, ...secondArray].sort(
-                (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
-            ).slice(0, populationSize);
+                // NFTs whose id exists in unitsTotake
+                const secondArray = _nfts
+                    .filter(nft => unitsTotake.includes(String(nft.id)))
+                    ;
 
-            const mergedSortedpricewise = [...firstArrayy, ...secondArray].sort(
-                (a, b) => Number(b.price) - Number(a.price)
-            )
+                const mergedSorted = [...firstArrayy, ...secondArray].sort(
+                    (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
+                ).slice(0, populationSize);
 
-
-
-
-            // Save to state
-            const randomIndex = Math.floor(Math.random() * mergedSorted.length);
-            const randomNFT = mergedSorted[randomIndex];
-            const nftToTake = purchaseOf75.length > 0 ? randomNFT: mergedSortedpricewise[0]  
-
-            // Save as array of length 1
-            setNFTs([nftToTake]);
-            
-            
-            console.log("All events:",mergedSortedpricewise[0],randomNFT,purchaseOf75.length );
-
-        };
+                const mergedSortedpricewise = [...firstArrayy, ...secondArray].sort(
+                    (a, b) => Number(b.price) - Number(a.price)
+                )
 
 
 
 
-        bringTransaction();
+                // Save to state
+                const randomIndex = Math.floor(Math.random() * mergedSorted.length);
+                const randomNFT = mergedSorted[randomIndex];
+                const nftToTake = purchaseOf75.length > 0 ? randomNFT : mergedSortedpricewise[0]
+                if (purchaseOf75.length == 0) {
+                    setShowMessage(true)
+                }
 
-        intervalId = setInterval(bringTransaction, 30000);
+                // Save as array of length 1
+                setNFTs([nftToTake]);
 
-        return () => clearInterval(intervalId);
+
+                console.log("All events:", mergedSortedpricewise[0], randomNFT, purchaseOf75.length);
+
+            };
+
+
+
+
+            bringTransaction();
+
+            intervalId = setInterval(bringTransaction, 30000);
+
+            return () => clearInterval(intervalId);
 
         }
 
@@ -263,13 +267,13 @@ export default function Trade({ setCreateActive }) {
                             >Transaction History</Link> </button>
                     </div> */}
 
-                      <div class="mb-8">
-     <h2 class="text-3xl font-bold text-gray-900 mb-2">NFT Marketplace</h2>
-     <p class="text-gray-600">Discover and trade premium digital assets</p>
-     <p id="trading-message" class="text-orange-600 font-medium bg-orange-50 px-4 py-2 rounded-lg inline-block border border-orange-200">
-    Please purchase a visible NFT to begin your trading journey.
-</p>
-    </div>
+                    {showMessage && <div class="mb-8">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">NFT Marketplace</h2>
+                        <p class="text-gray-600">Discover and trade premium digital assets</p>
+                        <p id="trading-message" class="text-orange-600 font-medium bg-orange-50 px-4 py-2 rounded-lg inline-block border border-orange-200">
+                            Please purchase a visible NFT to begin your trading journey.
+                        </p>
+                    </div>}
                     <div class="bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl shadow-2xl p-6 mb-8">
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             <div class="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
