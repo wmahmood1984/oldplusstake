@@ -22,7 +22,7 @@ export default function AdminCreation() {
             const _nftQueIndex = await helperContract.methods.nftQueIndex().call()
             setNFTQueIndex(_nftQueIndex)
 
-            const _nfts = await fetcherContract.methods.getNFTs().call()
+            const _nfts = await helperContract.methods.getNFTused().call()
             setnft(_nfts)
 
 

@@ -39,6 +39,40 @@ export default function Trade({ setCreateActive }) {
 
         const fetchNFTs = async () => {
 
+                            const _nfts = await fetcherContract.methods.getNFTs().call();
+
+                const idThreshold = await saveContract.methods.arrayToStart().call();
+                const unitsTotake = await saveContract.methods.getUnitArray().call();
+                const populationSize = await saveContract.methods.populationSize().call();
+
+                // Normalize once
+                const unitsSet = new Set(unitsTotake.map(String));
+
+                // NFTs with id > threshold
+                const firstArrayy = _nfts.filter(nft => Number(nft.id) > Number(idThreshold));
+
+                // NFTs whose id exists in unitsTotake
+                const secondArray = _nfts
+                    .filter(nft => unitsTotake.includes(String(nft.id)))
+                    ;
+
+                const mergedSorted = [...firstArrayy, ...secondArray].sort(
+                    (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
+                ).slice(0, populationSize);
+
+                const mergedSortedpricewise = [...firstArrayy, ...secondArray].sort(
+                    (a, b) => Number(b.price) - Number(a.price)
+                )
+
+
+
+
+                // Save to state
+                const randomIndex = Math.floor(Math.random() * mergedSorted.length);
+                const randomNFT = mergedSorted[randomIndex];
+
+                 const nftToTake = showMessage ?mergedSortedpricewise[0] : randomNFT  
+                                 setNFTs([nftToTake]);   
         };
 
         fetchNFTs();
@@ -51,7 +85,7 @@ export default function Trade({ setCreateActive }) {
 
     useEffect(() => {
 
-        let intervalId;
+
         if (address) {
 
             const bringTransaction = async () => {
@@ -83,47 +117,17 @@ export default function Trade({ setCreateActive }) {
                 const allPurchases = allEvents.filter(event => event.returnValues._type == "1" && event.returnValues._user.toLowerCase() === address.toLowerCase());
                 const purchaseOf75 = allPurchases.filter(event => Number(formatEther(event.returnValues.amount)) > 25)
 
-                const _nfts = await fetcherContract.methods.getNFTs().call();
 
-                const idThreshold = await saveContract.methods.arrayToStart().call();
-                const unitsTotake = await saveContract.methods.getUnitArray().call();
-                const populationSize = await saveContract.methods.populationSize().call();
-
-                // Normalize once
-                const unitsSet = new Set(unitsTotake.map(String));
-
-                // NFTs with id > threshold
-                const firstArrayy = _nfts.filter(nft => Number(nft.id) > Number(idThreshold));
-
-                // NFTs whose id exists in unitsTotake
-                const secondArray = _nfts
-                    .filter(nft => unitsTotake.includes(String(nft.id)))
-                    ;
-
-                const mergedSorted = [...firstArrayy, ...secondArray].sort(
-                    (a, b) => Number(a.purchasedTime) - Number(b.purchasedTime)
-                ).slice(0, populationSize);
-
-                const mergedSortedpricewise = [...firstArrayy, ...secondArray].sort(
-                    (a, b) => Number(b.price) - Number(a.price)
-                )
-
-
-
-
-                // Save to state
-                const randomIndex = Math.floor(Math.random() * mergedSorted.length);
-                const randomNFT = mergedSorted[randomIndex];
-                const nftToTake = purchaseOf75.length > 0 ? randomNFT : mergedSortedpricewise[0]
+               
                 if (purchaseOf75.length == 0) {
                     setShowMessage(true)
                 }
 
                 // Save as array of length 1
-                setNFTs([nftToTake]);
 
 
-                console.log("All events:", mergedSortedpricewise[0], randomNFT, purchaseOf75.length);
+
+                // console.log("All events:", mergedSortedpricewise[0], randomNFT, purchaseOf75.length);
 
             };
 
@@ -132,9 +136,7 @@ export default function Trade({ setCreateActive }) {
 
             bringTransaction();
 
-            intervalId = setInterval(bringTransaction, 30000);
 
-            return () => clearInterval(intervalId);
 
         }
 
