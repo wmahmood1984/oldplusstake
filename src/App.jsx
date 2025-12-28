@@ -62,7 +62,7 @@ export default function App() {
         <div>
             <Toaster position="top-right" reverseOrder={false} />
             <Nav createActive={createActive} setCreateActive={setCreateActive} />
-            {/* <NoteMarquee/> */}
+            <NoteMarquee/>
 
 
             <Routes>

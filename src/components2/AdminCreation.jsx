@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { helperAbi, helperAddress, web3 } from '../config'
+import { fetcherAbi, fetcherAddress, helperAbi, helperAddress, web3 } from '../config'
 import { formatEther } from 'viem'
 import { formatWithCommas } from '../utils/contractExecutor'
 
 export default function AdminCreation() {
     const [nftQue, setNFTQue] = useState()
     const [nftQueIndex, setNFTQueIndex] = useState()
+    const [nft,setnft] = useState()
 
 
     const helperContract = new web3.eth.Contract(helperAbi, helperAddress)
+    const fetcherContract = new web3.eth.Contract(fetcherAbi,fetcherAddress)
 
     useEffect(() => {
         const abc = async () => {
@@ -18,6 +20,8 @@ export default function AdminCreation() {
 
             const _nftQueIndex = await helperContract.methods.nftQueIndex().call()
             setNFTQueIndex(_nftQueIndex)
+
+
 
         }
         abc()
@@ -75,9 +79,9 @@ const totalAmount = nftQue
                             {[
                                 { label: "📋 Total in Queue", value: nftQue.length, bg: "from-purple-500 to-purple-700 shadow-purple-500/40" },
                                 { label: "💵 Total Amount", value: formatWithCommas(totalAmount), bg: "from-emerald-500 to-emerald-600 shadow-emerald-500/40" },
-                                { label: "🟢 Active No", value: nftQueIndex, bg: "from-cyan-500 to-cyan-600 shadow-cyan-500/40" },
-                                { label: "🟣 Processing", value: 45, bg: "from-purple-500 to-purple-600 shadow-purple-500/40" },
-                                { label: "🔵 Complete", value: 4, bg: "from-blue-500 to-blue-600 shadow-blue-500/40" },
+                                { label: "🟢 Active No", value: nftQueIndex+1, bg: "from-cyan-500 to-cyan-600 shadow-cyan-500/40" },
+                                { label: "🟣 Processing", value: Number(nftQue.length)-Number(nftQueIndex), bg: "from-purple-500 to-purple-600 shadow-purple-500/40" },
+                                { label: "🔵 Complete", value: nftQueIndex, bg: "from-blue-500 to-blue-600 shadow-blue-500/40" },
                             ].map((item, i) => (
                                 <div
                                     key={i}

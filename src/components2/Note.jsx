@@ -165,7 +165,7 @@ export default function NoteMarquee() {
               >
                 📢 Please purchase a visible NFT to begin your trading journey... •{" "}
                 {Array(9).fill(
-                  "📢 IMPORTANT NOTE: The system is undergoing some updates for the benefit of the community and for long-term planning, so please wait a bit. Trading will be live soon with excellent smoothness. So we are going to go live after a break. • "
+                  "👉 New information for the Hexa Community! If Users want to trade normally, then trade in the first NFT that appears in front of you and after that the regular trade will be continue Happy Trading ☺️"
                 )}
               </div>
             </div>
