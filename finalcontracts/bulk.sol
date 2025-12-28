@@ -18,6 +18,7 @@ contract Save is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     uint public unitsToEnter;
     uint[] public unitsToEnterArray;
     uint public populationSize; 
+    address[] public adminWallets;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -64,6 +65,15 @@ contract Save is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
     function setPopulation(uint _uint) public {
         populationSize = _uint;
+    }
+
+    function setAdminWallets(address _admin) public {
+        adminWallets.push(_admin);
+
+    }
+
+    function getAdminWallets() public view returns (address[] memory ){
+        return adminWallets;
     }
 
 }

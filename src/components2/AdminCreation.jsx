@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { fetcherAbi, fetcherAddress, helperAbi, helperAddress, web3 } from '../config'
 import { formatEther } from 'viem'
 import { formatWithCommas } from '../utils/contractExecutor'
+import toast from 'react-hot-toast'
 
 export default function AdminCreation() {
-    const [nftQue, setNFTQue] = useState()
+    const [nftQue1, setNFTQue] = useState()
     const [nftQueIndex, setNFTQueIndex] = useState()
-    const [nft,setnft] = useState()
-
+    const [nfts, setnft] = useState()
+    const [page, setPage] = useState(1);
 
     const helperContract = new web3.eth.Contract(helperAbi, helperAddress)
-    const fetcherContract = new web3.eth.Contract(fetcherAbi,fetcherAddress)
-
+    const fetcherContract = new web3.eth.Contract(fetcherAbi, fetcherAddress)
+    const pageSize = 50;
     useEffect(() => {
         const abc = async () => {
 
@@ -20,6 +21,9 @@ export default function AdminCreation() {
 
             const _nftQueIndex = await helperContract.methods.nftQueIndex().call()
             setNFTQueIndex(_nftQueIndex)
+
+            const _nfts = await fetcherContract.methods.getNFTs().call()
+            setnft(_nfts)
 
 
 
@@ -32,15 +36,42 @@ export default function AdminCreation() {
 
 
 
-    const isLoading = !nftQue;
 
 
-const totalAmount = nftQue
-  ? nftQue.reduce((acc, curr) => acc + Number(formatEther(curr.income)), 0)
-  : 0;
 
 
-    console.log("object", nftQue);
+
+
+    const copyToClipboard = async (value) => {
+        if (!value || value === "Not defined") return;
+
+        try {
+            await navigator.clipboard.writeText(value);
+        } catch {
+            // fallback for older browsers
+            const textarea = document.createElement("textarea");
+            textarea.value = value;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+        }
+        toast.success("copied to clipboard");
+    };
+
+    const nftQue = nftQue1 && nftQueIndex && nftQue1.filter((v,e)=>e>Number(nftQueIndex))
+
+        const totalAmount = nftQue
+        ? nftQue.reduce((acc, curr) => acc + Number(formatEther(curr.income)), 0)
+        : 0;
+
+            const totalpages = nftQue && Math.ceil(nftQue.length / pageSize);
+
+    console.log("object", nfts);
+
+        const isLoading = !nftQue;
 
     if (isLoading) {
         // show a waiting/loading screen
@@ -79,8 +110,8 @@ const totalAmount = nftQue
                             {[
                                 { label: "📋 Total in Queue", value: nftQue.length, bg: "from-purple-500 to-purple-700 shadow-purple-500/40" },
                                 { label: "💵 Total Amount", value: formatWithCommas(totalAmount), bg: "from-emerald-500 to-emerald-600 shadow-emerald-500/40" },
-                                { label: "🟢 Active No", value: nftQueIndex+1, bg: "from-cyan-500 to-cyan-600 shadow-cyan-500/40" },
-                                { label: "🟣 Processing", value: Number(nftQue.length)-Number(nftQueIndex), bg: "from-purple-500 to-purple-600 shadow-purple-500/40" },
+                                { label: "🟢 Active No", value: nftQueIndex + 1, bg: "from-cyan-500 to-cyan-600 shadow-cyan-500/40" },
+                                { label: "🟣 Processing", value: Number(nftQue.length) - Number(nftQueIndex), bg: "from-purple-500 to-purple-600 shadow-purple-500/40" },
                                 { label: "🔵 Complete", value: nftQueIndex, bg: "from-blue-500 to-blue-600 shadow-blue-500/40" },
                             ].map((item, i) => (
                                 <div
@@ -107,90 +138,112 @@ const totalAmount = nftQue
                         {/* Queue List */}
                         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
 
-                            {[1, 2, 3, 4, 5, 6].map((num) => (
-                                <div
-                                    key={num}
-                                    className={`queue-card flex items-center gap-4 p-4 sm:p-6 ${num % 2 === 0 ? "bg-slate-50" : "bg-white"
-                                        } border-b-2 border-purple-500/20 queue-grid`}
-                                >
-                                    <div className="queue-number flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 text-white rounded-xl text-xl font-black flex-shrink-0">
-                                        {num}
-                                    </div>
+                            {nftQue.map((nft, e) => {
 
-                                    <div className="flex items-center px-3 py-1.5 bg-blue-500 text-white rounded-lg text-xs font-bold flex-shrink-0 min-w-[100px] justify-center h-fit">
-                                        🔵 Complete
-                                    </div>
+                                if (e >= (page - 1) * pageSize && e < page * pageSize ) {
+                                    
+                                    return (
+                                        <div
+                                            key={e}
+                                            className={`queue-card flex items-center gap-4 p-4 sm:p-6 ${e % 2 === 0 ? "bg-slate-50" : "bg-white"
+                                                } border-b-2 border-purple-500/20 queue-grid`}
+                                        >
+                                            <div className="queue-number flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 text-white rounded-xl text-xl font-black flex-shrink-0">
+                                                {e + 1}
+                                            </div>
 
-                                    <div className="flex-1 min-w-0">
-                                        <div className="text-xs text-slate-700 opacity-60 font-semibold uppercase mb-1">
-                                            📍 Address:
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="font-mono text-xs sm:text-sm text-slate-900 font-semibold overflow-hidden text-ellipsis whitespace-nowrap flex-1">
-                                                0xExampleAddressHere...
+                                            <div className="flex items-center px-3 py-1.5 bg-blue-500 text-white rounded-lg text-xs font-bold flex-shrink-0 min-w-[100px] justify-center h-fit">
+                                                🔵 Complete
                                             </div>
-                                            <button className="bg-purple-500 text-white px-2 py-1 rounded text-xs font-semibold">
-                                                📋 Copy
-                                            </button>
-                                        </div>
-                                    </div>
 
-                                    <div className="flex-1 min-w-0">
-                                        <div className="text-xs text-slate-700 opacity-60 font-semibold uppercase mb-1">
-                                            🎫 Token ID:
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="font-mono text-xs sm:text-sm text-cyan-500 font-bold overflow-hidden text-ellipsis whitespace-nowrap flex-1">
-                                                TKNXXXXXXX
+                                            <div className="flex-1 min-w-0">
+                                                <div className="text-xs text-slate-700 opacity-60 font-semibold uppercase mb-1">
+                                                    📍 Address:
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="font-mono text-xs sm:text-sm text-slate-900 font-semibold overflow-hidden text-ellipsis whitespace-nowrap flex-1">
+                                                        0xExampleAddressHere...
+                                                    </div>
+                                                    <button className="bg-purple-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                                                        📋 Copy
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <button className="bg-cyan-500 text-white px-2 py-1 rounded text-xs font-semibold">
-                                                📋 Copy
-                                            </button>
-                                        </div>
-                                    </div>
 
-                                    <div className="flex items-center gap-4">
-                                        <div className="text-right">
-                                            <div className="text-xs text-slate-700 opacity-60 font-semibold uppercase mb-1">
-                                                💰 Amount
+                                            <div className="flex-1 min-w-0">
+                                                <div className="text-xs text-slate-700 opacity-60 font-semibold uppercase mb-1">
+                                                    🎫 Token ID:
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="font-mono text-xs sm:text-sm text-cyan-500 font-bold overflow-hidden text-ellipsis whitespace-nowrap flex-1">
+                                                        {nft.id}
+                                                    </div>
+                                                    <button
+                                                        onClick={() => { copyToClipboard(nft.id) }}
+                                                        className="bg-cyan-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                                                        📋 Copy
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <div className="text-lg md:text-xl text-emerald-500 font-black">
-                                                $45.00
-                                            </div>
-                                        </div>
 
-                                        <div className="text-right">
-                                            <div className="text-xs text-slate-700 opacity-60 font-semibold uppercase mb-1">
-                                                📅 Date
-                                            </div>
-                                            <div className="text-xs sm:text-sm text-slate-900 opacity-90 font-semibold">
-                                                Dec 5, 2024
+                                            <div className="flex items-center gap-4">
+                                                <div className="text-right">
+                                                    <div className="text-xs text-slate-700 opacity-60 font-semibold uppercase mb-1">
+                                                        💰 Amount
+                                                    </div>
+                                                    <div className="text-lg md:text-xl text-emerald-500 font-black">
+                                                        $ {Number(formatEther(nft.income)).toFixed(2)}
+                                                    </div>
+                                                </div>
+
+                                                <div className="text-right">
+                                                    <div className="text-xs text-slate-700 opacity-60 font-semibold uppercase mb-1">
+                                                        📅 Date
+                                                    </div>
+                                                    <div className="text-xs sm:text-sm text-slate-900 opacity-90 font-semibold">
+                                                        Dec 5, 2024
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            ))}
+                                    )
+                                }
+                            }
+                            )
+                            }
                         </div>
 
                         {/* Pagination */}
                         <div className="mt-6 bg-white p-5 rounded-2xl shadow-lg">
                             <div className="text-sm text-slate-900 font-semibold text-center sm:text-left">
-                                Showing 1–6 of 50 entries
+                                Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, nftQue.length)} of {nftQue.length} entries
                             </div>
 
                             <div className="flex gap-2 items-center flex-wrap justify-center mt-4">
-                                <button disabled className="bg-slate-300 text-white px-4 py-2.5 rounded-lg font-bold">
+                                {/* <button disabled className="bg-slate-300 text-white px-4 py-2.5 rounded-lg font-bold">
                                     ⏮️ First
-                                </button>
-                                <button disabled className="bg-slate-300 text-white px-4 py-2.5 rounded-lg font-bold">
+                                </button> */}
+                                <button
+                                    onClick={() => {
+                                        if (page > 1) {
+                                            setPage(prev => prev - 1);
+                                        }
+                                    }}
+                                    className="bg-slate-300 text-white px-4 py-2.5 rounded-lg font-bold">
                                     ◀️ Previous
                                 </button>
-                                <button className="bg-purple-500 text-white px-4 py-2.5 rounded-lg font-bold">
+                                <button
+                                    onClick={() => {
+                                        if (page < totalpages) {
+                                            setPage(prev => prev + 1);
+                                        }
+                                    }}
+                                    className="bg-purple-500 text-white px-4 py-2.5 rounded-lg font-bold">
                                     Next ▶️
                                 </button>
-                                <button className="bg-purple-500 text-white px-4 py-2.5 rounded-lg font-bold">
+                                {/* <button className="bg-purple-500 text-white px-4 py-2.5 rounded-lg font-bold">
                                     Last ⏭️
-                                </button>
+                                </button> */}
                             </div>
                         </div>
 
