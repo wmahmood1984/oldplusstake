@@ -1,0 +1,1373 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFT Burning Queue</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    .nft-image-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .nft-image-container.active {
+      display: flex;
+    }
+    
+    .admin-modal-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 10001;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .admin-modal-container.active {
+      display: flex;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes zoomIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .nft-card, .admin-card {
+      animation: zoomIn 0.3s ease;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90%;
+      overflow-y: auto;
+    }
+    
+    .token-clickable {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .token-clickable:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    
+    .table-row:hover {
+      background-color: rgba(59, 130, 246, 0.05) !important;
+    }
+    
+    .admin-row:hover {
+      background-color: rgba(239, 68, 68, 0.05) !important;
+    }
+    
+    @media (max-width: 768px) {
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      table {
+        min-width: 320px;
+      }
+      
+      .sort-buttons {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+      }
+      
+      .sort-buttons span {
+        margin-bottom: 8px;
+      }
+      
+      .sort-buttons div {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+      }
+      
+      .sort-buttons button {
+        width: 100%;
+      }
+      
+      .admin-buttons {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+      }
+      
+      .admin-buttons div {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+      }
+      
+      .admin-buttons button {
+        width: 100%;
+      }
+    }
+
+    /* Sorting badge styles */
+    .sort-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 8px;
+    }
+    
+    .admin-badge {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+    
+    .new-user-badge {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+    
+    .old-user-badge {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+    }
+    
+    .delete-btn {
+      transition: all 0.2s ease;
+    }
+    
+    .delete-btn:hover {
+      transform: scale(1.1);
+      background: #ef4444 !important;
+    }
+    
+    .admin-address-item {
+      transition: all 0.2s ease;
+    }
+    
+    .admin-address-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body class="h-full w-full m-0 p-0" style="background: linear-gradient(to bottom right, #f8fafc, #e2e8f0); font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+  <div class="min-h-full w-full p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+      <!-- Header -->
+      <div class="mb-6 md:mb-8 text-center">
+        <h1 style="font-size: 40px; color: #0f172a; font-weight: 900; margin-bottom: 12px; text-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+          NFT Burning Queue
+        </h1>
+        <p style="font-size: 18px; color: #0f172a; opacity: 0.8; font-weight: 500;">
+          Active NFT Listings with Address Sorting
+        </p>
+      </div>
+
+      <!-- Admin Management Buttons -->
+      <div class="mb-6">
+        <div class="admin-buttons" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+          <span style="font-size: 14px; color: #0f172a; font-weight: 600;">🔧 Admin Management:</span>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button 
+              id="addAdminBtn"
+              style="padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 2px solid #ef4444; background: #ffffff; color: #0f172a;"
+            >
+              ➕ Add Admin Address
+            </button>
+            <button 
+              id="viewAdminBtn"
+              style="padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 2px solid #3b82f6; background: #ffffff; color: #0f172a;"
+            >
+              👁️ View Admin List
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="mb-6">
+        <div class="relative">
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="🔍 Search by token number or owner address..." 
+            class="w-full px-6 py-4 rounded-xl border-2 transition-all focus:outline-none"
+            style="border-color: #3b82f6; background: #ffffff; color: #0f172a; padding-right: 100px;"
+          />
+          <button 
+            id="clearSearch"
+            class="absolute right-2 top-1/2 px-4 py-2 rounded-lg transition-all"
+            style="transform: translateY(-50%); background: #3b82f6; color: #ffffff; font-weight: 600; border: none; cursor: pointer; display: none;"
+          >
+            Clear
+          </button>
+        </div>
+        <div id="searchResults" style="font-size: 14px; color: #0f172a; margin-top: 8px; opacity: 0.7;"></div>
+      </div>
+
+      <!-- Sort Filter -->
+      <div class="mb-6">
+        <div class="sort-buttons" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+          <span style="font-size: 14px; color: #0f172a; font-weight: 600;">⏰ Sort by:</span>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button 
+              class="sort-btn"
+              data-sort="newest"
+              style="padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 2px solid #3b82f6; background: #ffffff; color: #0f172a;"
+            >
+              🆕 Newest First
+            </button>
+            <button 
+              class="sort-btn"
+              data-sort="oldest"
+              style="padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 2px solid #3b82f6; background: #ffffff; color: #0f172a;"
+            >
+              ⏳ Oldest First
+            </button>
+            <button 
+              class="sort-btn"
+              data-sort="admin"
+              style="padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 2px solid #ef4444; background: #ffffff; color: #0f172a;"
+            >
+              👑 Include ADM
+            </button>
+            <button 
+              class="sort-btn"
+              data-sort="newuser"
+              style="padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 2px solid #10b981; background: #ffffff; color: #0f172a;"
+            >
+              🆕 Exclude ADM
+            </button>
+           
+            <button 
+              class="sort-btn"
+              data-sort="default"
+              style="padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 2px solid #3b82f6; background: #3b82f6; color: white;"
+            >
+              🔄 Default Order
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics -->
+      <div class="mb-8 rounded-2xl p-6" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);">
+        <div style="font-size: 14px; color: white; opacity: 0.9; margin-bottom: 8px; font-weight: 600;">
+          🎨 Total NFTs in Marketplace
+        </div>
+        <div style="font-size: 48px; color: white; font-weight: 900;" id="totalNFTs">
+          100
+        </div>
+      </div>
+
+      <!-- NFT Table -->
+      <div class="rounded-2xl overflow-hidden" style="background: #ffffff; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);">
+        <div class="table-container overflow-x-auto" style="-webkit-overflow-scrolling: touch;">
+          <table class="w-full" style="min-width: 320px;" id="nftTable">
+            <thead style="background: linear-gradient(135deg, #3b82f6, #8b5cf6);">
+              <tr>
+                <th class="px-3 py-4 text-left font-bold uppercase" style="font-size: 10.4px; color: white; letter-spacing: 0.05em;">Queue</th>
+                <th class="px-3 py-4 text-left font-bold uppercase" style="font-size: 10.4px; color: white; letter-spacing: 0.05em;">NFT Token</th>
+                <th class="px-3 py-4 text-left font-bold uppercase" style="font-size: 10.4px; color: white; letter-spacing: 0.05em;">Burning Time</th>
+                <th class="px-3 py-4 text-left font-bold uppercase" style="font-size: 10.4px; color: white; letter-spacing: 0.05em;">Duration</th>
+                <th class="px-3 py-4 text-left font-bold uppercase" style="font-size: 10.4px; color: white; letter-spacing: 0.05em;">Burning Owner</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- NFT rows will be inserted here by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-4 md:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 border-t-2" style="border-color: rgba(59, 130, 246, 0.3);">
+          <div style="font-size: 12px; color: #0f172a; opacity: 0.8; text-align: center;" id="paginationInfo">
+            <strong>1</strong>-<strong>20</strong> of <strong>100</strong>
+          </div>
+          <div class="flex gap-2 items-center">
+            <button 
+              id="prevBtn" 
+              class="px-4 py-2 rounded-lg font-bold transition-all"
+              style="background: #3b82f6; color: white; font-size: 12px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);"
+            >
+              ← Prev
+            </button>
+            <div style="padding: 8px 16px; background: rgba(59, 130, 246, 0.2); border-radius: 8px; font-size: 12px; color: #0f172a; font-weight: 700;" id="pageIndicator">
+              1/5
+            </div>
+            <button 
+              id="nextBtn" 
+              class="px-4 py-2 rounded-lg font-bold transition-all"
+              style="background: #3b82f6; color: white; font-size: 12px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- NFT Image Modal -->
+  <div id="nftModal" class="nft-image-container">
+    <div class="nft-card rounded-2xl overflow-hidden" style="background: white;">
+      <div id="nftModalContent"></div>
+    </div>
+  </div>
+  
+  <!-- Admin Management Modal -->
+  <div id="adminModal" class="admin-modal-container">
+    <div class="admin-card rounded-2xl overflow-hidden" style="background: white; max-width: 600px;">
+      <div id="adminModalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // Address definitions
+    let ADMIN_ADDRESSES = ["0xadmin1234567890abcdef1234567890abcdef1234"];
+    const NEW_USER_ADDRESS = "0xnewuserabcdef1234567890abcdef1234567890ab";
+    const OLD_USER_ADDRESS = "0xolduserabcdef1234567890abcdef1234567890cd";
+
+    // Generate initial NFT data with different address types
+    let nftData = Array.from({ length: 100 }, (_, i) => {
+      const id = i + 1;
+      const tokenNo = `NFT-${1000 + id}`;
+      
+      // Randomly assign address types
+      const addressTypes = ['admin', 'newuser', 'olduser', 'regular'];
+      const addressType = addressTypes[Math.floor(Math.random() * addressTypes.length)];
+      
+      let ownerAddress, addressTypeLabel;
+      
+      switch(addressType) {
+        case 'admin':
+          ownerAddress = ADMIN_ADDRESSES[0];
+          addressTypeLabel = 'Include ADM';
+          break;
+        case 'newuser':
+          ownerAddress = NEW_USER_ADDRESS;
+          addressTypeLabel = 'Exclude ADM';
+          break;
+        case 'olduser':
+          ownerAddress = OLD_USER_ADDRESS;
+          addressTypeLabel = '👴 Old User';
+          break;
+        default:
+          // Generate a random regular address
+          ownerAddress = `0x${Array.from({length: 40}, () => 
+            Math.floor(Math.random() * 16).toString(16)).join('')}`;
+          addressTypeLabel = 'Regular';
+      }
+      
+      // Generate random dates for burning time
+      const startDate = new Date(2024, 0, 1);
+      const randomDays = Math.floor(Math.random() * 365);
+      const burningTime = new Date(startDate);
+      burningTime.setDate(burningTime.getDate() + randomDays);
+      burningTime.setHours(Math.floor(Math.random() * 24));
+      burningTime.setMinutes(Math.floor(Math.random() * 60));
+      
+      // Random durations
+      const durations = ['24h', '48h', '72h', '96h', '120h', '144h', '168h', '192h', '216h', '240h'];
+      const duration = durations[Math.floor(Math.random() * durations.length)];
+      const durationHours = parseInt(duration);
+      
+      return {
+        id,
+        tokenNo,
+        queueNo: id,
+        burningTime,
+        duration,
+        durationHours,
+        ownerAddress,
+        addressType,
+        addressTypeLabel,
+        value: `$${(Math.random() * 100 + 50).toFixed(2)}`,
+        rarity: ['Common', 'Rare', 'Epic', 'Legendary'][Math.floor(Math.random() * 4)],
+        holders: Math.floor(Math.random() * 100) + 1,
+        buyTime: burningTime.toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
+    });
+
+    // Generate SVG NFT image
+    function generateNFTImage(tokenNo, queueNo) {
+      const nftColors = [
+        ['#FF6B6B', '#4ECDC4', '#45B7D1'],
+        ['#A8E6CF', '#FFD93D', '#6BCF7F'],
+        ['#F38181', '#AA96DA', '#FCBAD3'],
+        ['#95E1D3', '#F38181', '#EAFFD0'],
+        ['#FEC8D8', '#957DAD', '#D291BC'],
+        ['#74B9FF', '#A29BFE', '#FD79A8'],
+        ['#FDCB6E', '#6C5CE7', '#00B894'],
+        ['#FF7675', '#74B9FF', '#55EFC4'],
+        ['#FD79A8', '#FDCB6E', '#E17055'],
+        ['#A29BFE', '#00B894', '#FF7675']
+      ];
+      
+      const [color1, color2, color3] = nftColors[queueNo % nftColors.length];
+      return `
+        <svg width="100%" height="300" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad-${queueNo}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:${color1};stop-opacity:1" />
+              <stop offset="50%" style="stop-color:${color2};stop-opacity:1" />
+              <stop offset="100%" style="stop-color:${color3};stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <rect width="400" height="400" fill="url(#grad-${queueNo})"/>
+          <circle cx="200" cy="150" r="80" fill="rgba(255,255,255,0.2)"/>
+          <circle cx="150" cy="250" r="60" fill="rgba(255,255,255,0.15)"/>
+          <circle cx="280" cy="280" r="70" fill="rgba(255,255,255,0.15)"/>
+          <text x="200" y="350" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="white" text-anchor="middle">
+            ${tokenNo}
+          </text>
+        </svg>
+      `;
+    }
+
+    // Update NFT data with new admin addresses
+    function updateNFTDataWithAdminAddresses() {
+      nftData = nftData.map(item => {
+        // Check if this item's address is in the admin list
+        const isAdmin = ADMIN_ADDRESSES.some(adminAddr => 
+          adminAddr.toLowerCase() === item.ownerAddress.toLowerCase()
+        );
+        
+        if (isAdmin) {
+          return {
+            ...item,
+            addressType: 'admin',
+            addressTypeLabel: 'Include ADM'
+          };
+        }
+        
+        // Check if it's a new user address
+        if (item.ownerAddress.toLowerCase() === NEW_USER_ADDRESS.toLowerCase()) {
+          return {
+            ...item,
+            addressType: 'newuser',
+            addressTypeLabel: 'Exclude ADM'
+          };
+        }
+        
+        // Check if it's an old user address
+        if (item.ownerAddress.toLowerCase() === OLD_USER_ADDRESS.toLowerCase()) {
+          return {
+            ...item,
+            addressType: 'olduser',
+            addressTypeLabel: '👴 Old User'
+          };
+        }
+        
+        // Keep regular addresses as is
+        if (item.addressType === 'regular') {
+          return item;
+        }
+        
+        // If it was previously admin but no longer is, change to regular
+        if (item.addressType === 'admin') {
+          return {
+            ...item,
+            addressType: 'regular',
+            addressTypeLabel: 'Regular'
+          };
+        }
+        
+        return item;
+      });
+      
+      // Re-sort and update the table
+      currentData = sortNFTs(currentSort);
+      updateTable();
+    }
+
+    function copyToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      
+      try {
+        document.execCommand('copy');
+        return true;
+      } catch (err) {
+        return false;
+      } finally {
+        document.body.removeChild(textarea);
+      }
+    }
+
+    function showPopup(message, isSuccess = true) {
+      const popup = document.createElement('div');
+      popup.textContent = message;
+      popup.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: ${isSuccess ? '#10b981' : '#ef4444'};
+        color: white;
+        padding: 16px 32px;
+        border-radius: 12px;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        box-shadow: 0 8px 20px ${isSuccess ? 'rgba(16, 185, 129, 0.5)' : 'rgba(239, 68, 68, 0.5)'};
+        z-index: 10000;
+      `;
+      document.body.appendChild(popup);
+      
+      setTimeout(() => {
+        popup.remove();
+      }, 2000);
+    }
+
+    // Admin Management Functions
+    function showAdminModal(mode = 'list') {
+      const modal = document.getElementById('adminModal');
+      const modalContent = document.getElementById('adminModalContent');
+      
+      if (mode === 'add') {
+        modalContent.innerHTML = `
+          <div style="position: relative;">
+            <button 
+              id="closeAdminModal" 
+              style="position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 24px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: all 0.2s;"
+            >
+              ×
+            </button>
+            
+            <div style="padding: 32px; background: linear-gradient(to bottom, #ffffff, #f8fafc);">
+              <h2 style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 28px; color: #0f172a; font-weight: 800; margin: 0 0 24px 0;">
+                ➕ Add Admin Address
+              </h2>
+              
+              <div style="margin-bottom: 24px;">
+                <div style="font-size: 14px; color: #0f172a; opacity: 0.8; margin-bottom: 8px; font-weight: 600;">
+                  Admin Address
+                </div>
+                <input 
+                  type="text" 
+                  id="adminAddressInput" 
+                  placeholder="0x..." 
+                  class="w-full px-4 py-3 rounded-lg border-2 transition-all focus:outline-none"
+                  style="border-color: #3b82f6; background: #ffffff; color: #0f172a; font-family: 'Courier New', monospace;"
+                />
+                <div style="font-size: 12px; color: #64748b; margin-top: 8px;">
+                  Enter a valid OPBNB address (0x...)
+                </div>
+              </div>
+              
+              <div style="display: flex; gap: 12px;">
+                <button 
+                  id="saveAdminBtn"
+                  style="flex: 1; padding: 16px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 12px; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);"
+                >
+                  💾 Save Address
+                </button>
+                <button 
+                  id="cancelAddBtn"
+                  style="flex: 1; padding: 16px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; border-radius: 12px; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);"
+                >
+                  ❌ Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        // Show admin list
+        modalContent.innerHTML = `
+          <div style="position: relative;">
+            <button 
+              id="closeAdminModal" 
+              style="position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 24px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: all 0.2s;"
+            >
+              ×
+            </button>
+            
+            <div style="padding: 32px; background: linear-gradient(to bottom, #ffffff, #f8fafc);">
+              <h2 style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 28px; color: #0f172a; font-weight: 800; margin: 0 0 24px 0;">
+                👑 Admin Address List
+              </h2>
+              
+              <div style="margin-bottom: 24px; font-size: 14px; color: #0f172a; opacity: 0.8;">
+                Total: <strong>${ADMIN_ADDRESSES.length}</strong> admin address${ADMIN_ADDRESSES.length !== 1 ? 'es' : ''}
+              </div>
+              
+              <div id="adminList" style="max-height: 300px; overflow-y: auto; margin-bottom: 24px;">
+                ${ADMIN_ADDRESSES.length > 0 ? 
+                  ADMIN_ADDRESSES.map((addr, index) => `
+                    <div class="admin-address-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(0,0,0,0.05); border-radius: 8px; margin-bottom: 8px;">
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="font-family: 'Courier New', monospace; font-size: 12px; color: #0f172a; word-break: break-all; flex: 1;">
+                          ${addr}
+                        </div>
+                      </div>
+                      <button 
+                        class="delete-admin-btn"
+                        data-address="${addr}"
+                        style="background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; flex-shrink: 0; transition: all 0.2s;"
+                      >
+                        🗑️ Delete
+                      </button>
+                    </div>
+                  `).join('') :
+                  '<div style="text-align: center; padding: 20px; color: #64748b; font-style: italic;">No admin addresses added yet</div>'
+                }
+              </div>
+              
+              <div style="display: flex; gap: 12px;">
+                <button 
+                  id="addNewAdminBtn"
+                  style="flex: 1; padding: 16px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border: none; border-radius: 12px; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);"
+                >
+                  ➕ Add New
+                </button>
+                <button 
+                  id="closeListBtn"
+                  style="flex: 1; padding: 16px; background: linear-gradient(135deg, #94a3b8, #64748b); color: white; border: none; border-radius: 12px; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(148, 163, 184, 0.4);"
+                >
+                  ✅ Done
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      
+      modal.classList.add('active');
+      
+      // Add event listeners
+      document.getElementById('closeAdminModal').onclick = () => {
+        modal.classList.remove('active');
+      };
+      
+      document.getElementById('closeAdminModal').addEventListener('mouseover', function() {
+        this.style.background = 'rgba(239,68,68,0.9)';
+        this.style.transform = 'rotate(90deg)';
+      });
+      
+      document.getElementById('closeAdminModal').addEventListener('mouseout', function() {
+        this.style.background = 'rgba(0,0,0,0.7)';
+        this.style.transform = 'rotate(0deg)';
+      });
+      
+      // Close on background click
+      modal.onclick = (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      };
+      
+      // Add mode-specific event listeners
+      if (mode === 'add') {
+        const adminAddressInput = document.getElementById('adminAddressInput');
+        adminAddressInput.focus();
+        
+        document.getElementById('saveAdminBtn').onclick = () => {
+          const address = adminAddressInput.value.trim();
+          
+          if (!address) {
+            showPopup('Please enter an address', false);
+            return;
+          }
+          
+          // Simple address validation
+          if (!address.startsWith('0x') || address.length !== 42) {
+            showPopup('Invalid address format', false);
+            return;
+          }
+          
+          // Check if address already exists
+          if (ADMIN_ADDRESSES.some(addr => addr.toLowerCase() === address.toLowerCase())) {
+            showPopup('Address already exists in admin list', false);
+            return;
+          }
+          
+          // Add to admin list
+          ADMIN_ADDRESSES.push(address);
+          showPopup('✅ Admin address added successfully!', true);
+          
+          // Update NFT data
+          updateNFTDataWithAdminAddresses();
+          
+          // Switch back to list view
+          setTimeout(() => {
+            showAdminModal('list');
+          }, 500);
+        };
+        
+        document.getElementById('cancelAddBtn').onclick = () => {
+          showAdminModal('list');
+        };
+        
+        // Hover effects
+        ['saveAdminBtn', 'cancelAddBtn'].forEach(btnId => {
+          const btn = document.getElementById(btnId);
+          btn.addEventListener('mouseover', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.3)';
+          });
+          
+          btn.addEventListener('mouseout', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+          });
+        });
+      } else {
+        // List view event listeners
+        document.getElementById('addNewAdminBtn').onclick = () => {
+          showAdminModal('add');
+        };
+        
+        document.getElementById('closeListBtn').onclick = () => {
+          modal.classList.remove('active');
+        };
+        
+        // Delete button functionality
+        const deleteButtons = document.querySelectorAll('.delete-admin-btn');
+        deleteButtons.forEach(btn => {
+          btn.addEventListener('click', function() {
+            const addressToDelete = this.getAttribute('data-address');
+            
+            // Check if we're trying to delete the last admin
+            if (ADMIN_ADDRESSES.length <= 1) {
+              showPopup('Cannot delete the last admin address', false);
+              return;
+            }
+            
+            // Remove from admin list
+            ADMIN_ADDRESSES = ADMIN_ADDRESSES.filter(addr => 
+              addr.toLowerCase() !== addressToDelete.toLowerCase()
+            );
+            
+            showPopup('🗑️ Admin address removed', true);
+            
+            // Update NFT data
+            updateNFTDataWithAdminAddresses();
+            
+            // Refresh the admin list
+            showAdminModal('list');
+          });
+          
+          btn.addEventListener('mouseover', function() {
+            this.style.transform = 'scale(1.1)';
+          });
+          
+          btn.addEventListener('mouseout', function() {
+            this.style.transform = 'scale(1)';
+          });
+        });
+        
+        // Hover effects for list view buttons
+        ['addNewAdminBtn', 'closeListBtn'].forEach(btnId => {
+          const btn = document.getElementById(btnId);
+          btn.addEventListener('mouseover', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.3)';
+          });
+          
+          btn.addEventListener('mouseout', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+          });
+        });
+      }
+    }
+
+    function showNFTModal(nftItem) {
+      const modal = document.getElementById('nftModal');
+      const modalContent = document.getElementById('nftModalContent');
+      
+      const rarityColors = {
+        'Common': '#94a3b8',
+        'Rare': '#3b82f6',
+        'Epic': '#a855f7',
+        'Legendary': '#f59e0b'
+      };
+      
+      const addressTypeBadges = {
+        'admin': { text: 'Include ADM', class: 'admin-badge' },
+        'newuser': { text: 'Exclude ADM', class: 'new-user-badge' },
+        'olduser': { text: '👴 Old User', class: 'old-user-badge' },
+        'regular': { text: 'Regular User', class: '' }
+      };
+      
+      const badge = addressTypeBadges[nftItem.addressType] || addressTypeBadges.regular;
+      
+      modalContent.innerHTML = `
+        <div style="position: relative;">
+          <button 
+            id="closeModal" 
+            style="position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 24px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: all 0.2s;"
+          >
+            ×
+          </button>
+          
+          <div>
+            ${generateNFTImage(nftItem.tokenNo, nftItem.queueNo)}
+          </div>
+          
+          <div style="padding: 24px; background: linear-gradient(to bottom, #ffffff, #f8fafc);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+              <div>
+                <h2 style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 28px; color: #0f172a; font-weight: 800; margin: 0 0 8px 0;">
+                  ${nftItem.tokenNo}
+                </h2>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <div style="display: inline-block; padding: 6px 12px; border-radius: 8px; background: ${rarityColors[nftItem.rarity]}; color: white; font-size: 12px; font-weight: 700;">
+                    ✨ ${nftItem.rarity}
+                  </div>
+                  <div class="sort-badge ${badge.class}" style="padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700;">
+                    ${badge.text}
+                  </div>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 12px; color: #0f172a; opacity: 0.7; margin-bottom: 4px;">
+                  Value
+                </div>
+                <div style="font-size: 24px; color: #10b981; font-weight: 800;">
+                  ${nftItem.value}
+                </div>
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 20px; padding: 16px; background: rgba(0,0,0,0.2); border-radius: 12px;">
+              <div style="font-size: 14px; color: #0f172a; opacity: 0.8; margin-bottom: 8px; font-weight: 600;">
+                📍 Queue Position
+              </div>
+              <div style="font-size: 20px; color: #3b82f6; font-weight: 700;">
+                #${nftItem.queueNo}
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <div style="font-size: 14px; color: #0f172a; opacity: 0.8; margin-bottom: 8px; font-weight: 600;">
+                👤 Owner Address
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <span style="font-family: 'Courier New', monospace; font-size: 11.2px; color: #0f172a; word-break: break-all; flex: 1;">
+                  ${nftItem.ownerAddress}
+                </span>
+                <button 
+                  class="copy-address-btn"
+                  data-address="${nftItem.ownerAddress}"
+                  style="background: #3b82f6; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; flex-shrink: 0; transition: all 0.2s;"
+                >
+                  📋 Copy
+                </button>
+              </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+              <div style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <div style="font-size: 12px; color: #0f172a; opacity: 0.7; margin-bottom: 4px;">
+                  🕐 Burning Time
+                </div>
+                <div style="font-size: 12.8px; color: #0f172a; font-weight: 600;">
+                  ${nftItem.buyTime}
+                </div>
+              </div>
+              
+              <div style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <div style="font-size: 12px; color: #0f172a; opacity: 0.7; margin-bottom: 4px;">
+                  ⏱️ Duration
+                </div>
+                <div style="font-size: 12.8px; color: #f59e0b; font-weight: 700;">
+                  ${nftItem.duration}
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 20px; padding: 16px; background: rgba(0,0,0,0.2); border-radius: 12px;">
+              <div style="font-size: 14px; color: #0f172a; opacity: 0.8; margin-bottom: 8px; font-weight: 600;">
+                👥 Total Value of NFT Holders
+              </div>
+              <div style="font-size: 24px; color: #3b82f6; font-weight: 700;">
+                $${(parseFloat(nftItem.value.replace('$', '')) * nftItem.holders).toFixed(2)}
+              </div>
+              <div style="font-size: 12px; color: #0f172a; opacity: 0.6; margin-top: 4px;">
+                ${nftItem.holders} holders × ${nftItem.value}
+              </div>
+            </div>
+            
+            <button 
+              id="hideModalBtn"
+              style="width: 100%; padding: 16px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border: none; border-radius: 12px; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);"
+            >
+              🙈 Hide NFT
+            </button>
+          </div>
+        </div>
+      `;
+      
+      modal.classList.add('active');
+      
+      // Add event listeners
+      document.getElementById('closeModal').onclick = () => {
+        modal.classList.remove('active');
+      };
+      
+      document.getElementById('closeModal').addEventListener('mouseover', function() {
+        this.style.background = 'rgba(239,68,68,0.9)';
+        this.style.transform = 'rotate(90deg)';
+      });
+      
+      document.getElementById('closeModal').addEventListener('mouseout', function() {
+        this.style.background = 'rgba(0,0,0,0.7)';
+        this.style.transform = 'rotate(0deg)';
+      });
+      
+      document.getElementById('hideModalBtn').onclick = () => {
+        modal.classList.remove('active');
+      };
+      
+      document.getElementById('hideModalBtn').addEventListener('mouseover', function() {
+        this.style.transform = 'translateY(-2px)';
+        this.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.6)';
+      });
+      
+      document.getElementById('hideModalBtn').addEventListener('mouseout', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+      });
+      
+      // Close on background click
+      modal.onclick = (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      };
+      
+      // Copy address functionality
+      const copyBtn = document.querySelector('.copy-address-btn');
+      if (copyBtn) {
+        copyBtn.onclick = function() {
+          const address = this.getAttribute('data-address');
+          if (copyToClipboard(address)) {
+            showPopup('✓ Address copied!', true);
+            
+            const originalText = this.innerHTML;
+            this.innerHTML = '✓ Copied!';
+            this.style.background = '#10b981';
+            
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = '#3b82f6';
+            }, 2000);
+          } else {
+            showPopup('✗ Failed to copy', false);
+          }
+        };
+        
+        copyBtn.addEventListener('mouseover', function() {
+          this.style.opacity = '0.8';
+        });
+        
+        copyBtn.addEventListener('mouseout', function() {
+          this.style.opacity = '1';
+        });
+      }
+    }
+
+    // Sorting functions
+    function sortNFTs(sortType) {
+      let sortedData = [...nftData];
+      
+      switch(sortType) {
+        case 'newest':
+          sortedData.sort((a, b) => b.burningTime - a.burningTime);
+          break;
+        case 'oldest':
+          sortedData.sort((a, b) => a.burningTime - b.burningTime);
+          break;
+        case 'admin':
+          sortedData.sort((a, b) => {
+            const aIsAdmin = a.addressType === 'admin' ? 1 : 0;
+            const bIsAdmin = b.addressType === 'admin' ? 1 : 0;
+            return bIsAdmin - aIsAdmin;
+          });
+          break;
+        case 'newuser':
+          sortedData.sort((a, b) => {
+            const aIsNew = a.addressType === 'newuser' ? 1 : 0;
+            const bIsNew = b.addressType === 'newuser' ? 1 : 0;
+            return bIsNew - aIsNew;
+          });
+          break;
+        case 'olduser':
+          sortedData.sort((a, b) => {
+            const aIsOld = a.addressType === 'olduser' ? 1 : 0;
+            const bIsOld = b.addressType === 'olduser' ? 1 : 0;
+            return bIsOld - aIsOld;
+          });
+          break;
+        case 'default':
+        default:
+          sortedData.sort((a, b) => a.id - b.id);
+          break;
+      }
+      
+      // Update queue numbers based on sort order
+      sortedData = sortedData.map((item, index) => ({
+        ...item,
+        queueNo: index + 1
+      }));
+      
+      return sortedData;
+    }
+
+    // Render table rows
+    function renderTableRows(data, startIndex = 0, itemsPerPage = 20) {
+      const tableBody = document.getElementById('tableBody');
+      const endIndex = Math.min(startIndex + itemsPerPage, data.length);
+      const pageData = data.slice(startIndex, endIndex);
+      
+      tableBody.innerHTML = '';
+      
+      pageData.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.className = 'table-row border-b transition-all';
+        row.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+        row.style.background = index % 2 === 0 ? '#ffffff' : '#f8fafc';
+        
+        // Format burning time
+        const burningTimeStr = item.burningTime.toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        // Get address type badge
+        let addressBadge = '';
+        if (item.addressType === 'admin') {
+          addressBadge = '<span class="sort-badge admin-badge">Include ADM</span>';
+        } else if (item.addressType === 'newuser') {
+          addressBadge = '<span class="sort-badge new-user-badge">Exclude ADM</span>';
+        } else if (item.addressType === 'olduser') {
+          addressBadge = '<span class="sort-badge old-user-badge">👴</span>';
+        }
+        
+        row.innerHTML = `
+          <td class="px-3 py-4" style="font-size: 12px; color: #0f172a; font-weight: 600;">
+            #${item.queueNo}
+          </td>
+          <td class="px-3 py-4">
+            <span 
+              class="token-clickable"
+              data-token="${item.id}"
+              style="display: inline-block; padding: 8px 12px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border-radius: 8px; font-size: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);"
+            >
+              ${item.tokenNo}
+            </span>
+          </td>
+          <td class="px-3 py-4" style="font-size: 11.2px; color: #0f172a; opacity: 0.8; white-space: nowrap;">
+            ${burningTimeStr}
+          </td>
+          <td class="px-3 py-4">
+            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #f59e0b; color: white; border-radius: 6px; font-size: 10.4px; font-weight: 700; white-space: nowrap;">
+              ⏱️ ${item.duration}
+            </span>
+          </td>
+          <td class="px-3 py-4">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <div style="font-family: 'Courier New', monospace; font-size: 10.4px; color: #1e293b; font-weight: 700; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                ${item.ownerAddress}
+              </div>
+              ${addressBadge}
+              <button 
+                class="copy-table-btn"
+                data-address="${item.ownerAddress}"
+                style="background: #3b82f6; color: white; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 10.4px; font-weight: 600; white-space: nowrap; transition: all 0.2s; flex-shrink: 0;"
+              >
+                📋
+              </button>
+            </div>
+          </td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+      
+      // Update pagination info
+      updatePaginationInfo(startIndex + 1, endIndex, data.length);
+    }
+
+    function updatePaginationInfo(start, end, total) {
+      const paginationInfo = document.getElementById('paginationInfo');
+      const pageIndicator = document.getElementById('pageIndicator');
+      const currentPage = Math.ceil(start / 20);
+      const totalPages = Math.ceil(total / 20);
+      
+      paginationInfo.innerHTML = `<strong>${start}</strong>-<strong>${end}</strong> of <strong>${total}</strong>`;
+      pageIndicator.innerHTML = `${currentPage}/${totalPages}`;
+      
+      document.getElementById('totalNFTs').textContent = total;
+    }
+
+    // Pagination
+    let currentPage = 1;
+    let currentSort = 'default';
+    let currentData = sortNFTs('default');
+    const itemsPerPage = 20;
+
+    function updateTable() {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      renderTableRows(currentData, startIndex, itemsPerPage);
+      setupEventListeners();
+    }
+
+    function setupEventListeners() {
+      // Token click functionality
+      const tokenButtons = document.querySelectorAll('.token-clickable');
+      tokenButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const tokenId = parseInt(this.getAttribute('data-token'));
+          const nftItem = currentData.find(item => item.id === tokenId);
+          if (nftItem) {
+            showNFTModal(nftItem);
+          }
+        });
+        
+        btn.addEventListener('mouseover', function() {
+          this.style.transform = 'scale(1.05)';
+          this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+        });
+        
+        btn.addEventListener('mouseout', function() {
+          this.style.transform = 'scale(1)';
+          this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+        });
+      });
+
+      // Copy functionality
+      const copyButtons = document.querySelectorAll('.copy-table-btn');
+      copyButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const address = this.getAttribute('data-address');
+          
+          if (copyToClipboard(address)) {
+            showPopup('✓ Address copied!', true);
+            
+            const originalContent = this.innerHTML;
+            const originalBg = this.style.background;
+            this.innerHTML = '✓';
+            this.style.background = '#10b981';
+            
+            setTimeout(() => {
+              this.innerHTML = originalContent;
+              this.style.background = originalBg;
+            }, 2000);
+          } else {
+            showPopup('✗ Failed to copy', false);
+          }
+        });
+        
+        btn.addEventListener('mouseover', function() {
+          this.style.opacity = '0.8';
+        });
+        
+        btn.addEventListener('mouseout', function() {
+          this.style.opacity = '1';
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initial render
+      updateTable();
+      
+      // Admin buttons
+      document.getElementById('addAdminBtn').addEventListener('click', () => {
+        showAdminModal('add');
+      });
+      
+      document.getElementById('viewAdminBtn').addEventListener('click', () => {
+        showAdminModal('list');
+      });
+      
+      // Admin button hover effects
+      ['addAdminBtn', 'viewAdminBtn'].forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        btn.addEventListener('mouseover', function() {
+          this.style.transform = 'translateY(-2px)';
+          this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+        });
+        
+        btn.addEventListener('mouseout', function() {
+          this.style.transform = 'translateY(0)';
+          this.style.boxShadow = 'none';
+        });
+      });
+      
+      // Sort buttons
+      const sortButtons = document.querySelectorAll('.sort-btn');
+      sortButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const sortType = this.getAttribute('data-sort');
+          currentSort = sortType;
+          currentPage = 1;
+          currentData = sortNFTs(sortType);
+          updateTable();
+          
+          // Update active button
+          sortButtons.forEach(b => {
+            b.style.background = '#ffffff';
+            b.style.color = '#0f172a';
+            b.style.borderColor = '#3b82f6';
+          });
+          
+          this.style.background = '#3b82f6';
+          this.style.color = 'white';
+        });
+        
+        btn.addEventListener('mouseover', function() {
+          if (this.style.background !== '#3b82f6') {
+            this.style.transform = 'translateY(-2px)';
+          }
+        });
+        
+        btn.addEventListener('mouseout', function() {
+          if (this.style.background !== '#3b82f6') {
+            this.style.transform = 'translateY(0)';
+          }
+        });
+      });
+
+      // Search functionality
+      const searchInput = document.getElementById('searchInput');
+      const clearSearchBtn = document.getElementById('clearSearch');
+      const searchResults = document.getElementById('searchResults');
+
+      if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+          const query = e.target.value.toLowerCase();
+          
+          if (query.length > 0) {
+            clearSearchBtn.style.display = 'block';
+            
+            // Filter data based on search query
+            const filteredData = currentData.filter(item => 
+              item.tokenNo.toLowerCase().includes(query) ||
+              item.ownerAddress.toLowerCase().includes(query)
+            );
+            
+            // Update table with filtered data
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            renderTableRows(filteredData, startIndex, itemsPerPage);
+            setupEventListeners();
+            
+            searchResults.innerHTML = `Found <span style="color: #3b82f6; font-weight: 700;">${filteredData.length}</span> NFTs`;
+          } else {
+            clearSearchBtn.style.display = 'none';
+            searchResults.innerHTML = '';
+            updateTable();
+          }
+        });
+
+        searchInput.addEventListener('focus', function() {
+          this.style.boxShadow = '0 4px 20px rgba(59, 130, 246, 0.4)';
+        });
+
+        searchInput.addEventListener('blur', function() {
+          this.style.boxShadow = 'none';
+        });
+      }
+
+      if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', function() {
+          searchInput.value = '';
+          searchResults.innerHTML = '';
+          this.style.display = 'none';
+          updateTable();
+        });
+
+        clearSearchBtn.addEventListener('mouseover', function() {
+          this.style.opacity = '0.9';
+        });
+
+        clearSearchBtn.addEventListener('mouseout', function() {
+          this.style.opacity = '1';
+        });
+      }
+
+      // Pagination buttons
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      prevBtn.addEventListener('click', function() {
+        if (currentPage > 1) {
+          currentPage--;
+          updateTable();
+        }
+      });
+
+      nextBtn.addEventListener('click', function() {
+        const totalPages = Math.ceil(currentData.length / itemsPerPage);
+        if (currentPage < totalPages) {
+          currentPage++;
+          updateTable();
+        }
+      });
+
+      // Button hover effects
+      [prevBtn, nextBtn].forEach(btn => {
+        if (btn) {
+          btn.addEventListener('mouseover', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.6)';
+          });
+
+          btn.addEventListener('mouseout', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -470,16 +470,16 @@ const MyForm = () => {
     return (
         <div
 
-class="relative hero-gradient py-12 sm:py-20 overflow-hidden"
+            class="relative hero-gradient py-12 sm:py-20 overflow-hidden"
         // style={{
-            //     maxWidth: "450px",
-            //     margin: "50px auto",
-            //     padding: "30px",
-            //     borderRadius: "12px",
-            //     boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
-            //     backgroundColor: "#f9f9f9",
-            //     fontFamily: "Arial, sans-serif",
-            // }}
+        //     maxWidth: "450px",
+        //     margin: "50px auto",
+        //     padding: "30px",
+        //     borderRadius: "12px",
+        //     boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+        //     backgroundColor: "#f9f9f9",
+        //     fontFamily: "Arial, sans-serif",
+        // }}
         >
             <h2 style={{ textAlign: "center", marginBottom: "25px", color: "#333" }}>
                 NFT Array Manager

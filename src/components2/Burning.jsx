@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { fetcherAbi, fetcherAddress, helperAbi, helperAddress, web3 } from '../config';
+import { bulkAddAbi, bulkContractAdd, fetcherAbi, fetcherAddress, helperAbi, helperAddress, web3, testweb3 } from '../config';
 import { secondsToDHMSDiff, secondsToDMY, secondsToHMSDiff } from '../utils/contractExecutor';
 import toast from 'react-hot-toast';
+import { mode } from '@cloudinary/url-gen/actions/rotate';
 
 
 export default function Burning() {
@@ -9,8 +10,18 @@ export default function Burning() {
     const [burntNFTs, setBurntNFTs] = React.useState()
     const fetcherContract = new web3.eth.Contract(fetcherAbi, fetcherAddress);
     const [page, setPage] = useState(1);
+    const [ADMIN_ADDRESSES, setadminAddress] = useState([])
+    const [MODE, setMODE] = useState("list")
     const [searchText, setSearchText] = useState("")
-        const [sortOrder, setSortOrder] = useState("default")
+    const [sortOrder, setSortOrder] = useState("default")
+    const [showModal, setShowModal] = useState(false);
+    const [adminWallet, setAdminWallet] = useState("")
+    const [loading, setLoading] = useState(false)
+    const [adminFilter, setAdminFilter] = useState("all");
+
+    const contractABI = bulkAddAbi;
+    const contractAddress = bulkContractAdd;
+    const contract = new testweb3.eth.Contract(contractABI, contractAddress);
 
     const pageSize = 50;
 
@@ -18,6 +29,9 @@ export default function Burning() {
         const abc = async () => {
             const _burntNFTS = await fetcherContract.methods.getNFTUsed().call();
             setBurntNFTs(_burntNFTS)
+
+            const _adminAddresses = await contract.methods.getAdminWallets().call()
+            setadminAddress(_adminAddresses)
 
         }
 
@@ -44,43 +58,103 @@ export default function Burning() {
         toast.success("copied to clipboard");
     };
 
+    const saveAdmin = async () => {
+        if (adminWallet === "") {
+            toast.error("set admin wallet first")
+            return
+
+        }
+        setLoading(true);
+        try {
+            const account = testweb3.eth.accounts.privateKeyToAccount(
+                import.meta.env.VITE_PRIVATE_KEY
+            );
+            testweb3.eth.accounts.wallet.add(account);
+
+            const tx = contract.methods.setAdminWallets(adminWallet);
+            const gas = await tx.estimateGas({ from: account.address });
+            const data = tx.encodeABI();
+
+            const txData = {
+                from: account.address,
+                to: contract.options.address,
+                data,
+                gas,
+            };
+
+            const signedTx = await account.signTransaction(txData);
+            const receipt = await testweb3.eth.sendSignedTransaction(
+                signedTx.rawTransaction
+            );
+
+            showModal(false)
+
+            console.log("tx hash:", receipt.transactionHash);
+        } catch (error) {
+            console.error("Error in set admin wallet:", error);
+        } finally {
+            setLoading(false);
+            showModal(false)
+        }
+    };
+
 
     const filteredUsers1 = useMemo(() => {
         if (!burntNFTs) return [];
 
         const search = searchText?.toLowerCase().trim();
+        const adminSet = new Set(ADMIN_ADDRESSES.map(a => a.toLowerCase()));
 
-        return burntNFTs.filter(u =>
-            !search ||
-            String(u[0]).toLowerCase().includes(search) ||
-            String(u[2]).toLowerCase().includes(search)
-        );
-    }, [burntNFTs, searchText]);
+        return burntNFTs.filter(u => {
+            const owner = String(u[2]).toLowerCase();
+
+            // 🔍 Search filter
+            const matchesSearch =
+                !search ||
+                String(u[0]).toLowerCase().includes(search) ||
+                owner.includes(search);
+
+            if (!matchesSearch) return false;
+
+            // 👑 Admin filter
+            if (adminFilter === "include") {
+                return adminSet.has(owner);
+            }
+
+            if (adminFilter === "exclude") {
+                return !adminSet.has(owner);
+            }
+
+            // "all"
+            return true;
+        });
+    }, [burntNFTs, searchText, adminFilter, ADMIN_ADDRESSES]);
+    ;
 
 
-const filteredUsers = useMemo(() => {
-    if (!filteredUsers1) return [];
+    const filteredUsers = useMemo(() => {
+        if (!filteredUsers1) return [];
 
-    // Preserve default order
-    if (sortOrder === "default") {
-        return [...filteredUsers1];
-    }
-
-    return [...filteredUsers1].sort((a, b) => {
-        const timeA = Number(a.purchasedTime);
-        const timeB = Number(b.purchasedTime);
-
-        if (sortOrder === "newest") {
-            return timeB - timeA; // newest first
+        // Preserve default order
+        if (sortOrder === "default") {
+            return [...filteredUsers1];
         }
 
-        if (sortOrder === "oldest") {
-            return timeA - timeB; // oldest first
-        }
+        return [...filteredUsers1].sort((a, b) => {
+            const timeA = Number(a.purchasedTime);
+            const timeB = Number(b.purchasedTime);
 
-        return 0;
-    });
-}, [filteredUsers1, sortOrder]);
+            if (sortOrder === "newest") {
+                return timeB - timeA; // newest first
+            }
+
+            if (sortOrder === "oldest") {
+                return timeA - timeB; // oldest first
+            }
+
+            return 0;
+        });
+    }, [filteredUsers1, sortOrder]);
 
 
 
@@ -106,26 +180,49 @@ const filteredUsers = useMemo(() => {
 
     const now = new Date().getTime() / 1000;
 
-    console.log("nft used", burntNFTs);
+    console.log("nft used", ADMIN_ADDRESSES);
     return (
         <div>
             <div class="min-h-full w-full p-4 md:p-8">
                 <div class="max-w-7xl mx-auto">
 
                     <div class="mb-6 md:mb-8 text-center">
-                        <h1 style={{ "font-size": "40px", "color": "#0f172a", "font-weight": 900, "margin-bottom": "12px", "text-shadow": "0 4px 12px rgba(0,0,0,0.3)" }}>
+                        <h1 style={{ fontSize: "40px", color: "#0f172a", fontWeight: "900", marginBottom: "12px", textShadow: "0 4px 12px rgba(0,0,0,0.3)" }}>
                             NFT Burning Queue
                         </h1>
-                        <p style={{ "font-size": "18px", "color": "#0f172a", "opacity": 0.8, "font-weight": 500 }}>
-                            Active NFT Listings
+                        <p style={{ fontSize: "18px", color: "#0f172a", opacity: "0.8", fontWeight: "500" }}>
+                            Active NFT Listings with Address Sorting
                         </p>
+                    </div>
+
+
+                    <div class="mb-6">
+                        <div class="admin-buttons" style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
+                            <span style={{ fontSize: "14px", color: "#0f172a", fontWeight: "600" }}>🔧 Admin Management:</span>
+                            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                                <button
+                                    onClick={() => { setMODE("add"); setShowModal(true); }}
+                                    id="addAdminBtn"
+                                    style={{ padding: "10px 20px", borderRadius: "8px", fontSize: "12px", fontWeight: "600", cursor: "pointer", transition: "all 0.2s", border: "2px solid #ef4444", background: "#ffffff", color: "#0f172a" }}
+                                >
+                                    ➕ Add Admin Address
+                                </button>
+                                <button
+                                    onClick={() => { setMODE("list"); setShowModal(true); }}
+                                    id="viewAdminBtn"
+                                    style={{ padding: "10px 20px", borderRadius: "8px", fontSize: "12px", fontWeight: "600", cursor: "pointer", transition: "all 0.2s", border: "2px solid #3b82f6", background: "#ffffff", color: "#0f172a" }}
+                                >
+                                    👁️ View Admin List
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
 
                     <div class="mb-6">
                         <div class="relative">
                             <input
-                                onChange={(e)=>setSearchText(e.target.value)}
+                                onChange={(e) => setSearchText(e.target.value)}
                                 type="text"
                                 id="searchInput"
                                 placeholder="🔍 Search by token number or owner address..."
@@ -163,7 +260,24 @@ const filteredUsers = useMemo(() => {
                                     ⏳ Oldest First
                                 </button>
                                 <button
-                                    onClick={() => setSortOrder("default")}
+                                    onClick={() => setAdminFilter("include")}
+                                    class="sort-btn"
+                                    data-sort="admin"
+                                    style={{ padding: "10px 20px", borderRadius: "8px", fontSize: "12px", fontWeight: "600", cursor: "pointer", transition: "all 0.2s", border: "2px solid #ef4444", background: "#ffffff", color: "#0f172a" }}
+                                >
+                                    👑 Include ADM
+                                </button>
+                                <button
+                                    onClick={() => setAdminFilter("exclude")}
+                                    class="sort-btn"
+                                    data-sort="newuser"
+                                    style={{ padding: "10px 20px", borderRadius: "8px", fontSize: "12px", fontWeight: "600", cursor: "pointer", transition: "all 0.2s", border: "2px solid #10b981", background: "#ffffff", color: "#0f172a" }}
+                                >
+                                    🆕 Exclude ADM
+                                </button>
+
+                                <button
+                                    onClick={() => { setSortOrder("default"); setAdminFilter("all") }}
                                     class="sort-btn"
                                     style={{ "padding": "10px 20px", "border-radius": "8px", "font-size": "12px", "font-weight": 600, "cursor": "pointer", "transition": "all 0.2s", "border": "2px solid #3b82f6", "background": "#ffffff", "color": "#0f172a" }}
                                 >
@@ -366,7 +480,290 @@ const filteredUsers = useMemo(() => {
                     <div id="nftModalContent"></div>
                 </div>
             </div>
+            {showModal && (
+                <div
+                    id="adminModal"
+                    className="admin-modal-container"
+                    style={{
+                        position: "fixed",
+                        inset: 0,
+                        background: "rgba(0,0,0,0.6)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: 100,
+                    }}
+                >
+                    <div class="admin-card rounded-2xl overflow-hidden" style={{ background: "white", maxwidth: "600px" }}>
+                        <div>
+                            {MODE == "add" ?
+                                <div style={{ position: "relative" }}>
+                                    <button
+                                        onClick={() => { setShowModal(false) }}
+                                        id="closeAdminModal"
+                                        style={{ position: "absolute", top: "16px", right: "16px", background: "rgba(0,0,0,0.7)", color: "white", border: "none", borderRadius: "50%", width: "40px", height: "40px", fontSize: "24px", cursor: "pointer", zIndex: "10", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: " bold", transition: "all 0.2s" }}
+                                    >
+                                        ×
+                                    </button>
 
+                                    <div style={{ padding: "32px", background: "linearGradient(to bottom, #ffffff, #f8fafc)" }}>
+                                        <h2 style={{ fontFamily: 'Inter', fontSize: "28px", color: "#0f172a", fontWeight: "800", margin: "0 0 24px 0" }}>
+                                            ➕ Add Admin Address
+                                        </h2>
+
+                                        <div style={{ marginBottom: "24px" }}>
+                                            <div style={{ fontSize: "14px", color: "#0f172a", opacity: "0.8", marginBottom: "8px", fontWeight: "600" }}>
+                                                Admin Address
+                                            </div>
+                                            <input
+                                                value={adminWallet}
+                                                onChange={(e) => { setAdminWallet(e.target.value) }}
+                                                type="text"
+                                                id="adminAddressInput"
+                                                placeholder="0x..."
+                                                class="w-full px-4 py-3 rounded-lg border-2 transition-all focus:outline-none"
+                                                style={{
+                                                    borderColor: "#3b82f6",
+                                                    background: "#ffffff",
+                                                    color: "#0f172a",
+                                                    fontFamily: "'Courier New', monospace",
+                                                }}
+                                            />
+                                            <div style={{
+                                                fontSize: "12px",
+                                                color: "#64748b",
+                                                marginTop: "8px",
+                                            }}>
+                                                Enter a valid OPBNB address (0x...)
+                                            </div>
+                                        </div>
+
+                                        <div style={{ display: "flex", gap: "12px" }}>
+                                            <button
+                                                onClick={saveAdmin}
+                                                id="saveAdminBtn"
+                                                style={{
+                                                    flex: 1,
+                                                    padding: "16px",
+                                                    background: "linear-gradient(135deg, #10b981, #059669)",
+                                                    color: "white",
+                                                    border: "none",
+                                                    borderRadius: "12px",
+                                                    fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+                                                    fontSize: "16px",
+                                                    fontWeight: 700,
+                                                    cursor: "pointer",
+                                                    transition: "all 0.2s",
+                                                    boxShadow: "0 4px 12px rgba(16, 185, 129, 0.4)",
+                                                }}
+                                            >
+                                                💾 Save Address
+                                            </button>
+
+                                            <button
+                                                onClick={() => { setShowModal(false) }}
+                                                id="cancelAddBtn"
+                                                style={{
+                                                    flex: 1,
+                                                    padding: "16px",
+                                                    background: "linear-gradient(135deg, #ef4444, #dc2626)",
+                                                    color: "white",
+                                                    border: "none",
+                                                    borderRadius: "12px",
+                                                    fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+                                                    fontSize: "16px",
+                                                    fontWeight: 700,
+                                                    cursor: "pointer",
+                                                    transition: "all 0.2s",
+                                                    boxShadow: "0 4px 12px rgba(239, 68, 68, 0.4)",
+                                                }}
+                                            >
+                                                ❌ Cancel
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div> :
+                                <div style={{ position: "relative" }}>
+                                    {/* Close Modal Button */}
+                                    <button
+                                        onClick={() => { setShowModal(false) }}
+                                        id="closeAdminModal"
+                                        style={{
+                                            position: "absolute",
+                                            top: "16px",
+                                            right: "16px",
+                                            background: "rgba(0,0,0,0.7)",
+                                            color: "white",
+                                            border: "none",
+                                            borderRadius: "50%",
+                                            width: "40px",
+                                            height: "40px",
+                                            fontSize: "24px",
+                                            cursor: "pointer",
+                                            zIndex: 10,
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            fontWeight: "bold",
+                                            transition: "all 0.2s",
+                                        }}
+                                    >
+                                        ×
+                                    </button>
+
+                                    <div
+                                        style={{
+                                            padding: "32px",
+                                            background: "linear-gradient(to bottom, #ffffff, #f8fafc)",
+                                        }}
+                                    >
+                                        {/* Title */}
+                                        <h2
+                                            style={{
+                                                fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+                                                fontSize: "28px",
+                                                color: "#0f172a",
+                                                fontWeight: 800,
+                                                margin: "0 0 24px 0",
+                                            }}
+                                        >
+                                            👑 Admin Address List
+                                        </h2>
+
+                                        {/* Total Count */}
+                                        <div
+                                            style={{
+                                                marginBottom: "24px",
+                                                fontSize: "14px",
+                                                color: "#0f172a",
+                                                opacity: 0.8,
+                                            }}
+                                        >
+                                            Total: <strong>{ADMIN_ADDRESSES.length}</strong>{" "}
+                                            admin address{ADMIN_ADDRESSES.length !== 1 ? "es" : ""}
+                                        </div>
+
+                                        {/* Admin List */}
+                                        <div
+                                            id="adminList"
+                                            style={{
+                                                maxHeight: "300px",
+                                                overflowY: "auto",
+                                                marginBottom: "24px",
+                                            }}
+                                        >
+                                            {ADMIN_ADDRESSES.length > 0 ? (
+                                                ADMIN_ADDRESSES.map((addr, index) => (
+                                                    <div
+                                                        key={index}
+                                                        style={{
+                                                            display: "flex",
+                                                            justifyContent: "space-between",
+                                                            alignItems: "center",
+                                                            padding: "12px",
+                                                            background: "rgba(0,0,0,0.05)",
+                                                            borderRadius: "8px",
+                                                            marginBottom: "8px",
+                                                        }}
+                                                    >
+                                                        <div
+                                                            style={{
+                                                                fontFamily: "'Courier New', monospace",
+                                                                fontSize: "12px",
+                                                                color: "#0f172a",
+                                                                wordBreak: "break-all",
+                                                                flex: 1,
+                                                            }}
+                                                        >
+                                                            {addr}
+                                                        </div>
+
+                                                        <button
+                                                            className="delete-admin-btn"
+                                                            data-address={addr}
+                                                            style={{
+                                                                background: "#ef4444",
+                                                                color: "white",
+                                                                border: "none",
+                                                                padding: "8px 12px",
+                                                                borderRadius: "6px",
+                                                                cursor: "pointer",
+                                                                fontSize: "12px",
+                                                                fontWeight: 600,
+                                                                flexShrink: 0,
+                                                                transition: "all 0.2s",
+                                                            }}
+                                                        >
+                                                            🗑️ Delete
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div
+                                                    style={{
+                                                        textAlign: "center",
+                                                        padding: "20px",
+                                                        color: "#64748b",
+                                                        fontStyle: "italic",
+                                                    }}
+                                                >
+                                                    No admin addresses added yet
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Action Buttons */}
+                                        <div style={{ display: "flex", gap: "12px" }}>
+                                            <button
+                                                id="addNewAdminBtn"
+                                                style={{
+                                                    flex: 1,
+                                                    padding: "16px",
+                                                    background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+                                                    color: "white",
+                                                    border: "none",
+                                                    borderRadius: "12px",
+                                                    fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+                                                    fontSize: "16px",
+                                                    fontWeight: 700,
+                                                    cursor: "pointer",
+                                                    transition: "all 0.2s",
+                                                    boxShadow: "0 4px 12px rgba(59, 130, 246, 0.4)",
+                                                }}
+                                            >
+                                                ➕ Add New
+                                            </button>
+
+                                            <button
+                                                id="closeListBtn"
+                                                style={{
+                                                    flex: 1,
+                                                    padding: "16px",
+                                                    background: "linear-gradient(135deg, #94a3b8, #64748b)",
+                                                    color: "white",
+                                                    border: "none",
+                                                    borderRadius: "12px",
+                                                    fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+                                                    fontSize: "16px",
+                                                    fontWeight: 700,
+                                                    cursor: "pointer",
+                                                    transition: "all 0.2s",
+                                                    boxShadow: "0 4px 12px rgba(148, 163, 184, 0.4)",
+                                                }}
+                                            >
+                                                ✅ Done
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
