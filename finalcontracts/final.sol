@@ -5858,7 +5858,7 @@ contract Helper is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         NFT storage _nft = nfts[index];
         Package storage _package = userPackage[_user];
 
-        if (block.timestamp - userTradingLimitTime[_user] > 24 hours) {
+        if (block.timestamp - userTradingLimitTime[_user] > 18 hours) {
             // Reset after 3 minutes
             userTradingLimitTime[_user] = block.timestamp;
             userLimitUtilized[_user] = 0;

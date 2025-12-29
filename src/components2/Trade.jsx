@@ -260,7 +260,7 @@ export default function Trade({ setCreateActive }) {
     const revisedLimitUtilized =
         now - Number(userTradingLimitTime) > 60 * 60 * 24 ? 0 : limitUtilized
 
-    const duration = Number(userTradingLimitTime) + 60 * 60 * 24 - now > 0 ? Number(userTradingLimitTime) + 60 * 60 * 24 - now : 0
+    const duration = Number(userTradingLimitTime) + 60 * 60 * 18 - now > 0 ? Number(userTradingLimitTime) + 60 * 60 * 18 - now : 0
 
     const randomeNFTs = nfts
     // ? [...nfts].sort((a, b) => a.purchasedTime - b.purchasedTime)
