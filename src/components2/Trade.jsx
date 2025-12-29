@@ -74,7 +74,7 @@ export default function Trade({ setCreateActive }) {
                     setShowMessage(true)
                 }
 
-                console.log("All events:", accountNFTs,accountNFTslast24Hrs,nftOver75);
+
 
 
 
@@ -83,7 +83,9 @@ export default function Trade({ setCreateActive }) {
                 const randomIndex = Math.floor(Math.random() * mergedSorted.length);
                 const randomNFT = mergedSorted[randomIndex];
 
-                 const nftToTake = nftOver75===0 ?mergedSortedpricewise[0] : randomNFT  
+                                console.log("All events:",nftOver75, mergedSortedpricewise[0],randomNFT);
+
+                 const nftToTake = nftOver75.length===0 ?mergedSortedpricewise[0] : randomNFT  
                                  setNFTs([nftToTake]);   
         };
 
