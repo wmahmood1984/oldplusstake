@@ -39,7 +39,8 @@ export default function Trade({ setCreateActive }) {
 
         const fetchNFTs = async () => {
 
-                            const _nfts = await fetcherContract.methods.getNFTs().call();
+                const _nfts = await fetcherContract.methods.getNFTs().call();
+                const _burnt = await fetcherContract.methods.getNFTUsed().call()
 
                 const idThreshold = await saveContract.methods.arrayToStart().call();
                 const unitsTotake = await saveContract.methods.getUnitArray().call();
@@ -67,10 +68,10 @@ export default function Trade({ setCreateActive }) {
                 const now = new Date().getTime()/1000
 
 
-                const accountNFTs = [...firstArrayy,...secondArray].filter(nft=>nft._owner.toLowerCase()===address.toLowerCase())
+                const accountNFTs = _burnt.filter(nft=>nft._owner.toLowerCase()===address.toLowerCase())
                 const accountNFTslast24Hrs = accountNFTs.filter(nft=>now - Number(nft.purchasedTime)<=60*60*24)
-                const nftOver75 = accountNFTslast24Hrs.filter(nft=>Number(formatEther(nft.price))>70)
-                if(nftOver75.length===0){
+
+                if(accountNFTslast24Hrs.length===0){
                     setShowMessage(true)
                 }
 
@@ -83,9 +84,9 @@ export default function Trade({ setCreateActive }) {
                 const randomIndex = Math.floor(Math.random() * mergedSorted.length);
                 const randomNFT = mergedSorted[randomIndex];
 
-                                console.log("All events:",nftOver75, mergedSortedpricewise[0],randomNFT);
+                                console.log("All events:", mergedSortedpricewise[0],randomNFT,"account",accountNFTs);
 
-                 const nftToTake = nftOver75.length===0 ?mergedSortedpricewise[0] : randomNFT  
+                 const nftToTake = accountNFTslast24Hrs.length===0 ?mergedSortedpricewise[0] : randomNFT  
                                  setNFTs([nftToTake]);   
         };
 
