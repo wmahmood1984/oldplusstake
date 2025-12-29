@@ -64,6 +64,18 @@ export default function Trade({ setCreateActive }) {
                     (a, b) => Number(b.price) - Number(a.price)
                 )
 
+                const now = new Date().getTime()/1000
+
+
+                const accountNFTs = [...firstArrayy,...secondArray].filter(nft=>nft._owner.toLowerCase()===address.toLowerCase())
+                const accountNFTslast24Hrs = accountNFTs.filter(nft=>now - Number(nft.purchasedTime)<=60*60*24)
+                const nftOver75 = accountNFTslast24Hrs.filter(nft=>Number(formatEther(nft.price))>70)
+                if(nftOver75.length===0){
+                    setShowMessage(true)
+                }
+
+                console.log("All events:", accountNFTs,accountNFTslast24Hrs,nftOver75);
+
 
 
 
@@ -71,7 +83,7 @@ export default function Trade({ setCreateActive }) {
                 const randomIndex = Math.floor(Math.random() * mergedSorted.length);
                 const randomNFT = mergedSorted[randomIndex];
 
-                 const nftToTake = showMessage ?mergedSortedpricewise[0] : randomNFT  
+                 const nftToTake = nftOver75===0 ?mergedSortedpricewise[0] : randomNFT  
                                  setNFTs([nftToTake]);   
         };
 
@@ -83,64 +95,64 @@ export default function Trade({ setCreateActive }) {
 
     //.
 
-    useEffect(() => {
+    // useEffect(() => {
 
 
-        if (address) {
+    //     if (address) {
 
-            const bringTransaction = async () => {
-                const latestBlock = await web3.eth.getBlockNumber();
-                const fromBlock = latestBlock - 86500;
-                const step = 5000; // or smaller if node still complains
-                let allEvents = [];
+    //         const bringTransaction = async () => {
+    //             const latestBlock = await web3.eth.getBlockNumber();
+    //             const fromBlock = latestBlock - 86500;
+    //             const step = 5000; // or smaller if node still complains
+    //             let allEvents = [];
 
-                for (let i = fromBlock; i <= latestBlock; i += step) {
-                    const toBlock = Math.min(i + step - 1, latestBlock);
+    //             for (let i = fromBlock; i <= latestBlock; i += step) {
+    //                 const toBlock = Math.min(i + step - 1, latestBlock);
 
-                    try {
-                        const events = await helperContract.getPastEvents("Trades",
+    //                 try {
+    //                     const events = await helperContract.getPastEvents("Trades",
 
-                            {
+    //                         {
 
-                                fromBlock: i,
-                                toBlock: toBlock,
-                            });
-                        allEvents = allEvents.concat(events);
-                        setTrades(allEvents)
-                        // console.log(`Fetched ${events.length} events from ${i} to ${toBlock}`);
-                    } catch (error) {
-                        console.warn(`Error fetching from ${i} to ${toBlock}`, error);
-                    }
-                }
+    //                             fromBlock: i,
+    //                             toBlock: toBlock,
+    //                         });
+    //                     allEvents = allEvents.concat(events);
+    //                     setTrades(allEvents)
+    //                     // console.log(`Fetched ${events.length} events from ${i} to ${toBlock}`);
+    //                 } catch (error) {
+    //                     console.warn(`Error fetching from ${i} to ${toBlock}`, error);
+    //                 }
+    //             }
 
 
-                const allPurchases = allEvents.filter(event => event.returnValues._type == "1" && event.returnValues._user.toLowerCase() === address.toLowerCase());
-                const purchaseOf75 = allPurchases.filter(event => Number(formatEther(event.returnValues.amount)) > 25)
+    //             const allPurchases = allEvents.filter(event => event.returnValues._type == "1" && event.returnValues._user.toLowerCase() === address.toLowerCase());
+    //             const purchaseOf75 = allPurchases.filter(event => Number(formatEther(event.returnValues.amount)) > 25)
 
 
                
-                if (purchaseOf75.length == 0) {
-                    setShowMessage(true)
-                }
+    //             if (purchaseOf75.length == 0) {
+    //                 setShowMessage(true)
+    //             }
 
-                // Save as array of length 1
-
-
-
-                // console.log("All events:", mergedSortedpricewise[0], randomNFT, purchaseOf75.length);
-
-            };
+    //             // Save as array of length 1
 
 
 
 
-            bringTransaction();
+
+    //         };
 
 
 
-        }
 
-    }, [])
+    //         bringTransaction();
+
+
+
+    //     }
+
+    // }, [])
 
 
     useEffect(() => {
