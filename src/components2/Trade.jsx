@@ -88,7 +88,7 @@ export default function Trade({ setCreateActive }) {
                                 //     "last nft purchase time",accountNFTs[6].purchasedTime, "diff", now-Number(accountNFTs[6].purchasedTime)
                                 // );
 
-                 const nftToTake = accountNFTslast24Hrs.length > 0 ? randomNFT : mergedSortedpricewise[0]    
+                 const nftToTake = (accountNFTslast24Hrs.length > 0 || Package.id=="0") ? randomNFT : mergedSortedpricewise[0]    
                                  setNFTs([nftToTake]);   
         };
 
