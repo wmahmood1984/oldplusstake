@@ -55,9 +55,12 @@ export default function NormalList() {
                 Number(web3.utils.fromWei(u.price, "ether")) * 1.07;
 
             // PRICE FILTER MODE
-            if (priceSelected !== "default") {
-                return priceWithFee.toFixed(0) === Number(priceSelected).toFixed(0);
-            }
+if (priceSelected !== "default") {
+    return (
+        priceWithFee >= priceSelected.min &&
+        priceWithFee <= priceSelected.max
+    );
+}
 
             // SEARCH MODE
             if (!search) return true;
@@ -125,13 +128,13 @@ export default function NormalList() {
     const _5325 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 53.50 && Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) <= 57.24).length;
     const _5724 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 57.24 && Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) <= 61.24).length;
     const _6124 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 61.24 && Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) <= 65.04).length;
-    const _6504 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 64 && Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) <= 70.12).length;
+    const _6504 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 65.04 && Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) <= 70.12).length;
     const _7012 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 70.12 && Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) <= 75.03).length;
     const _7528 = nfts && nfts.filter(nft => Number(web3.utils.fromWei(nft.price, 'ether') * 1.07).toFixed(2) >= 75.03).length;
     const totalpages = nfts && Math.ceil(filteredUsers.length / pageSize);
 
 
-    console.log("object", filteredUsers);
+    console.log("object", _6504);
 
 
     const isLoading = !nfts;
@@ -206,7 +209,7 @@ export default function NormalList() {
                         <div class="price-filter-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "12px" }}>
 
                             <div
-                                onClick={() => { setPriceSelected("53.50") }}
+onClick={() => setPriceSelected({ min: 53.5, max: 57.24 })}
 
                                 class="price-filter-card rounded-lg p-4 border-2 transition-all"
                                 style={{ background: "#ffffff", border: "3px solid #3b82f6", borderRadius: "12px", cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}>
@@ -219,7 +222,7 @@ export default function NormalList() {
                             </div>
 
                             <div
-                                onClick={() => { setPriceSelected("57.24") }}
+onClick={() => setPriceSelected({ min: 57.24, max: 61.24 })}
                                 class="price-filter-card rounded-lg p-4 border-2 transition-all"
                                 style={{ background: "#ffffff", border: "3px solid #3b82f6", borderRadius: "12px", cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}>
                                 <div style={{ fontSize: "20px", color: "#3b82f6", fontWeight: "900", marginBottom: "8px" }}>
@@ -231,7 +234,7 @@ export default function NormalList() {
                             </div>
 
                             <div
-                                onClick={() => { setPriceSelected("61.24") }}
+onClick={() => setPriceSelected({ min: 61.24, max: 65.04 })}
                                 class="price-filter-card rounded-lg p-4 border-2 transition-all"
                                 style={{ background: "#ffffff", border: "3px solid #3b82f6", borderRadius: "12px", cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}>
                                 <div style={{ fontSize: "20px", color: "#3b82f6", fontWeight: "900", marginBottom: "8px" }}>
@@ -243,7 +246,7 @@ export default function NormalList() {
                             </div>
 
                             <div
-                                onClick={() => { setPriceSelected("65.04") }}
+onClick={() => setPriceSelected({ min: 65.04, max: 70.12 })}
                                 class="price-filter-card rounded-lg p-4 border-2 transition-all"
                                 style={{ background: "#ffffff", border: "3px solid #3b82f6", borderRadius: "12px", cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}>
                                 <div style={{ fontSize: "20px", color: "#3b82f6", fontWeight: "900", marginBottom: "8px" }}>
@@ -254,7 +257,7 @@ export default function NormalList() {
                                 </div>
                             </div>
                             <div
-                                onClick={() => { setPriceSelected("70.12") }}
+onClick={() => setPriceSelected({ min: 70.12, max: 75.00 })}
                                 class="price-filter-card rounded-lg p-4 border-2 transition-all"
                                 style={{ background: "#ffffff", border: "3px solid #3b82f6", borderRadius: "12px", cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}>
                                 <div style={{ fontSize: "20px", color: "#3b82f6", fontWeight: "900", marginBottom: "8px" }}>
@@ -265,7 +268,7 @@ export default function NormalList() {
                                 </div>
                             </div>
                             <div
-                                onClick={() => { setPriceSelected("75.25") }}
+onClick={() => setPriceSelected({ min: 75.00, max: 76.00 })}
                                 class="price-filter-card rounded-lg p-4 border-2 transition-all"
                                 style={{ background: "#ffffff", border: "3px solid #3b82f6", borderRadius: "12px", cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}>
                                 <div style={{ fontSize: "20px", color: "#3b82f6", fontWeight: "900", marginBottom: "8px" }}>
