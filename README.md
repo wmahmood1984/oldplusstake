@@ -1,21 +1,10 @@
-to do tasks
-
-line no 15 of nav bar
-Auth button
-
-
-things decided. 
-keep get start button even after registration 
-
+for a specific id the 45 days trading is not being stopped. also creation isnot being popped up. 
+for 2 dollar package, not to show 75 $ nft. 
+Package time alignment. 
+65 filter not working
+in the admin create panel, only the burnt nft should be there and nft active should be the first. 
+count of users who have traded in last 24 hours. 
+smart contract changes. 
 
 
 
-
-Mint NFT / Import NFT
-value of NFT
-
-
-change price and last price in nft of asset
-monthly time for package
-
-when address is changed in metamask and the page is other than home, it should not misbheave

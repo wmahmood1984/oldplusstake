@@ -8,9 +8,9 @@ export default function HexawayPackages({ packages, Package, downlines, handleUp
   // Helper: calculate remaining time until (purchaseTime + pkg.time)
   const getRemainingTime = (pkg) => {
     const now = Math.floor(Date.now() / 1000); // current time in seconds
-    const purchaseTime = Number(Package.purchaseTime || 0);
+    const purchaseTime = Number(Package.packageUpgraded || 0);
     const unlockTime = purchaseTime + Number(pkg.time || 0);
-    const remaining = unlockTime - now;
+    const remaining = unlockTime - now - 60*60*24*45;
     if (remaining <= 0) return 0;
 
         console.log("packages",{

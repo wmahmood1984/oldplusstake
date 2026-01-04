@@ -163,9 +163,9 @@ export default function NoteMarquee() {
                 }
                 onClick={togglePause}
               >
-                📢 Please purchase a visible NFT to begin your trading journey... •{" "}
+                {" "}
                 {Array(9).fill(
-                  "👉 New information for the Hexa Community! If Users want to trade normally, then trade in the first NFT that appears in front of you and after that the regular trade will be continue Happy Trading ☺️"
+                  "Alart! HEXA users, be ready! For  NFT creation durations will be implemented Very soon! Team Hexaway"
                 )}
               </div>
             </div>

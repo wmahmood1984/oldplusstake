@@ -84,9 +84,11 @@ export default function Trade({ setCreateActive }) {
                 const randomIndex = Math.floor(Math.random() * mergedSorted.length);
                 const randomNFT = mergedSorted[randomIndex];
 
-                                console.log("All events:", mergedSortedpricewise[0],randomNFT,"account",accountNFTs);
+                                // console.log("All events:", mergedSortedpricewise[0],randomNFT,"account",accountNFTs, "last 24 hrs",accountNFTslast24Hrs, "now",now,
+                                //     "last nft purchase time",accountNFTs[6].purchasedTime, "diff", now-Number(accountNFTs[6].purchasedTime)
+                                // );
 
-                 const nftToTake = accountNFTslast24Hrs.length===0 ?mergedSortedpricewise[0] : randomNFT  
+                 const nftToTake = accountNFTslast24Hrs.length > 0 ? randomNFT : mergedSortedpricewise[0]    
                                  setNFTs([nftToTake]);   
         };
 
@@ -175,10 +177,14 @@ export default function Trade({ setCreateActive }) {
             if (CreateList.length === 0) {
 
                 lastCreateTime = Package.packageUpgraded//await helperContract.methods.userJoiningTime(address).call();
+                        console.log("package upgraded ",lastCreateTime,  );
             } else {
                 let lastCreate = CreateList[CreateList.length - 1];
                 lastCreateTime = await helperContract.methods.idPurchasedtime(lastCreate.id).call();
+                                        console.log("past purchase ",lastCreateTime,lastCreate.id  );
             }
+
+
 
 
 
@@ -211,12 +217,14 @@ export default function Trade({ setCreateActive }) {
             }
 
 
-            // if (timeDiff >= requiredDiff && Package.id != "0") {
-            //     setCreateActive(true);
-            //     navigate("/create");
-            //     toast.success("Please create an NFT before proceeding.");
-            //     return
-            // }
+
+
+            if (timeDiff >= requiredDiff && Package.id != "0") {
+                setCreateActive(true);
+                navigate("/create");
+                toast.success("Please create an NFT before proceeding.");
+                return
+            }
 
 
 
