@@ -219,12 +219,12 @@ export default function Trade({ setCreateActive }) {
 
 
 
-            if (timeDiff >= requiredDiff && Package.id != "0") {
-                setCreateActive(true);
-                navigate("/create");
-                toast.success("Please create an NFT before proceeding.");
-                return
-            }
+            // if (timeDiff >= requiredDiff && Package.id != "0") {
+            //     setCreateActive(true);
+            //     navigate("/create");
+            //     toast.success("Please create an NFT before proceeding.");
+            //     return
+            // }
 
 
 
