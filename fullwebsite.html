@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEXAWAY - NFT Marketplace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Main body and font styles */
+        body {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #f9fafb;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .font-display {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+        }
+        
+        /* POPUP STYLES */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+        
+        .popup-container {
+            background: transparent;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            overflow: hidden;
+            position: relative;
+            animation: popupAppear 0.5s ease-out;
+        }
+        
+        @keyframes popupAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .announcement-image-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            border: 3px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .announcement-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .popup-close-button {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            z-index: 10001;
+        }
+        
+        .popup-close-button:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.6);
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+        }
+        
+        /* Right-to-left scrolling animation for collections - VERY SLOW */
+        @keyframes scroll-right-to-left {
+            0% {
+                transform: translateX(0%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        
+        .scroll-animation {
+            animation: scroll-right-to-left 120s linear infinite;
+            display: flex;
+            width: max-content;
+            padding: 20px 0;
+        }
+        
+        /* Left-to-right scrolling animation for note - SLOWER SPEED */
+        @keyframes scroll-left-to-right {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        .note-scroll-animation {
+            animation: scroll-left-to-right 120s linear infinite; /* Slowed down from 60s to 120s */
+            white-space: nowrap;
+            display: inline-block;
+            padding-left: 100%;
+            animation-delay: 0s !important;
+            animation-play-state: running !important;
+            will-change: transform;
+        }
+        
+        /* Alternative: CSS-only marquee without animation restart */
+        .marquee-container-alt {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .marquee-content {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: marquee 120s linear infinite;
+        }
+        
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        /* Note box styling */
+        .note-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-left: 4px solid #0ea5e9;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            border-bottom: 1px solid #bae6fd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Featured collection card styling */
+        .featured-card {
+            flex: 0 0 280px;
+            height: 280px;
+            margin: 0 20px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .featured-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Crystal effect for collection cards */
+        .crystal-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .crystal-effect::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                transparent 20%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 80%
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(30deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(30deg);
+            }
+        }
+        
+        /* Gradient backgrounds for each collection */
+        .digital-brand-2020 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .global-brand-2021 {
+            background: linear-gradient(135deg, #4fd1c5 0%, #38b2ac 100%);
+        }
+        
+        .global-brand-2022 {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        }
+        
+        .global-brand-2023 {
+            background: linear-gradient(135deg, #f687b3 0%, #d53f8c 100%);
+        }
+        
+        .global-brand-2024 {
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+        }
+        
+        /* Hero gradient */
+        .hero-gradient {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
+        }
+        
+        /* Glass effect */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Premium shadow */
+        .premium-shadow {
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Hover effects for cards */
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Navigation styles */
+        .nav-blur {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        /* NFT image containers */
+        .nft-image-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nft-cyberpunk {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            position: relative;
+        }
+        
+        .nft-android {
+            background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+            position: relative;
+        }
+        
+        /* NFT visual elements */
+        .cyber-eye {
+            position: absolute;
+            width: 60px;
+            height: 40px;
+            background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
+            border-radius: 50%;
+            top: 40%;
+            left: 30%;
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+        }
+        
+        .cyber-eye::before {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: white;
+            border-radius: 50%;
+            top: 12px;
+            left: 15px;
+        }
+        
+        .android-circuit {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            top: 30%;
+            left: 35%;
+            background: 
+                radial-gradient(circle at 30% 30%, #10b981 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, #059669 0%, transparent 50%);
+            border-radius: 20px;
+            transform: rotate(45deg);
+        }
+        
+        .android-circuit::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            top: 10px;
+            left: 10px;
+            background: 
+                radial-gradient(circle at 30% 30%, #34d399 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, #10b981 0%, transparent 50%);
+            border-radius: 15px;
+        }
+        
+        /* Info icon */
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            background: #0ea5e9;
+            color: white;
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        /* Note wrapper to ensure continuous scrolling */
+        .note-wrapper {
+            display: flex;
+            align-items: center;
+            min-height: 28px;
+            padding: 10px 0;
+        }
+        
+        /* Note content container */
+        .note-content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Marquee container */
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Immediate visibility fix */
+        .scrolling-note {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0c4a6e;
+            padding-right: 20px;
+        }
+        
+        /* Pause on hover for better readability */
+        .note-scroll-animation:hover,
+        .marquee-content:hover {
+            animation-play-state: paused;
+            cursor: pointer;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .scrolling-note {
+                font-size: 13px;
+                font-weight: 500;
+            }
+            
+            .note-wrapper {
+                padding: 8px 0;
+                min-height: 24px;
+            }
+            
+            .info-icon {
+                width: 20px;
+                height: 20px;
+                font-size: 12px;
+                margin-right: 10px;
+            }
+            
+            /* Slower speed on mobile for better readability */
+            .note-scroll-animation,
+            .marquee-content {
+                animation-duration: 150s; /* Even slower on mobile */
+            }
+            
+            /* Popup responsive styles */
+            .popup-container {
+                width: 95%;
+                max-width: 500px;
+            }
+            
+            .popup-close-button {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                top: -10px;
+                right: -10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .scrolling-note {
+                font-size: 12px;
+            }
+            
+            .note-wrapper {
+                padding: 6px 0;
+            }
+            
+            .note-scroll-animation,
+            .marquee-content {
+                animation-duration: 180s; /* Slowest on small screens */
+            }
+            
+            .popup-container {
+                max-width: 90vw;
+            }
+            
+            .announcement-image-container {
+                border-radius: 10px;
+            }
+            
+            .popup-close-button {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+                top: -8px;
+                right: -8px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen text-gray-900">
+    <!-- Announcement Popup -->
+    <div id="announcementPopup" class="popup-overlay" style="display: none;">
+        <div class="popup-container">
+            <button id="popupCloseButton" class="popup-close-button">
+                ×
+            </button>
+            <div class="announcement-image-container">
+                <!-- Replace with your image.png from your folder -->
+                <img src="image.png" alt="Important Announcement">
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="nav-blur sticky top-0 z-50 premium-shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold font-display bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent" id="hexaway-logo">
+                        HEXAWAY
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
+                    <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Trade</a>
+                    <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Create</a>
+                    <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Assets</a>
+                    <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Team Tree</a>
+                    <button class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg">
+                        Get Started
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="lg:hidden">
+                    <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 p-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-200 shadow-lg">
+            <div class="px-4 py-3 space-y-1">
+                <a href="#" class="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium">Home</a>
+                <a href="#" class="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium">Trade</a>
+                <a href="#" class="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium">Create</a>
+                <a href="#" class="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium">Assets</a>
+                <a href="#" class="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium">Team Tree</a>
+                <div class="pt-2 border-t border-gray-200">
+                    <button class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-200">
+                        Connect wallet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Scrolling Note Box - WITH CONTINUOUS SCROLLING -->
+    <div class="note-box">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="note-wrapper">
+                <div class="info-icon">i</div>
+                <div class="note-content marquee-container">
+                    <!-- Using the new CSS-only marquee for better continuity -->
+                    <div class="marquee-content scrolling-note" id="continuous-marquee">
+                        📢 IMPORTANT NOTE: The system is undergoing some updates for the benefit of the community and for long-term planning, so please wait a bit. Trading will be live soon with excellent smoothness. So we are going to go live after a break. • 
+                        📢 IMPORTANT NOTE: The system is undergoing some updates for the benefit of the community and for long-term planning, so please wait a bit. Trading will be live soon with excellent smoothness. So we are going to go live after a break. • 
+                        📢 IMPORTANT NOTE: The system is undergoing some updates for the benefit of the community and for long-term planning, so please wait a bit. Trading will be live soon with excellent smoothness. So we are going to go live after a break. • 
+                        📢 IMPORTANT NOTE: The system is undergoing some updates for the benefit of the community and for long-term planning, so please wait a bit. Trading will be live soon with excellent smoothness. So we are going to go live after a break. • 
+                        📢 IMPORTANT NOTE: The system is undergoing some updates for the benefit of the community and for long-term planning, so please wait a bit. Trading will be live soon with excellent smoothness. So we are going to go live after a break. • 
+                        📢 IMPORTANT NOTE: The system is undergoing some updates for the benefit of the community and for long-term planning, so please wait a bit. Trading will be live soon with excellent smoothness. So we are going to go live after a break. • 
+                        📢 IMPORTANT NOTE: The system is undergoing some updates for the benefit of the community and for long-term planning, so please wait a bit. Trading will be live soon with excellent smoothness. So we are going to go live after a break. • 
+                        📢 IMPORTANT NOTE: The system is undergoing some updates for the benefit of the community and for long-term planning, so please wait a bit. Trading will be live soon with excellent smoothness. So we are going to go live after a break. • 
+                        📢 IMPORTANT NOTE: The system is undergoing some updates for the benefit of the community and for long-term planning, so please wait a bit. Trading will be live soon with excellent smoothness. So we are going to go live after a break. • 
+                        📢 IMPORTANT NOTE: The system is undergoing some updates for the benefit of the community and for long-term planning, so please wait a bit. Trading will be live soon with excellent smoothness. So we are going to go live after a break. • 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Home Page -->
+    <div id="home-page">
+        <!-- Hero Section -->
+        <section class="relative hero-gradient py-20 overflow-hidden">
+            <div class="absolute inset-0 opacity-30">
+                <svg width="100%" height="100%">
+                    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+                        <circle cx="30" cy="30" r="2" fill="currentColor" fill-opacity="0.1"/>
+                    </pattern>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                </svg>
+            </div>
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-5xl md:text-7xl font-bold font-display bg-gradient-to-r from-gray-900 via-indigo-700 to-purple-700 bg-clip-text text-transparent mb-6 leading-tight">
+                    Discover, Trade & Create NFTs
+                </h2>
+                <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                    Join the future of digital art trading
+                </p>
+                <button class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-2xl hover:shadow-indigo-500/25 transform hover:scale-105">
+                    Start Trading Now
+                </button>
+            </div>
+        </section>
+
+        <!-- Featured Collections -->
+        <section class="py-20 overflow-hidden bg-gradient-to-br from-slate-50 to-gray-100">
+            <div class="mb-16 text-center">
+                <h3 class="text-4xl font-bold font-display text-gray-900 mb-6">Featured Collections</h3>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Discover premium digital assets from world-renowned artists and creators
+                </p>
+            </div>
+            
+            <div class="relative overflow-hidden">
+                <div class="scroll-animation">
+                    <!-- Digital Brand 2020 -->
+                    <div class="featured-card digital-brand-2020 crystal-effect">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white">
+                            <div class="text-5xl mb-4">✨</div>
+                            <h4 class="text-2xl font-bold mb-2">Digital Brand 2020</h4>
+                            <p class="text-lg opacity-90">Crystal</p>
+                        </div>
+                    </div>
+
+                    <!-- Global Brand 2021 -->
+                    <div class="featured-card global-brand-2021 crystal-effect">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white">
+                            <div class="text-5xl mb-4">🌍</div>
+                            <h4 class="text-2xl font-bold mb-2">Global Brand 2021</h4>
+                            <p class="text-lg opacity-90">Crystal</p>
+                        </div>
+                    </div>
+
+                    <!-- Global Brand 2022 -->
+                    <div class="featured-card global-brand-2022 crystal-effect">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white">
+                            <div class="text-5xl mb-4">🚀</div>
+                            <h4 class="text-2xl font-bold mb-2">Global Brand 2022</h4>
+                            <p class="text-lg opacity-90">Crystal</p>
+                        </div>
+                    </div>
+
+                    <!-- Global Brand 2023 -->
+                    <div class="featured-card global-brand-2023 crystal-effect">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white">
+                            <div class="text-5xl mb-4">💎</div>
+                            <h4 class="text-2xl font-bold mb-2">Global Brand 2023</h4>
+                            <p class="text-lg opacity-90">Crystal</p>
+                        </div>
+                    </div>
+
+                    <!-- Global Brand 2024 -->
+                    <div class="featured-card global-brand-2024 crystal-effect">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white">
+                            <div class="text-5xl mb-4">🌟</div>
+                            <h4 class="text-2xl font-bold mb-2">Global Brand 2024</h4>
+                            <p class="text-lg opacity-90">Crystal</p>
+                        </div>
+                    </div>
+
+                    <!-- Duplicate for seamless scrolling -->
+                    <div class="featured-card digital-brand-2020 crystal-effect">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white">
+                            <div class="text-5xl mb-4">✨</div>
+                            <h4 class="text-2xl font-bold mb-2">Digital Brand 2020</h4>
+                            <p class="text-lg opacity-90">Crystal</p>
+                        </div>
+                    </div>
+
+                    <div class="featured-card global-brand-2021 crystal-effect">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white">
+                            <div class="text-5xl mb-4">🌍</div>
+                            <h4 class="text-2xl font-bold mb-2">Global Brand 2021</h4>
+                            <p class="text-lg opacity-90">Crystal</p>
+                        </div>
+                    </div>
+
+                    <div class="featured-card global-brand-2022 crystal-effect">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white">
+                            <div class="text-5xl mb-4">🚀</div>
+                            <h4 class="text-2xl font-bold mb-2">Global Brand 2022</h4>
+                            <p class="text-lg opacity-90">Crystal</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Today's Top Picks & Top Sellers -->
+        <section class="py-16 bg-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-2 gap-12">
+                    <!-- Today's Top Picks -->
+                    <div>
+                        <h3 class="text-2xl font-bold font-display text-gray-900 mb-6">🏆 Today's Top Picks</h3>
+                        <div class="space-y-4">
+                            <!-- Cyber Granada 20564 -->
+                            <div class="glass-effect hover-lift p-4 rounded-xl border border-blue-200">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-16 h-16 nft-cyberpunk rounded-lg overflow-hidden relative">
+                                        <div class="cyber-eye"></div>
+                                        <div class="absolute bottom-2 left-2">
+                                            <div class="text-xs text-white font-bold">#20564</div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">Cyber Granada 20564</h4>
+                                        <p class="text-gray-600">Power: 42.9 FTW</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Android Connect 42949 -->
+                            <div class="glass-effect hover-lift p-4 rounded-xl border border-blue-200">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-16 h-16 nft-android rounded-lg overflow-hidden relative">
+                                        <div class="android-circuit"></div>
+                                        <div class="absolute bottom-2 left-2">
+                                            <div class="text-xs text-white font-bold">#42949</div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">Android Connect 42949</h4>
+                                        <p class="text-gray-600">Power: 33.7 FTW</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Sellers -->
+                    <div>
+                        <h3 class="text-2xl font-bold font-display text-gray-900 mb-6">💰 Top Sellers</h3>
+                        <div class="space-y-4">
+                            <!-- DigitalMaker -->
+                            <div class="glass-effect hover-lift p-4 rounded-xl border border-blue-200">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
+                                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                                            <span class="text-emerald-600 font-bold text-sm">DM</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">DigitalMaker</h4>
+                                        <p class="text-gray-600">Network: 1,215 FTW</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sternade -->
+                            <div class="glass-effect hover-lift p-4 rounded-xl border border-blue-200">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                                            <span class="text-purple-600 font-bold text-sm">ST</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">Sternade</h4>
+                                        <p class="text-gray-600">Network: 807 FTW</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="py-16 bg-white">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h3 class="text-3xl font-bold font-display text-gray-900 mb-8">Contact Us</h3>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Event Support -->
+                    <div class="glass-effect hover-lift p-6 rounded-xl border border-blue-200">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Event Support</h4>
+                        <p class="text-gray-600">support@johnsonry.com</p>
+                    </div>
+                    
+                    <!-- Live Chat -->
+                    <div class="glass-effect hover-lift p-6 rounded-xl border border-blue-200">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Live Chat</h4>
+                        <p class="text-gray-600">24/7 Support Available</p>
+                    </div>
+                    
+                    <!-- Community -->
+                    <div class="glass-effect hover-lift p-6 rounded-xl border border-blue-200">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Community</h4>
+                        <p class="text-gray-600">Join us! Discuss</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Show announcement popup when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show popup after a short delay (so page loads first)
+            setTimeout(function() {
+                const popup = document.getElementById('announcementPopup');
+                popup.style.display = 'flex';
+                
+                // Add fade in effect
+                setTimeout(function() {
+                    popup.style.opacity = '1';
+                }, 10);
+            }, 500); // 0.5 second delay
+        });
+
+        // Close popup when close button is clicked
+        document.getElementById('popupCloseButton').addEventListener('click', function() {
+            const popup = document.getElementById('announcementPopup');
+            
+            // Add fade out effect
+            popup.style.opacity = '0';
+            popup.style.transition = 'opacity 0.3s ease';
+            
+            setTimeout(function() {
+                popup.style.display = 'none';
+                
+                // Reset opacity for next time
+                setTimeout(function() {
+                    popup.style.opacity = '1';
+                    popup.style.transition = '';
+                }, 300);
+            }, 300);
+        });
+
+        // Close popup when clicking outside the popup container
+        document.getElementById('announcementPopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                document.getElementById('popupCloseButton').click();
+            }
+        });
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const popup = document.getElementById('announcementPopup');
+                if (popup.style.display !== 'none') {
+                    document.getElementById('popupCloseButton').click();
+                }
+            }
+        });
+
+        // Triple click on HEXAWAY logo to show secret admin page
+        const hexawayLogo = document.getElementById('hexaway-logo');
+        
+        if (hexawayLogo) {
+            let clickCount = 0;
+            let clickTimer;
+            
+            hexawayLogo.style.cursor = 'pointer';
+            hexawayLogo.title = 'Click 3 times for admin access';
+            
+            hexawayLogo.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                clickCount++;
+                
+                // Reset counter after 1 second
+                clearTimeout(clickTimer);
+                clickTimer = setTimeout(function() {
+                    clickCount = 0;
+                }, 1000);
+                
+                // If clicked 3 times within 1 second
+                if (clickCount === 3) {
+                    clickCount = 0;
+                    showAdminPage();
+                }
+            });
+        }
+
+        // Function to show admin page
+        function showAdminPage() {
+            // Create admin page HTML with NFT Array Manager
+            const adminPageHTML = `
+                <div id="adminPage" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                    z-index: 10000;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-family: 'Inter', sans-serif;
+                    padding: 20px;
+                    box-sizing: border-box;
+                    overflow-y: auto;
+                ">
+                    <div style="
+                        background: rgba(15, 23, 42, 0.9);
+                        border-radius: 20px;
+                        padding: 40px;
+                        max-width: 1000px;
+                        width: 100%;
+                        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+                        position: relative;
+                        max-height: 90vh;
+                        overflow-y: auto;
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        backdrop-filter: blur(10px);
+                    ">
+                        <!-- Close button -->
+                        <button onclick="closeAdminPage()" style="
+                            position: absolute;
+                            top: 20px;
+                            right: 20px;
+                            background: rgba(255, 255, 255, 0.1);
+                            border: 1px solid rgba(255, 255, 255, 0.2);
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 50%;
+                            font-size: 24px;
+                            color: white;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            transition: all 0.2s;
+                            z-index: 10001;
+                        " onmouseover="this.style.background='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'">
+                            ×
+                        </button>
+                        
+                        <!-- Header -->
+                        <div style="text-align: center; margin-bottom: 40px;">
+                            <div style="
+                                font-size: 48px;
+                                font-weight: 800;
+                                background: linear-gradient(135deg, #22d3ee 0%, #0ea5e9 50%, #3b82f6 100%);
+                                -webkit-background-clip: text;
+                                -webkit-text-fill-color: transparent;
+                                margin: 0 0 10px 0;
+                                font-family: 'Space Grotesk', sans-serif;
+                                letter-spacing: 2px;
+                            ">
+                                HEXAWAY
+                            </div>
+                            <div style="color: #94a3b8; font-size: 16px; margin: 0; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                <span>1. or long-term planning, so please wait a bit. Trading:</span>
+                            </div>
+                        </div>
+                        
+                        <!-- NFT Array Manager Section -->
+                        <div style="
+                            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+                            border-radius: 16px;
+                            padding: 30px;
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+                            margin-bottom: 30px;
+                            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                        ">
+                            <div style="
+                                display: flex;
+                                align-items: center;
+                                margin-bottom: 25px;
+                            ">
+                                <div style="
+                                    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                                    width: 50px;
+                                    height: 50px;
+                                    border-radius: 12px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin-right: 15px;
+                                ">
+                                    <span style="color: white; font-size: 24px;">🔢</span>
+                                </div>
+                                <div>
+                                    <h3 style="
+                                        font-size: 24px;
+                                        font-weight: 700;
+                                        background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
+                                        -webkit-background-clip: text;
+                                        -webkit-text-fill-color: transparent;
+                                        margin: 0 0 5px 0;
+                                        font-family: 'Space Grotesk', sans-serif;
+                                    ">
+                                        NFT Array Manager
+                                    </h3>
+                                    <p style="color: #94a3b8; font-size: 14px; margin: 0;">
+                                        Manage your NFT collections and arrays
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div style="
+                                display: grid;
+                                grid-template-columns: 1fr 1fr;
+                                gap: 30px;
+                            ">
+                                <!-- Left Column: New List to Start With -->
+                                <div>
+                                    <h4 style="
+                                        font-size: 18px;
+                                        font-weight: 600;
+                                        color: #e2e8f0;
+                                        margin: 0 0 20px 0;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                    ">
+                                        <span style="
+                                            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                                            width: 8px;
+                                            height: 8px;
+                                            border-radius: 50%;
+                                        "></span>
+                                        New List to Start With:
+                                    </h4>
+                                    
+                                    <!-- NFT ID Input -->
+                                    <div style="margin-bottom: 25px;">
+                                        <div style="
+                                            display: flex;
+                                            align-items: center;
+                                            margin-bottom: 10px;
+                                        ">
+                                            <div style="
+                                                width: 30px;
+                                                height: 30px;
+                                                background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+                                                border-radius: 8px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                margin-right: 12px;
+                                            ">
+                                                <span style="color: white; font-size: 14px; font-weight: bold;">#</span>
+                                            </div>
+                                            <span style="color: #cbd5e1; font-weight: 500; font-size: 14px;">
+                                                NFT ID Number
+                                            </span>
+                                        </div>
+                                        <div style="
+                                            display: flex;
+                                            gap: 10px;
+                                            align-items: center;
+                                        ">
+                                            <div style="
+                                                flex: 1;
+                                                background: rgba(255, 255, 255, 0.05);
+                                                border: 1px solid rgba(255, 255, 255, 0.1);
+                                                border-radius: 10px;
+                                                padding: 15px;
+                                            ">
+                                                <div style="
+                                                    font-size: 32px;
+                                                    font-weight: 800;
+                                                    text-align: center;
+                                                    background: linear-gradient(135deg, #22d3ee 0%, #0ea5e9 100%);
+                                                    -webkit-background-clip: text;
+                                                    -webkit-text-fill-color: transparent;
+                                                    font-family: 'Space Grotesk', sans-serif;
+                                                ">
+                                                    3400
+                                                </div>
+                                                <div style="
+                                                    text-align: center;
+                                                    color: #94a3b8;
+                                                    font-size: 12px;
+                                                    margin-top: 5px;
+                                                ">
+                                                    Current NFT ID
+                                                </div>
+                                            </div>
+                                            <button onclick="changeNFTId()" style="
+                                                background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                                                border: none;
+                                                border-radius: 10px;
+                                                padding: 15px 25px;
+                                                color: white;
+                                                font-weight: 600;
+                                                cursor: pointer;
+                                                transition: all 0.3s;
+                                                font-size: 14px;
+                                                white-space: nowrap;
+                                            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 5px 15px rgba(139, 92, 246, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                                ✏️ Edit ID
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Set Array Start Button -->
+                                    <button onclick="setArrayStart()" style="
+                                        width: 100%;
+                                        padding: 18px;
+                                        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                                        border: none;
+                                        border-radius: 12px;
+                                        color: white;
+                                        font-weight: 700;
+                                        cursor: pointer;
+                                        transition: all 0.3s;
+                                        font-size: 16px;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        gap: 10px;
+                                        margin-top: 20px;
+                                    " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 25px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                        <span style="font-size: 20px;">🚀</span>
+                                        Set Array Start
+                                    </button>
+                                </div>
+                                
+                                <!-- Right Column: Number of NFT to Include -->
+                                <div>
+                                    <h4 style="
+                                        font-size: 18px;
+                                        font-weight: 600;
+                                        color: #e2e8f0;
+                                        margin: 0 0 20px 0;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                    ">
+                                        <span style="
+                                            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                                            width: 8px;
+                                            height: 8px;
+                                            border-radius: 50%;
+                                        "></span>
+                                        Number of NFT to Include:
+                                    </h4>
+                                    
+                                    <!-- NFT Count Selection -->
+                                    <div style="margin-bottom: 25px;">
+                                        <div style="
+                                            display: flex;
+                                            align-items: center;
+                                            margin-bottom: 15px;
+                                        ">
+                                            <div style="
+                                                width: 30px;
+                                                height: 30px;
+                                                background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                                                border-radius: 8px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                margin-right: 12px;
+                                            ">
+                                                <span style="color: white; font-size: 14px; font-weight: bold;">📊</span>
+                                            </div>
+                                            <span style="color: #cbd5e1; font-weight: 500; font-size: 14px;">
+                                                Select number NFT ID of old list
+                                            </span>
+                                        </div>
+                                        
+                                        <!-- Number Grid -->
+                                        <div style="
+                                            display: grid;
+                                            grid-template-columns: repeat(4, 1fr);
+                                            gap: 10px;
+                                            margin-bottom: 20px;
+                                        ">
+                                            ${[10, 25, 50, 100, 250, 500, 1000, 1500].map(num => `
+                                                <button onclick="selectNFTCount(${num})" style="
+                                                    background: rgba(255, 255, 255, 0.05);
+                                                    border: 1px solid rgba(255, 255, 255, 0.1);
+                                                    border-radius: 8px;
+                                                    padding: 12px;
+                                                    color: #cbd5e1;
+                                                    font-weight: 500;
+                                                    cursor: pointer;
+                                                    transition: all 0.2s;
+                                                    text-align: center;
+                                                " onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='white'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='#cbd5e1'">
+                                                    ${num}
+                                                </button>
+                                            `).join('')}
+                                        </div>
+                                        
+                                        <!-- Custom Input -->
+                                        <div style="
+                                            display: flex;
+                                            gap: 10px;
+                                            align-items: center;
+                                        ">
+                                            <div style="flex: 1;">
+                                                <input type="number" id="customNFTCount" placeholder="Enter custom number" style="
+                                                    width: 100%;
+                                                    padding: 15px;
+                                                    background: rgba(255, 255, 255, 0.05);
+                                                    border: 1px solid rgba(255, 255, 255, 0.2);
+                                                    border-radius: 10px;
+                                                    color: white;
+                                                    font-size: 14px;
+                                                    outline: none;
+                                                    transition: all 0.3s;
+                                                " onfocus="this.style.border='1px solid #3b82f6'; this.style.boxShadow='0 0 0 2px rgba(59, 130, 246, 0.2)'" onblur="this.style.border='1px solid rgba(255, 255, 255, 0.2)'; this.style.boxShadow='none'">
+                                            </div>
+                                            <button onclick="setCustomCount()" style="
+                                                background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+                                                border: none;
+                                                border-radius: 10px;
+                                                padding: 15px 25px;
+                                                color: white;
+                                                font-weight: 600;
+                                                cursor: pointer;
+                                                transition: all 0.3s;
+                                                font-size: 14px;
+                                                white-space: nowrap;
+                                            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 5px 15px rgba(59, 130, 246, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                                Set
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Enter Units Section -->
+                                    <div>
+                                        <div style="
+                                            display: flex;
+                                            align-items: center;
+                                            margin-bottom: 15px;
+                                        ">
+                                            <div style="
+                                                width: 30px;
+                                                height: 30px;
+                                                background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+                                                border-radius: 8px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                margin-right: 12px;
+                                            ">
+                                                <span style="color: white; font-size: 14px; font-weight: bold;">⚡</span>
+                                            </div>
+                                            <span style="color: #cbd5e1; font-weight: 500; font-size: 14px;">
+                                                Enter Units
+                                            </span>
+                                        </div>
+                                        
+                                        <div style="
+                                            display: grid;
+                                            grid-template-columns: 1fr 1fr;
+                                            gap: 15px;
+                                        ">
+                                            <input type="text" id="unitsInput" placeholder="Enter units..." style="
+                                                grid-column: span 2;
+                                                padding: 15px;
+                                                background: rgba(255, 255, 255, 0.05);
+                                                border: 1px solid rgba(255, 255, 255, 0.2);
+                                                border-radius: 10px;
+                                                color: white;
+                                                font-size: 14px;
+                                                outline: none;
+                                                transition: all 0.3s;
+                                            " onfocus="this.style.border='1px solid #ec4899'; this.style.boxShadow='0 0 0 2px rgba(236, 72, 153, 0.2)'" onblur="this.style.border='1px solid rgba(255, 255, 255, 0.2)'; this.style.boxShadow='none'">
+                                            
+                                            <button onclick="submitUnits()" style="
+                                                padding: 15px;
+                                                background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+                                                border: none;
+                                                border-radius: 10px;
+                                                color: white;
+                                                font-weight: 600;
+                                                cursor: pointer;
+                                                transition: all 0.3s;
+                                                font-size: 14px;
+                                            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 5px 15px rgba(236, 72, 153, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                                Submit Units
+                                            </button>
+                                            
+                                            <button onclick="resetUnits()" style="
+                                                padding: 15px;
+                                                background: rgba(255, 255, 255, 0.05);
+                                                border: 1px solid rgba(255, 255, 255, 0.1);
+                                                border-radius: 10px;
+                                                color: #cbd5e1;
+                                                font-weight: 600;
+                                                cursor: pointer;
+                                                transition: all 0.3s;
+                                                font-size: 14px;
+                                            " onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='white'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='#cbd5e1'">
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- System Info Footer -->
+                        <div style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            padding-top: 20px;
+                            border-top: 1px solid rgba(255, 255, 255, 0.1);
+                            margin-top: 20px;
+                        ">
+                            <div style="color: #94a3b8; font-size: 12px;">
+                                System Time: <span id="systemTime" style="color: #22d3ee; font-weight: 500;">${new Date().toLocaleTimeString()}</span>
+                            </div>
+                            <div style="
+                                display: flex;
+                                gap: 15px;
+                                align-items: center;
+                            ">
+                                <div style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 5px;
+                                ">
+                                    <div style="
+                                        width: 8px;
+                                        height: 8px;
+                                        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                                        border-radius: 50%;
+                                    "></div>
+                                    <span style="color: #94a3b8; font-size: 12px;">Connected</span>
+                                </div>
+                                <button onclick="refreshData()" style="
+                                    background: rgba(255, 255, 255, 0.05);
+                                    border: 1px solid rgba(255, 255, 255, 0.1);
+                                    border-radius: 8px;
+                                    padding: 8px 16px;
+                                    color: #cbd5e1;
+                                    font-size: 12px;
+                                    cursor: pointer;
+                                    transition: all 0.2s;
+                                " onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='white'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='#cbd5e1'">
+                                    🔄 Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add admin page to body
+            document.body.insertAdjacentHTML('beforeend', adminPageHTML);
+            
+            // Update system time
+            const updateTime = () => {
+                const timeElement = document.getElementById('systemTime');
+                if (timeElement) {
+                    timeElement.textContent = new Date().toLocaleTimeString();
+                }
+            };
+            
+            // Update time every second
+            const timeInterval = setInterval(updateTime, 1000);
+            
+            // Store interval ID for cleanup
+            const adminPage = document.getElementById('adminPage');
+            adminPage.dataset.timeInterval = timeInterval;
+            
+            // Add fade-in animation
+            setTimeout(() => {
+                adminPage.style.opacity = '1';
+            }, 10);
+        }
+
+        // Function to close admin page
+        function closeAdminPage() {
+            const adminPage = document.getElementById('adminPage');
+            if (adminPage) {
+                // Clear time interval
+                const timeInterval = adminPage.dataset.timeInterval;
+                if (timeInterval) {
+                    clearInterval(timeInterval);
+                }
+                
+                adminPage.style.opacity = '0';
+                adminPage.style.transition = 'opacity 0.3s';
+                setTimeout(() => {
+                    adminPage.remove();
+                }, 300);
+            }
+        }
+
+        // NFT Array Manager Functions
+        function changeNFTId() {
+            const newId = prompt('Enter new NFT ID (e.g., 3400):', '3400');
+            if (newId && !isNaN(newId)) {
+                alert(`NFT ID changed to: ${newId}`);
+                // In a real implementation, you would update the display here
+            }
+        }
+
+        function setArrayStart() {
+            alert('🚀 Array start position set successfully!');
+        }
+
+        function selectNFTCount(count) {
+            alert(`✅ Selected ${count} NFTs to include`);
+            // In a real implementation, you would update the selection here
+        }
+
+        function setCustomCount() {
+            const input = document.getElementById('customNFTCount');
+            if (input && input.value) {
+                const count = parseInt(input.value);
+                if (!isNaN(count) && count > 0) {
+                    alert(`✅ Custom count set to: ${count} NFTs`);
+                } else {
+                    alert('⚠️ Please enter a valid number');
+                }
+            } else {
+                alert('⚠️ Please enter a number');
+            }
+        }
+
+        function submitUnits() {
+            const input = document.getElementById('unitsInput');
+            if (input && input.value.trim()) {
+                alert(`✅ Units submitted: "${input.value}"`);
+            } else {
+                alert('⚠️ Please enter units');
+            }
+        }
+
+        function resetUnits() {
+            const input = document.getElementById('unitsInput');
+            if (input) {
+                input.value = '';
+            }
+            const customInput = document.getElementById('customNFTCount');
+            if (customInput) {
+                customInput.value = '';
+            }
+        }
+
+        function refreshData() {
+            alert('🔄 Data refreshed successfully!');
+        }
+
+        // Button functions for Box 1
+        function restartSystem() {
+            alert('⚠️ System restart initiated. This may take a few minutes.');
+        }
+
+        function checkStatus() {
+            alert('✅ System status check completed. All systems operational.');
+        }
+
+        function showLogs() {
+            alert('📋 Opening system logs...');
+        }
+
+        // Button functions for Box 2
+        function enableTrading() {
+            alert('🚀 Trading enabled successfully! Trading is now live.');
+        }
+
+        function pauseTrading() {
+            alert('⏸️ Trading paused. All trading activities will be suspended.');
+        }
+
+        function scheduleMaintenance() {
+            alert('🛠️ Maintenance scheduled for 2 AM UTC. Users will be notified.');
+        }
+
+        function broadcastMessage() {
+            const message = prompt('Enter broadcast message:', 'System maintenance in progress. Trading will resume shortly.');
+            if (message) {
+                alert(`📢 Message broadcasted: "${message}"`);
+            }
+        }
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuButton = document.getElementById('mobile-menu-button');
+            
+            if (mobileMenu && !mobileMenu.contains(event.target) && menuButton && !menuButton.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
+        // CONTINUOUS SCROLLING SOLUTION
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the scrolling note element
+            const noteElement = document.getElementById('continuous-marquee');
+            
+            if (noteElement) {
+                // Try to get the saved scroll position from localStorage
+                let savedPosition = localStorage.getItem('marqueeScrollPosition');
+                let savedTimestamp = localStorage.getItem('marqueeTimestamp');
+                const currentTime = Date.now();
+                
+                // If we have a saved position and it's recent (within 5 seconds), use it
+                if (savedPosition && savedTimestamp && (currentTime - savedTimestamp < 5000)) {
+                    // Calculate animation delay based on saved position
+                    const totalDuration = 120; // 120 seconds
+                    const animationDelay = -parseFloat(savedPosition); // Negative because we want to start from that position
+                    
+                    // Apply the animation with custom starting point
+                    noteElement.style.animation = `marquee ${totalDuration}s linear infinite`;
+                    noteElement.style.animationDelay = `${animationDelay}s`;
+                } else {
+                    // Otherwise start fresh
+                    noteElement.style.animation = 'marquee 120s linear infinite';
+                    noteElement.style.animationDelay = '0s';
+                }
+                
+                // Make sure it's visible immediately
+                noteElement.style.opacity = '1';
+                noteElement.style.visibility = 'visible';
+                noteElement.style.display = 'inline-block';
+                
+                // Save scroll position periodically
+                setInterval(function() {
+                    // Get computed style to check animation state
+                    const style = window.getComputedStyle(noteElement);
+                    const matrix = new WebKitCSSMatrix(style.transform);
+                    
+                    // Save current transform position
+                    const currentPosition = matrix.m41; // This is the translateX value
+                    localStorage.setItem('marqueeScrollPosition', currentPosition);
+                    localStorage.setItem('marqueeTimestamp', Date.now());
+                }, 1000); // Save every second
+                
+                // Add hover pause functionality
+                noteElement.addEventListener('mouseenter', function() {
+                    this.style.animationPlayState = 'paused';
+                    this.style.cursor = 'pointer';
+                });
+                
+                noteElement.addEventListener('mouseleave', function() {
+                    this.style.animationPlayState = 'running';
+                });
+            }
+            
+            // Start collection animation
+            const collectionElement = document.querySelector('.scroll-animation');
+            if (collectionElement) {
+                collectionElement.style.animation = 'scroll-right-to-left 120s linear infinite';
+                collectionElement.style.animationPlayState = 'running';
+            }
+        });
+
+        // Add click to pause/resume for note
+        const noteElement = document.getElementById('continuous-marquee');
+        if (noteElement) {
+            noteElement.addEventListener('click', function() {
+                if (this.style.animationPlayState === 'paused') {
+                    this.style.animationPlayState = 'running';
+                } else {
+                    this.style.animationPlayState = 'paused';
+                }
+            });
+        }
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId !== '#') {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        // Close mobile menu if open
+                        const mobileMenu = document.getElementById('mobile-menu');
+                        if (mobileMenu) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    }
+                }
+            });
+        });
+
+        // Save scroll position before page unload
+        window.addEventListener('beforeunload', function() {
+            const noteElement = document.getElementById('continuous-marquee');
+            if (noteElement) {
+                const style = window.getComputedStyle(noteElement);
+                const matrix = new WebKitCSSMatrix(style.transform);
+                const currentPosition = matrix.m41;
+                
+                // Save position with timestamp
+                localStorage.setItem('marqueeScrollPosition', currentPosition);
+                localStorage.setItem('marqueeTimestamp', Date.now());
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Important</title>
+</head>
+<body>
+    <!-- Announcement Popup -->
+<div id="announcementPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-container">
+        <button id="popupCloseButton" class="popup-close-button">
+            ×
+        </button>
+        <div class="announcement-image-container">
+            <!-- Replace with your image.png from your folder -->
+            <img src="image.png" alt="Important Announcement">
+        </div>
+    </div>
+</div>
+
+<style>
+    /* POPUP STYLES */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        backdrop-filter: blur(5px);
+    }
+    
+    .popup-container {
+        background: transparent;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 600px;
+        overflow: hidden;
+        position: relative;
+        animation: popupAppear 0.5s ease-out;
+    }
+    
+    @keyframes popupAppear {
+        from {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+    
+    .announcement-image-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        border: 3px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .announcement-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+    
+    .popup-close-button {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+        z-index: 10001;
+    }
+    
+    .popup-close-button:hover {
+        transform: scale(1.1) rotate(90deg);
+        box-shadow: 0 8px 25px rgba(79, 70, 229, 0.6);
+        background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+    }
+    
+    @media (max-width: 768px) {
+        .popup-container {
+            width: 95%;
+            max-width: 500px;
+        }
+        
+        .popup-close-button {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            top: -10px;
+            right: -10px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .popup-container {
+            max-width: 90vw;
+        }
+        
+        .announcement-image-container {
+            border-radius: 10px;
+        }
+        
+        .popup-close-button {
+            width: 35px;
+            height: 35px;
+            font-size: 18px;
+            top: -8px;
+            right: -8px;
+        }
+    }
+</style>
+
+<script>
+    // Show announcement popup when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show popup after a short delay (so page loads first)
+        setTimeout(function() {
+            const popup = document.getElementById('announcementPopup');
+            popup.style.display = 'flex';
+            
+            // Add fade in effect
+            setTimeout(function() {
+                popup.style.opacity = '1';
+            }, 10);
+        }, 500); // 0.5 second delay
+    });
+
+    // Close popup when close button is clicked
+    document.getElementById('popupCloseButton').addEventListener('click', function() {
+        const popup = document.getElementById('announcementPopup');
+        
+        // Add fade out effect
+        popup.style.opacity = '0';
+        popup.style.transition = 'opacity 0.3s ease';
+        
+        setTimeout(function() {
+            popup.style.display = 'none';
+            
+            // Reset opacity for next time
+            setTimeout(function() {
+                popup.style.opacity = '1';
+                popup.style.transition = '';
+            }, 300);
+        }, 300);
+    });
+
+    // Close popup when clicking outside the popup container
+    document.getElementById('announcementPopup').addEventListener('click', function(e) {
+        if (e.target === this) {
+            document.getElementById('popupCloseButton').click();
+        }
+    });
+
+    // Close popup with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const popup = document.getElementById('announcementPopup');
+            if (popup.style.display !== 'none') {
+                document.getElementById('popupCloseButton').click();
+            }
+        }
+    });
+</script>
+</body>
+</html>

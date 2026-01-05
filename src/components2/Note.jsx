@@ -165,7 +165,7 @@ export default function NoteMarquee() {
               >
                 {" "}
                 {Array(9).fill(
-                  "Alart! HEXA users, be ready! For  NFT creation durations will be implemented Very soon! Team Hexaway"
+                  "Attention  please! .🤌🏻 Dear Hexa community, NFT trading has been temporarily paused, Please wait. You will receive an excellent module within the next 6-7 days ✌️✌️"
                 )}
               </div>
             </div>
