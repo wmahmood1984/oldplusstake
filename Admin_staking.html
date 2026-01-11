@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFT Prediction Admin</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-pending {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-completed {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+
+    th, td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+      font-weight: 700;
+      background: #f9fafb;
+    }
+
+    tr:hover {
+      background: #f9fafb;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .transfer-btn {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .transfer-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(95, 68, 158, 0.3);
+    }
+
+    .transfer-btn:active {
+      transform: translateY(0);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 16px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      z-index: 2000;
+      animation: slideIn 0.3s ease;
+    }
+
+    .toast-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .toast-error {
+      background: #ef4444;
+      color: white;
+    }
+
+    .toast-info {
+      background: #6366f1;
+      color: white;
+    }
+  </style>
+</head>
+<body class="h-full w-full m-0 p-0" style="background-color: #ffffff; color: #1e293b;">
+  <div id="app" class="h-full w-full overflow-auto">
+    <!-- Navigation -->
+    <nav style="background: #f8fafc; padding: 20px 0; border-bottom: 2px solid rgba(99, 102, 241, 0.3); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <div style="max-width: 1600px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            🎨
+          </div>
+          <span style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 20px; color: #1e293b; font-weight: 700;">
+            HEXA Transfer
+          </span>
+        </div>
+        
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main style="max-width: 1400px; margin: 0 auto; padding: 32px 20px;">
+      <div style="margin-bottom: 32px;">
+        <h1 style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 32px; color: #1e293b; font-weight: 700; margin-bottom: 8px;">
+          NFTs Staking Detail
+        </h1>
+      <button class="transfer-btn" onclick="window.location.href='Admin_staking.html'">
+          <i class="fas fa-exchange-alt"></i>
+          Go to Staking 
+        </button>
+         <button class="transfer-btn" onclick="window.location.href='Admin_staking_earning.html'">
+          <i class="fas fa-exchange-alt"></i>
+          Go to Staking Earning
+        </button>
+        <p style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 16px; color: #1e293b; opacity: 0.7;">
+          Overview of NFTs Staking and analytics
+        </p>
+      </div>
+
+      <!-- Stats Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-bottom: 40px;">
+        <div style="background: #f8fafc; padding: 24px; border-radius: 12px; border: 2px solid rgba(99, 102, 241, 0.3); box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; opacity: 0.7; margin-bottom: 8px;">
+          Total Burned NFTs
+          </div>
+          <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 40px; color: #6366f1; font-weight: 700;">
+            3
+          </div>
+        </div>
+
+        <div style="background: #f8fafc; padding: 24px; border-radius: 12px; border: 2px solid rgba(245, 158, 11, 0.3); box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; opacity: 0.7; margin-bottom: 8px;">
+            Converted Hexa Token
+          </div>
+          <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 40px; color: #f59e0b; font-weight: 700;">
+          435(H)
+          </div>
+        </div>
+
+        <div style="background: #f8fafc; padding: 24px; border-radius: 12px; border: 2px solid rgba(16, 185, 129, 0.3); box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; opacity: 0.7; margin-bottom: 8px;">
+            Burned NFTs Margin Value
+          </div>
+          <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 40px; color: #10b981; font-weight: 700;">
+            $23,324
+          </div>
+        </div>
+
+        <div style="background: #f8fafc; padding: 24px; border-radius: 12px; border: 2px solid rgba(139, 92, 246, 0.3); box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; opacity: 0.7; margin-bottom: 8px;">
+            Burned NFTs Value
+          </div>
+          <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 40px; color: #8b5cf6; font-weight: 700;">
+            $24,150.00
+          </div>
+        </div>
+      </div>
+
+     <!-- Table Section -->
+      <di v style="background: #f8fafc; padding: 32px; border-radius: 12px; border: 2px solid rgba(99, 102, 241, 0.3); box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <h2 style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 24px; color: #1e293b; font-weight: 700;">
+            Recent Transfers
+          </h2>
+         
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">User Address</th>
+                <th style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">Token ID</th>
+                <th style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">NFT Value</th>
+                <th style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">NFT Client Margin</th>
+                <th style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">Token Price</th>
+                <th style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">Token Staked</th>
+                <th style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">Date</th>
+                
+               
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span>0x742d...bEb</span>
+                    <button class="copy-btn" onclick="copyAddress('0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb', event)" style="color: #6366f1;" title="Copy full address">
+                      📋
+                    </button>
+                  </div>
+                </td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">#7834</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">$2,500.00</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">53.5</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">3.5</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #8b5cf6; font-weight: 600;">1,250</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">Jan 15, 2024</td>
+                
+              </tr>
+              <tr>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span>0x8a90...f6a5</span>
+                    <button class="copy-btn" onclick="copyAddress('0x8a90f4e29c2a75a7c8d9b6e4f3c2a1b0d8e7f6a5', event)" style="color: #6366f1;" title="Copy full address">
+                      📋
+                    </button>
+                  </div>
+                </td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">#4521</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">$3,200.00</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">53.5</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">3.5</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #8b5cf6; font-weight: 600;">1,580</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">Jan 18, 2024</td>
+                
+              </tr>
+              <tr>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span>0x1b2c...b0c</span>
+                    <button class="copy-btn" onclick="copyAddress('0x1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c', event)" style="color: #6366f1;" title="Copy full address">
+                      📋
+                    </button>
+                  </div>
+                </td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">#9012</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">$1,800.00</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">53.5</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">3.5</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #8b5cf6; font-weight: 600;">3,232</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">Jan 28, 2024</td>
+                
+              </tr>
+              <tr>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span>0x5e4d...f7e6d</span>
+                    <button class="copy-btn" onclick="copyAddress('0x5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b9a8f7e6d', event)" style="color: #6366f1;" title="Copy full address">
+                      📋
+                    </button>
+                  </div>
+                </td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">#5678</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">$4,100.00</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">53.5</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">3.5</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #8b5cf6; font-weight: 600;">2,120</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">Jan 10, 2024</td>
+                
+              </tr>
+              <tr>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span>0x9f8e...f0e</span>
+                    <button class="copy-btn" onclick="copyAddress('0x9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e', event)" style="color: #6366f1;" title="Copy full address">
+                      📋
+                    </button>
+                  </div>
+                </td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">#3456</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">$2,900.00</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">53.5</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b; font-weight: 600;">3.5</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #8b5cf6; font-weight: 600;">2,333</td>
+                <td style="font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; color: #1e293b;">Feb 1, 2024</td>
+            
+               
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Copy address function
+    function copyAddress(address, event) {
+      event.stopPropagation();
+      
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(address).then(() => {
+          showToast('Address copied to clipboard!', 'success');
+        }).catch(() => {
+          showToast('Failed to copy address', 'error');
+        });
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = address;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          showToast('Address copied to clipboard!', 'success');
+        } catch (err) {
+          showToast('Failed to copy address', 'error');
+        }
+        document.body.removeChild(textArea);
+      }
+    }
+
+    // Show toast notification
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Format address for display
+    function formatAddress(address) {
+      if (!address || address.length < 10) return address;
+      return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+    }
+
+    // Make functions available globally
+    window.copyAddress = copyAddress;
+    window.showToast = showToast;
+    window.formatAddress = formatAddress;
+  </script>
+</body>
+</html>

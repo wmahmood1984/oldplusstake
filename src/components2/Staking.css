@@ -1,0 +1,61 @@
+body {
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    .stake-card {
+      transition: all 0.3s ease;
+    }
+
+    .stake-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(139, 92, 246, 0.5);
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .loading {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .slide-up {
+      animation: slideUp 0.5s ease;
+    }
+
+    @keyframes priceChange {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    .price-update {
+      animation: priceChange 0.3s ease;
+    }

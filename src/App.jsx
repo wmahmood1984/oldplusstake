@@ -21,6 +21,7 @@ import Bulk from './components2/Bulk'
 import NoteMarquee from './components2/Note'
 import MyForm from './components2/Admin'
 import Lists from './components2/Lists'
+import Staking from './components2/Staking'
 
 export default function App() {
 
@@ -82,6 +83,7 @@ export default function App() {
                 <Route path="/bulk" element={<Bulk />} />
                 <Route path="/admin" element={<MyForm />} />
                                 <Route path="/lists" element={<Lists />} />
+                                <Route path="/staking" element={<Staking />} />
             </Routes>
 
 
