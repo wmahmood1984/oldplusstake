@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import "./Staking.css"
 import { hexaContractR, stakingContract, stakingContractR, USDTContractR } from '../config'
 import { useAppKitAccount } from '@reown/appkit/react';
-import { executeContract, formatWithCommas, secondsToDMY } from '../utils/contractExecutor';
+import { executeContract, formatWithCommas, secondsToDHMSDiff, secondsToDMY } from '../utils/contractExecutor';
 import { formatEther } from 'ethers';
 import { useConfig } from 'wagmi';
 import { useDispatch } from 'react-redux';
@@ -287,7 +287,7 @@ console.log("staking",show);
                 </div>
                 <div style={{ background: "rgba(139, 92, 246, 0.2)", padding: "8px 12px", borderRadius: "8px", marginBottom: "8px" }}>
                   <div id="countdown-0" style={{ fontSize: "12px", color: "#8b5cf6", fontWeight: 700, textAlign: "center" }}>
-                    ⏱️ 199d 23h 59m 45s remaining
+                    ⏱️ {secondsToDHMSDiff(Number(v.time)+200*24*60*60- new Date().getTime()/1000)} remaining
                   </div>
                 </div>
                 <div style={{ fontSize: "10px", color: "#0f172a", opacity: 0.6 }}>
@@ -314,13 +314,13 @@ console.log("staking",show);
             <div style={{ background: "linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.1))", padding: "16px", borderRadius: "12px", marginBottom: "16px", border: "2px solid rgba(6, 182, 212, 0.4)" }}>
               <div style={{ textAlign: "center" }}>
                 <div style={{ fontSize: "14px", color: "#0f172a", opacity: 0.7, marginBottom: "8px", fontWeight: 600 }}>
-                  Total Projected Earnings
+                  Total Earnings
                 </div>
                 <div style={{ fontSize: "32px", color: "#06b6d4", fontWeight: 900 }}>
-                  16,168 HEXA
+                  {formatWithCommas(formatEther(myStake[0].claimable))} HEXA
                 </div>
                 <div style={{ fontSize: "12px", color: "#0f172a", opacity: 0.6, marginTop: "4px" }}>
-                  ≈ $105,092,000 USDT
+                  ≈ ${formatWithCommas(Number(formatEther(myStake[0].claimable))/hexaPrice)} USDT
                 </div>
               </div>
             </div>

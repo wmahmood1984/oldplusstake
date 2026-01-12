@@ -6,5 +6,8 @@ in the admin create panel, only the burnt nft should be there and nft active sho
 count of users who have traded in last 24 hours. 
 smart contract changes. 
 
+add history of claims made. 
+check the error of limit in auto trade
+
 
 
