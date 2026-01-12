@@ -3118,6 +3118,19 @@ export const stakingAbi = [
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "claim",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "implementation",
 				"type": "address"
@@ -3313,6 +3326,40 @@ export const stakingAbi = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "claimMapping",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "time",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amountClaimed",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "_id",
 				"type": "uint256"
@@ -3324,6 +3371,42 @@ export const stakingAbi = [
 				"internalType": "uint256",
 				"name": "claimable",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_claimer",
+				"type": "address"
+			}
+		],
+		"name": "getClaims",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "time",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountClaimed",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct Staking.Claim[]",
+				"name": "",
+				"type": "tuple[]"
 			}
 		],
 		"stateMutability": "view",
@@ -3352,6 +3435,21 @@ export const stakingAbi = [
 			{
 				"internalType": "uint256",
 				"name": "que",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "marketCount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "burntCount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "queCount",
 				"type": "uint256"
 			}
 		],

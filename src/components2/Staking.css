@@ -59,3 +59,15 @@ body {
     .price-update {
       animation: priceChange 0.3s ease;
     }
+
+
+    @media (max-width: 480px) {
+  .triangle-container {
+    padding: 20px !important;
+  }
+
+  .triangle-container > div {
+    position: static !important;
+    transform: none !important;
+  }
+}

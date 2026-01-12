@@ -90,8 +90,15 @@ contract Staking is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         uint256 amountClaimed;
     }
 
+    struct Claim {
+        uint time;
+        address user;
+        uint amountClaimed;
+    }
+
     mapping(uint => Stake) public stakeMapping;
     uint public stakeIndex;
+    mapping(address=>Claim[]) public claimMapping;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -117,18 +124,22 @@ contract Staking is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
     function getData(
         address _user
-    ) public view returns (uint marketTotal, uint burnt, uint que) {
+    ) public view returns (uint marketTotal, uint burnt, uint que,
+    uint marketCount, uint burntCount, uint queCount) {
         // ---------- MARKET NFT PREMIUM ----------
         Ihelper.NFT[] memory market = helper.getNFTs(_user);
         for (uint i = 0; i < market.length; i++) {
             marketTotal += market[i].premium;
         }
 
+        marketCount = market.length;
+
         // ---------- BURNT NFT PREMIUM ----------
         Ihelper.NFT[] memory allBurnt = helper.getNFTused();
         for (uint i = 0; i < allBurnt.length; i++) {
             if (allBurnt[i]._owner == _user) {
                 burnt += allBurnt[i].premium;
+                burntCount++;
             }
         }
 
@@ -139,7 +150,7 @@ contract Staking is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         for (uint i = 0; i < allQue.length; i++) {
             if (allQue[i].user == _user) {
                 que += (QUE_PREMIUM - allQue[i].income);
-
+                queCount++;    
                 // else: fully paid, add nothing
             }
         }
@@ -147,7 +158,7 @@ contract Staking is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
     function stake() public {
         require(helperv2.stakeEligible(msg.sender),"not eligible for stake");
-        (uint a, uint b, uint c) = getData(msg.sender);
+        (uint a, uint b, uint c,,,) = getData(msg.sender);
         uint amount = a + b + c;
         helper.stakeAndBurn(msg.sender);
         stakeMapping[stakeIndex] = Stake({
@@ -171,6 +182,17 @@ contract Staking is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         claimable = (amount * APR * daysPassed) / 1000;
     }
 
+    function claim(uint _id) public {
+        address user = stakeMapping[_id].user;
+        require(user==msg.sender,"you are not authorized");
+        uint amount = getAmounts(_id);
+        stakeMapping[_id].claimable = amount;
+        uint claimable = amount - stakeMapping[_id].amountClaimed;
+        stakeMapping[_id].amountClaimed = amount;
+        paymentToken.transfer(user,claimable);
+        claimMapping[user].push(Claim(block.timestamp,user,claimable));
+    }
+
     function getTicketsByUser(
         address _user
      ) public view returns (Stake[] memory) {
@@ -190,11 +212,16 @@ contract Staking is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         for (uint i = 0; i < stakeIndex; i++) {
             Stake memory tx1 = stakeMapping[i];
             if (tx1.user == _user) {
+                tx1.claimable = getAmounts(tx1.id);
                 userStake[j] = tx1;
                 j++;
             }
         }
 
         return userStake;
+    }
+
+    function getClaims(address _claimer) public view returns (Claim[] memory) {
+        return claimMapping[_claimer];
     }
 }
