@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import "./Staking.css"
-import { hexaContractR, stakingContract, stakingContractR, USDTContractR } from '../config'
+import { hexaContractR, stakingAbi, stakingAddress, stakingContract, stakingContractR, USDTContractR } from '../config'
 import { useAppKitAccount } from '@reown/appkit/react';
 import { executeContract, formatWithCommas, secondsToDHMSDiff, secondsToDMY } from '../utils/contractExecutor';
 import { formatEther } from 'ethers';
-import { useConfig } from 'wagmi';
+import { useConfig, useSimulateContract, useWriteContract } from 'wagmi';
 import { useDispatch } from 'react-redux';
 import { readName } from '../slices/contractSlice';
 import toast from 'react-hot-toast';
@@ -116,34 +116,53 @@ const fetchStakeable = async () => {
 
   const isLoading = !myStake || !myClaims
 
-  const handleStake = async () => {
-    await executeContract({
-      config,
-      functionName: "stake",
-      args: [],
-      onSuccess: (txHash, receipt) => {
-        console.log("🎉 Tx Hash:", txHash);
-        console.log("🚀 Tx Receipt:", receipt);
-        dispatch(readName({ address: receipt.from }));
-        toast.success("Stake done Successfully")
-        fetchStakeable();
-        fetchMyStake();
-        fetchStakesIndex();
-        setLoading(false)
-      },
-      contract: stakingContract,
-      onError: (err) => {
-        setLoading(false)
+  // const handleStake = async () => {
+  //   await executeContract({
+  //     config,
+  //     functionName: "stake",
+  //     args: [],
+  //     onSuccess: (txHash, receipt) => {
+  //       console.log("🎉 Tx Hash:", txHash);
+  //       console.log("🚀 Tx Receipt:", receipt);
+  //       dispatch(readName({ address: receipt.from }));
+  //       toast.success("Stake done Successfully")
+  //       fetchStakeable();
+  //       fetchMyStake();
+  //       fetchStakesIndex();
+  //       setLoading(false)
+  //     },
+  //     contract: stakingContract,
+  //     onError: (err) => {
+  //       setLoading(false)
 
-        toast.error("This Trade is not available")
-      },
-    });
+  //       toast.error("This Trade is not available")
+  //     },
+  //   });
+  // }
+
+  const {data: simulation, error: simError} = useSimulateContract({
+    address:stakingAddress,
+    abi:stakingAbi,
+    functionName:"stake",
+    args:[]
+  })
+
+  const {writeContract} = useWriteContract()
+
+  const handleStake = ()=>{
+    console.log("äny",simError)
+    if(!simulation) {
+      toast.error(`${simError}`)
+      return
+    }
+
+    writeContract(simulation.request)
   }
 
   const handleClaim = async () => {
     await executeContract({
       config,
-      functionName: "stake",
+      functionName: "claim",
       args: [],
       onSuccess: (txHash, receipt) => {
         console.log("🎉 Tx Hash:", txHash);
@@ -177,38 +196,9 @@ const fetchStakeable = async () => {
     );
   }
 
-  console.log("staking", show);
+  console.log("staking", assetStats);
 
 
-  const OrbitItem = ({ top, left, right, transform, title, count, value, color }) => (
-  <div
-    style={{
-      position: "absolute",
-      top,
-      left,
-      right,
-      transform,
-      background: "#ffffff",
-      borderRadius: "14px",
-      padding: "12px 14px",
-      width: "140px",
-      textAlign: "center",
-      border: `2px solid ${color}55`,
-      boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
-      zIndex: 1,
-    }}
-  >
-    <div style={{ fontSize: "12px", fontWeight: 800, color }}>
-      {title}
-    </div>
-    <div style={{ fontSize: "18px", fontWeight: 900, marginTop: "4px" }}>
-      {count}
-    </div>
-    <div style={{ fontSize: "12px", opacity: 0.7 }}>
-      ${formatWithCommas(value)}
-    </div>
-  </div>
-);
 
 
   return (
@@ -294,131 +284,79 @@ const fetchStakeable = async () => {
             </div>
 
 
-            {myStake.length==0 &&  <div style={{ background: "#ffffff", padding: "16px", borderRadius: "20px", boxShadow: "0 10px 40px rgba(0,0,0,0.4)", marginBottom: "16px" }}>
-              <h2 style={{ fontSize: "clamp(18px, 4vw, 20px)", color: "#0f172a", fontWeight: 900, textAlign: "center", marginBottom: "16px" }}>
-                🎯 NFT Staking
-              </h2>
+            {myStake.length==0 &&  
+            
+            <div style={{background: "#ffffff", padding: "16px", borderRadius: "20px", boxShadow: "0 10px 40px rgba(0,0,0,0.4)", marginBottom: "16px"}}>
+          <h2 style={{fontSize: "clamp(18px, 4vw, 20px)", color: "#0f172a", fontWeight: "900", textAlign: "center", marginBottom: "16px"}}>
+            🎯 NFT Staking
+          </h2>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px", maxWidth: "600px", margin: "0 auto" }}>
-                <div class="stake-card" style={{ background: "linear-gradient(135deg, #f8fafc, rgba(139, 92, 246, 0.2))", padding: "20px", borderRadius: "16px", border: "3px solid rgba(139, 92, 246, 0.4)" }}>
+          <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px", maxWidth: "600px", margin: "0 auto"}}>
+            <div class="stake-card" style={{background: "linear-gradient(135deg, #f8fafc, rgba(139, 92, 246, 0.2))", padding: "20px", borderRadius: "16px", border: "3px solid rgba(139, 92, 246, 0.4)"}}>
+              
+              <div style={{textAlign: "center", marginBottom: "16px"}}>
+                <div style={{display: "flex", justifyContent: "center", marginBottom: "8px"}}>
+                  <img width="200" src="image.png" alt="Hexa Coin" style={{maxWidth: "100%", height: "auto"}}/>
+                </div>
 
-                  {/* <div style={{ textAlign: "center", marginBottom: "16px" }}>
-                    <div style={{ display: "flex", justifyContent: "center", marginBottom: "8px" }}>
-                      <img width="200" src="image.png" alt="Hexa Coin" style={{ maxWidth: "100%", height: "auto" }} />
-                    </div>
-
-                    <h3 style={{ fontSize: "clamp(16px, 3vw, 18px)", color: "#0f172a", fontWeight: 900, marginBottom: "6px" }}>
-                      HEXA NFT Staking
-                    </h3>
-                    <div style={{ fontSize: "clamp(18px, 4vw, 24px)", color: "#8b5cf6", fontWeight: 900, marginBottom: "4px" }}>
-                      Your Asset Value
-                    </div>
-                    <div style={{ fontSize: "clamp(18px, 4vw, 24px)", color: "#8b5cf6", fontWeight: 900, marginBottom: "4px" }}>
-                      ${stakable}
-                    </div>
-                  </div> */}
-
-<div
-  style={{
-    position: "relative",
-    maxWidth: "520px",
-    margin: "40px auto",
-    padding: "80px 40px",
-  }}
->
-  {/* Triangle */}
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      gridTemplateRows: "auto auto",
-      gap: "32px 48px",
-      justifyItems: "center",
-    }}
-  >
-    {/* Market NFTs (Top) */}
-    <TriangleCard
-      title="Market NFTs"
-      count={assetStats.market.count}
-      value={assetStats.market.value}
-      color="#06b6d4"
-      style={{ gridColumn: "1 / span 2" }}
-    />
-
-    {/* Burnt NFTs (Bottom Left) */}
-    <TriangleCard
-      title="Burnt NFTs"
-      count={assetStats.burnt.count}
-      value={assetStats.burnt.value}
-      color="#ef4444"
-    />
-
-    {/* NFT Queue (Bottom Right) */}
-    <TriangleCard
-      title="NFT Queue"
-      count={assetStats.queue.count}
-      value={assetStats.queue.value}
-      color="#10b981"
-    />
-  </div>
-
-  {/* Center Circle */}
-  <div
-    style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: "200px",
-      height: "200px",
-      borderRadius: "50%",
-      background: "linear-gradient(135deg, #8b5cf6, #6366f1)",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      color: "#ffffff",
-      boxShadow: "0 12px 32px rgba(99,102,241,0.45)",
-      textAlign: "center",
-      zIndex: 0,
-    }}
-  >
-    <div style={{ fontSize: "13px", fontWeight: 700, opacity: 0.85 }}>
-      Total Asset Value
-    </div>
-
-    <div style={{ fontSize: "28px", fontWeight: 900, marginTop: "6px" }}>
-      ${formatWithCommas(assetStats.totalUsd)}
-    </div>
-
-    <div style={{ fontSize: "14px", opacity: 0.9 }}>
-      {formatWithCommas(assetStats.totalHexa)} HEXA
-    </div>
-  </div>
-</div>
-
-
-
-                  <div style={{ background: "#ffffff", padding: "12px", borderRadius: "12px", marginBottom: "16px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                      <span style={{ fontSize: "12px", color: "#0f172a", opacity: 0.7 }}>Stake Amount:</span>
-                      <span style={{ fontSize: "14px", color: "#0f172a", fontWeight: 700 }}>{stakable} HEXA</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                      <span style={{ fontSize: "12px", color: "#0f172a", opacity: 0.7 }}>Duration:</span>
-                      <span style={{ fontSize: "14px", color: "#0f172a", fontWeight: 700 }}>200 Days</span>
-                    </div>
-
-                  </div>
-
-                  <button
-                    onClick={handleStake}
-                    id="stakeNowBtn" style={{ width: "100%", background: "linear-gradient(135deg, #8b5cf6, #7c3aed)", color: "white", border: "none", padding: "14px", borderRadius: "10px", cursor: "pointer", fontSize: "16px", fontWeight: 700, boxShadow: "0 4px 12px rgba(139, 92, 246, 0.4)" }}>
-                    Stake Now
-                  </button>
+                <h3 style={{fontSize: "clamp(16px, 3vw, 18px)", color: "#0f172a", fontWeight: "900", marginBottom: "6px"}}>
+                  HEXA NFT Staking
+                </h3>
+               
+                <div style={{fontSize: "clamp(18px, 4vw, 24px)", color: "#8b5cf6", fontWeight: "900", marginBottom: "16px"}}>
+                  Your Asset Value
                 </div>
               </div>
-            </div>}
+
+              <div style={{background: "#ffffff", padding: "12px", borderRadius: "12px", marginBottom: "16px"}}>
+                <div style={{display: "flex", justifyContent: "space-between", marginBottom: "8px"}}>
+                  <span style={{fontSize: "12px", color: "#0f172a", opacity: "0.7"}}>Stake Amount:</span>
+                  <span style={{fontSize: "14px", color: "#0f172a", fontWeight: "700;"}}>3028 HEXA</span>
+                </div>
+                <div style={{display: "flex", justifyContent: "space-between", marginBottom: "8px"}}>
+                  <span style={{fontSize: "12px", color: "#0f172a", opacity: "0.7"}}>Duration:</span>
+                  <span style={{fontSize: "14px", color: "#0f172a", fontWeight: "700"}}>200 Days</span>
+                </div>
+              </div>
+
+
+              <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", marginBottom: "8px"}}>
+                <div style={{background: "#f8fafc", padding: "12px", borderRadius: "8px", textAlign: "center", border: "1px solid rgba(16, 185, 129, 0.2)"}}>
+                  <div style={{fontSize: "10px", color: "#0f172a", opacity: "0.7", marginBottom: "4px"}}>Purchased</div>
+                  <div style={{fontSize: "14px", color: "#10b981", fontWeight: "700"}}>${assetStats.market.value}</div>
+                </div>
+                <div style={{background: "#f8fafc", padding: "12px", borderRadius: "8px", textAlign: "center", border: "1px solid rgba(245, 158, 11, 0.2)"}}>
+                  <div style={{fontSize: "10px", color: "#0f172a", opacity: "0.7", marginBottom:" 4px"}}>Created</div>
+                  <div style={{fontSize: "14px", color: "#f59e0b", fontWeight: "700"}}>${assetStats.queue.value}</div>
+                </div>
+                <div style={{background: "#f8fafc", padding: "12px", borderRadius: "8px", textAlign: "center", border: "1px solid rgba(239, 68, 68, 0.2)"}}>
+                  <div style={{fontSize: "10px", color: "#0f172a", opacity: "0.7", marginBottom: "4px"}}>Burned</div>
+                  <div style={{fontSize: "14px", color: "#ef4444", fontWeight: "700"}}>${assetStats.burnt.value}</div>
+                </div>
+              </div>
+
+              <div class="full-row-box" style={{background: "#f8fafc", padding: "16px", borderRadius: "12px", textAlign: "center", border: "2px solid rgba(139, 92, 246, 0.4)", marginBottom: "16px", gridColumn: "1 / -1 "}}>
+                <div style={{fontSize: "12px", color: "#8b5cf6", opacity: "1", marginBottom: "8px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px"}}>
+                  Total Value
+                </div>
+                <div style={{fontSize: "24px", color: "#8b5cf6", fontWeight: "900"}}>
+                  ${assetStats. totalHexa}
+                </div>
+                <div style={{fontSize: "10px", color: "#0f172a", opacity: "0.6", marginTop: "4px"}}>
+                  Combined Asset Worth
+                </div>
+              </div>
+
+              <button 
+              onClick={handleStake}
+              id="stakeNowBtn" style={{width: "100%", background: "linear-gradient(135deg, #8b5cf6, #7c3aed)", color: "white", border: "none", padding: "14px", borderRadius: "10px", cursor: "pointer", fontSize: "16px", fontWeight: "700", boxShadow: "0 4px 12px rgba(139, 92, 246, 0.4)"}}>
+                Stake Now
+              </button>
+            </div>
+          </div>
+        </div>
+            
+            }
 
 
             <div style={{ textAlign: "center", display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
@@ -515,7 +453,7 @@ const fetchStakeable = async () => {
                         Total Earned
                       </div>
                       <div style={{ fontSize: "22px", color: "#06b6d4", fontWeight: 900 }}>
-                        {formatWithCommas(formatEther(myStake[0]?.claimable))} HEXA
+                        {myStake.length>0? formatWithCommas(formatEther( myStake[0]?.claimable)):0} HEXA
                       </div>
                     </div>
 
@@ -525,7 +463,7 @@ const fetchStakeable = async () => {
                         Total Claimed
                       </div>
                       <div style={{ fontSize: "22px", color: "#10b981", fontWeight: 900 }}>
-                        {formatWithCommas(formatEther(myStake[0].amountClaimed))} HEXA
+                        {myStake.length>0? formatWithCommas(formatEther(myStake[0].amountClaimed)):0} HEXA
                       </div>
                     </div>
 
@@ -535,13 +473,13 @@ const fetchStakeable = async () => {
                         Claimable
                       </div>
                       <div style={{ fontSize: "22px", color: "#f59e0b", fontWeight: 900 }}>
-                        {formatWithCommas(formatEther(myStake[0].claimable))} HEXA
+                        { myStake.length>0?formatWithCommas(formatEther(myStake[0].claimable)):0} HEXA
                       </div>
                       <div style={{ fontSize: "11px", opacity: 0.6 }}>
                         ≈ $
-                        {formatWithCommas(
+                        {myStake.length>0? formatWithCommas(
                           Number(formatEther(myStake[0].claimable)) / hexaPrice
-                        )}{" "}
+                        ):0}{" "}
                         USDT
                       </div>
                     </div>
@@ -550,15 +488,15 @@ const fetchStakeable = async () => {
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <button
                         onClick={handleClaim}
-                        disabled={Number(myStake[0].claimable) === 0}
+                        disabled={myStake.length>0? Number(myStake[0].claimable) === 0:true}
                         style={{
                           width: "100%",
                           padding: "14px",
                           borderRadius: "10px",
-                          background:
+                          background: myStake.length>0? 
                             Number(myStake[0].claimable) > 0
                               ? "linear-gradient(135deg, #06b6d4, #0ea5e9)"
-                              : "#94a3b8",
+                              : "#94a3b8": "grey",
                           color: "#ffffff",
                           fontWeight: 800,
                           border: "none",
