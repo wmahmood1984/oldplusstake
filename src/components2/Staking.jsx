@@ -116,48 +116,48 @@ const fetchStakeable = async () => {
 
   const isLoading = !myStake || !myClaims
 
-  // const handleStake = async () => {
-  //   await executeContract({
-  //     config,
-  //     functionName: "stake",
-  //     args: [],
-  //     onSuccess: (txHash, receipt) => {
-  //       console.log("🎉 Tx Hash:", txHash);
-  //       console.log("🚀 Tx Receipt:", receipt);
-  //       dispatch(readName({ address: receipt.from }));
-  //       toast.success("Stake done Successfully")
-  //       fetchStakeable();
-  //       fetchMyStake();
-  //       fetchStakesIndex();
-  //       setLoading(false)
-  //     },
-  //     contract: stakingContract,
-  //     onError: (err) => {
-  //       setLoading(false)
+  const handleStake = async () => {
+    await executeContract({
+      config,
+      functionName: "stake",
+      args: [],
+      onSuccess: (txHash, receipt) => {
+        console.log("🎉 Tx Hash:", txHash);
+        console.log("🚀 Tx Receipt:", receipt);
+        dispatch(readName({ address: receipt.from }));
+        toast.success("Stake done Successfully")
+        fetchStakeable();
+        fetchMyStake();
+        fetchStakesIndex();
+        setLoading(false)
+      },
+      contract: stakingContract,
+      onError: (err) => {
+        setLoading(false)
 
-  //       toast.error("This Trade is not available")
-  //     },
-  //   });
-  // }
-
-  const {data: simulation, error: simError} = useSimulateContract({
-    address:stakingAddress,
-    abi:stakingAbi,
-    functionName:"stake",
-    args:[]
-  })
-
-  const {writeContract} = useWriteContract()
-
-  const handleStake = ()=>{
-    console.log("äny",simError)
-    if(!simulation) {
-      toast.error(`${simError}`)
-      return
-    }
-
-    writeContract(simulation.request)
+        toast.error("This Trade is not available")
+      },
+    });
   }
+
+  // const {data: simulation, error: simError} = useSimulateContract({
+  //   address:stakingAddress,
+  //   abi:stakingAbi,
+  //   functionName:"stake",
+  //   args:[]
+  // })
+
+  // const {writeContract} = useWriteContract()
+
+  // const handleStake =async ()=>{
+  //   console.log("äny",simError)
+  //   if(!simulation) {
+  //     toast.error(`${simError.splice(":")}`)
+  //     return
+  //   }
+
+  //   writeContract(simulation.request)
+  // }
 
   const handleClaim = async () => {
     await executeContract({
