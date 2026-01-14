@@ -129,7 +129,7 @@ contract Helperv2 is
     address public adminWallet;
     mapping(address => uint) public balance;
     uint public rateHexa;
-    mapping(address=>bool) public stakeEligible;
+    mapping(address => bool) public stakeEligible;
 
     event Upgrades(uint time, uint amount, uint _type, address _user);
     event Incomes(
@@ -152,14 +152,14 @@ contract Helperv2 is
         __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
         paymentToken = IERC20(_paymentToken);
-        packageExpiry = 60 * 60 * 24 * 45;
+        packageExpiry = 60 * 5; //60 * 24 * 15;
         packages.push(Package(0, 2 ether, packageExpiry * 1, 0, 1, 1, 0));
-        packages.push(Package(1, 5 ether, packageExpiry * 1, 0, 2, 5, 2));
-        packages.push(Package(2, 10 ether, packageExpiry * 2, 15, 3, 10, 3));
-        packages.push(Package(3, 15 ether, packageExpiry * 3, 40, 4, 20, 4));
-        packages.push(Package(4, 20 ether, packageExpiry * 4, 100, 5, 50, 5)); //100 //90
-        packages.push(Package(5, 25 ether, packageExpiry * 5, 300, 6, 100, 6));
-        timelimit = 60 * 60 * 48;
+        packages.push(Package(1, 5 ether, packageExpiry * 1, 0, 3, 5, 2));
+        packages.push(Package(2, 10 ether, packageExpiry * 2, 10, 7, 10, 3));
+        packages.push(Package(3, 15 ether, packageExpiry * 3, 12, 11, 15, 4));
+        packages.push(Package(4, 20 ether, packageExpiry * 4, 14, 15, 20, 5)); //100 //90
+        packages.push(Package(5, 25 ether, packageExpiry * 5, 16, 20, 24, 6));
+        timelimit = 60 * 45 ; //60 * 24 * 45;
         helper = Ihelper(_helper);
         rateHexa = 100;
 
@@ -202,19 +202,11 @@ contract Helperv2 is
         }
 
         if (
-            block.timestamp - users[_referrer].data.packageUpgraded <=
-            userPackage[_referrer].time
+            block.timestamp - users[_referrer].data.packageUpgraded <= timelimit
         ) {
             paymentToken.transfer(_referrer, amount / 2);
             users[_referrer].data.packageReferralBonus += amount / 2;
-            emit Incomes(
-                    block.timestamp,
-                    (amount * 2),
-                    1,
-                    _referrer,
-                    0,
-                    0
-                );
+            emit Incomes(block.timestamp, (amount * 2), 1, _referrer, 0, 0);
         }
 
         paymentToken.transfer(adminWallet, amount / 2);
@@ -264,20 +256,10 @@ contract Helperv2 is
 
         address up = users[_user].referrer;
 
-        if (
-            block.timestamp - users[up].data.packageUpgraded <=
-            userPackage[up].time
-        ) {
+        if (block.timestamp - users[up].data.packageUpgraded <= timelimit) {
             paymentToken.transfer(up, (amount * 20) / 100);
             users[up].data.packageReferralBonus += amount / 2;
-            emit Incomes(
-                    block.timestamp,
-                    (amount * 20) / 100,
-                    1,
-                    up,
-                    0,
-                    0
-                );
+            emit Incomes(block.timestamp, (amount * 20) / 100, 1, up, 0, 0);
         }
 
         address[] memory _uplines = getUplines(_user);
@@ -299,17 +281,17 @@ contract Helperv2 is
             address up = _uplines[i];
             bool cond = _type == 2 // Package Buy
                 ? users[up].direct.length >= 2
-                : ((userPackage[up].id == 5 && // NFT buy
-                    users[up].data.userLimitUtilized >=
-                        (userPackage[up].limit / 2)) ||
-                    userPackage[up].id != 5) &&
-                    userPackage[up].levelUnlock >= i &&
-                    users[up].direct.length >= userPackage[up].directrequired;
+                : // : ((userPackage[up].id == 5 && // NFT buy
+                //     users[up].data.userLimitUtilized >=
+                //         (userPackage[up].limit / 2)) ||
+                //     userPackage[up].id != 5) &&
+                userPackage[up].levelUnlock >= i &&
+                    checkActive(users[up].direct) >=
+                        userPackage[up].directrequired;
             uint transactionType = _type == 1 ? 2 : 3;
             if (
                 cond &&
-                block.timestamp - users[up].data.packageUpgraded <=
-                    userPackage[up].time &&
+                block.timestamp - users[up].data.packageUpgraded <= timelimit &&
                 userPackage[up].id > 0
             ) {
                 paymentToken.transfer(up, _amount / levelD);
@@ -336,6 +318,19 @@ contract Helperv2 is
             adminWallet,
             (_amount * (levelD - validLeftOver)) / levelD
         );
+    }
+
+    function checkActive(
+        address[] memory _users
+    ) public view returns (uint count) {
+        for (uint i = 0; i < _users.length; i++) {
+            if (
+                block.timestamp - users[_users[i]].data.packageUpgraded <=
+                timelimit
+            ) {
+                count++;
+            }
+        }
     }
 
     function getUplines(address user) public view returns (address[] memory) {
@@ -365,17 +360,16 @@ contract Helperv2 is
     ) public view returns (bool condition) {
         Package memory _package = packages[_id];
 
-    //    Package memory _currentPackage = userPackage[_user];
+        //    Package memory _currentPackage = userPackage[_user];
 
         condition =
-            block.timestamp - users[_user].data.packageUpgraded >=
+            block.timestamp - users[_user].data.userJoiningTime >=
                 _package.time ||
             users[_user].indirect.length >= _package.team;
     }
 
     function trade() public {
         uint amount = 6 ether * rateHexa;
-
 
         require(
             paymentToken.allowance(msg.sender, address(this)) >= amount,
@@ -401,14 +395,7 @@ contract Helperv2 is
             ? adminWallet
             : users[msg.sender].referrer;
         paymentToken.transfer(referrer, (amount * 5) / 100);
-        emit Incomes(
-                    block.timestamp,
-                    (amount * 5) / 100,
-                    0,
-                    referrer,
-                    0,
-                    0
-                );
+        emit Incomes(block.timestamp, (amount * 5) / 100, 0, referrer, 0, 0);
         users[referrer].data.tradingReferralBonus += (amount * 5) / 100;
         users[msg.sender].data.userLimitUtilized++;
         require(
@@ -419,7 +406,7 @@ contract Helperv2 is
 
         if (
             block.timestamp - users[msg.sender].data.userTradingLimitTime >
-            24 hours
+            30 minutes
         ) {
             // Reset after 3 minutes
             users[msg.sender].data.userTradingLimitTime = block.timestamp;
@@ -443,24 +430,21 @@ contract Helperv2 is
             ticketMapping[activeTicketIndex].active = true;
             activeTicketIndex++;
         }
-        stakeEligible[msg.sender]=true;
+        stakeEligible[msg.sender] = true;
     }
 
     function settle(uint _ticket) public {
         trade();
-            require(
-                ticketMapping[_ticket].user == msg.sender
-                && !ticketMapping[_ticket].filled
-                && ticketMapping[_ticket].active
-                ,
-                
-                "you are not authorized"
-            );
+        require(
+            ticketMapping[_ticket].user == msg.sender &&
+                !ticketMapping[_ticket].filled &&
+                ticketMapping[_ticket].active,
+            "you are not authorized"
+        );
 
-            ticketMapping[_ticket].filled = true;
-            balance[ticketMapping[_ticket].user] -= 9 ether*rateHexa;
-            paymentToken.transfer(msg.sender, 9 ether*rateHexa);
-        
+        ticketMapping[_ticket].filled = true;
+        balance[ticketMapping[_ticket].user] -= 9 ether * rateHexa;
+        paymentToken.transfer(msg.sender, 9 ether * rateHexa);
     }
 
     function changePackages(
@@ -532,7 +516,7 @@ contract Helperv2 is
         // PUSH INTEGER VALUES
         // =========================
 
-        u.data.userJoiningTime = helper.userJoiningTime(_user); // 0
+        u.data.userJoiningTime = block.timestamp; // 0
         u.data.userTradingTime = helper.userTradingTime(_user); // 1
         u.data.userTradingLimitTime = helper.userTradingLimitTime(_user); // 2
         u.data.userLimitUtilized = 0; // 3

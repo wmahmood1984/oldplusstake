@@ -57,7 +57,9 @@ export default function Staking() {
   }
 
   const fetchMyStake = async () => {
+        console.log("log")
     const _data = await stakingContractR.methods.getTicketsByUser(address).call()
+
     setMyStake(_data)
 
   }
@@ -116,7 +118,10 @@ const fetchStakeable = async () => {
 
   const isLoading = !myStake || !myClaims
 
-  const handleStake = async () => {
+
+
+
+  const handleStake1 = async () => {
     await executeContract({
       config,
       functionName: "stake",
@@ -140,24 +145,49 @@ const fetchStakeable = async () => {
     });
   }
 
-  // const {data: simulation, error: simError} = useSimulateContract({
-  //   address:stakingAddress,
-  //   abi:stakingAbi,
-  //   functionName:"stake",
-  //   args:[]
-  // })
+ const { data: simulation, error: simError } = useSimulateContract({
+  address: stakingAddress,
+  abi: stakingAbi,
+  functionName: "stake",
+  args: [],
+})
 
-  // const {writeContract} = useWriteContract()
+const { writeContract } = useWriteContract()
 
-  // const handleStake =async ()=>{
-  //   console.log("äny",simError)
-  //   if(!simulation) {
-  //     toast.error(`${simError.splice(":")}`)
-  //     return
-  //   }
+const extractRevertReason = (error) => {
+  if (!error) return "Transaction reverted"
 
-  //   writeContract(simulation.request)
-  // }
+  // Convert entire error object to searchable text
+  const text = JSON.stringify(
+    error,
+    Object.getOwnPropertyNames(error),
+    2
+  )
+
+  // Most common viem format
+  let match =
+    text.match(/reverted with the following reason:\\n(.*?)(\\n|")/) ||
+    text.match(/reverted with reason string '(.*?)'/) ||
+    text.match(/reason:\s*(.*?)(\\n|")/) ||
+    text.match(/"reason":"(.*?)"/)
+
+  return match?.[1]?.trim() || "Transaction reverted"
+}
+
+
+const handleStake = async () => {
+  if (!simulation) {
+    
+    console.log("staking", simError);
+    const reason = extractRevertReason(simError)
+    toast.error(reason)
+    return
+  }
+
+  writeContract(simulation.request)
+}
+
+
 
   const handleClaim = async () => {
     await executeContract({
@@ -196,7 +226,6 @@ const fetchStakeable = async () => {
     );
   }
 
-  console.log("staking", assetStats);
 
 
 
