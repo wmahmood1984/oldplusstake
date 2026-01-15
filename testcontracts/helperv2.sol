@@ -202,7 +202,7 @@ contract Helperv2 is
         }
 
         if (
-            block.timestamp - users[_referrer].data.packageUpgraded <= timelimit
+            incomeEligible(_referrer)
         ) {
             paymentToken.transfer(_referrer, amount / 2);
             users[_referrer].data.packageReferralBonus += amount / 2;
@@ -256,7 +256,8 @@ contract Helperv2 is
 
         address up = users[_user].referrer;
 
-        if (block.timestamp - users[up].data.packageUpgraded <= timelimit) {
+        if (incomeEligible(up)
+        ) {
             paymentToken.transfer(up, (amount * 20) / 100);
             users[up].data.packageReferralBonus += amount / 2;
             emit Incomes(block.timestamp, (amount * 20) / 100, 1, up, 0, 0);
@@ -281,18 +282,14 @@ contract Helperv2 is
             address up = _uplines[i];
             bool cond = _type == 2 // Package Buy
                 ? users[up].direct.length >= 2
-                : // : ((userPackage[up].id == 5 && // NFT buy
-                //     users[up].data.userLimitUtilized >=
-                //         (userPackage[up].limit / 2)) ||
-                //     userPackage[up].id != 5) &&
+                : // trade 
                 userPackage[up].levelUnlock >= i &&
                     checkActive(users[up].direct) >=
                         userPackage[up].directrequired;
             uint transactionType = _type == 1 ? 2 : 3;
             if (
                 cond &&
-                block.timestamp - users[up].data.packageUpgraded <= timelimit &&
-                userPackage[up].id > 0
+                incomeEligible(up)
             ) {
                 paymentToken.transfer(up, _amount / levelD);
                 if (_type == 1) {
@@ -331,6 +328,11 @@ contract Helperv2 is
                 count++;
             }
         }
+    }
+
+    function incomeEligible(address _user) public view returns(bool){
+        return block.timestamp - users[_user].data.packageUpgraded <= timelimit &&
+                userPackage[_user].id > 0 && block.timestamp-users[_user].data.userTradingTime<=60*60*2;
     }
 
     function getUplines(address user) public view returns (address[] memory) {
@@ -398,6 +400,7 @@ contract Helperv2 is
         emit Incomes(block.timestamp, (amount * 5) / 100, 0, referrer, 0, 0);
         users[referrer].data.tradingReferralBonus += (amount * 5) / 100;
         users[msg.sender].data.userLimitUtilized++;
+        users[msg.sender].data.userTradingTime = block.timestamp;
         require(
             users[msg.sender].data.userLimitUtilized <=
                 userPackage[msg.sender].limit,
@@ -481,7 +484,7 @@ contract Helperv2 is
 
     function migrate(address _user) public onlyOwner {
         require(helper.userRegistered(_user), "Not registered");
-        require(!users[_user].registered, "Not registered");
+        require(!users[_user].registered, "Already registered");
         // require(!users[_user].registered, "Already migrated");
 
         // Fetch old data
@@ -491,12 +494,12 @@ contract Helperv2 is
         // Migrate package
         userPackage[_user] = Package(
             _package.id,
-            _package.price,
-            _package.time,
-            _package.team,
+            packages[_package.id].price,
+            packages[_package.id].time,
+            packages[_package.id].team,
             packages[_package.id].limit,
-            _package.levelUnlock,
-            _package.directrequired
+            packages[_package.id].levelUnlock,
+            packages[_package.id].directrequired
         );
 
         // Storage pointer
@@ -516,17 +519,17 @@ contract Helperv2 is
         // PUSH INTEGER VALUES
         // =========================
 
-        u.data.userJoiningTime = block.timestamp; // 0
+        u.data.userJoiningTime = helper.userJoiningTime(_user); // 0
         u.data.userTradingTime = helper.userTradingTime(_user); // 1
-        u.data.userTradingLimitTime = helper.userTradingLimitTime(_user); // 2
+        u.data.userTradingLimitTime = block.timestamp; // 2
         u.data.userLimitUtilized = 0; // 3
-        u.data.tradingLevelBonus = helper.tradingLevelBonus(_user); // 4
-        u.data.packageLevelBonus = helper.packageLevelBonus(_user); // 5
+        u.data.tradingLevelBonus = 0; // 4
+        u.data.packageLevelBonus = 0; // 5
         u.data.userLevelIncomeBlockTime = 0; // 6
-        u.data.tradingReferralBonus = helper.tradingReferralBonus(_user); // 7
-        u.data.packageReferralBonus = helper.packageReferralBonus(_user); // 8
-        u.data.selfTradingProfit = helper.selfTradingProfit(_user); // 9
-        u.data.packageUpgraded = _package.packageUpgraded;
+        u.data.tradingReferralBonus = 0; // 7
+        u.data.packageReferralBonus = 0; // 8
+        u.data.selfTradingProfit = 0; // 9
+        u.data.packageUpgraded = block.timestamp; // 10;
     }
 
     function migrateBulk(address[] memory _users) public onlyOwner {

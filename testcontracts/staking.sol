@@ -157,7 +157,7 @@ contract Staking is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     }
 
     function stake() public {
-        require(helperv2.stakeEligible(msg.sender),"not eligible for stake");
+        require(helperv2.stakeEligible(msg.sender),"Please get the trade done on new module");
         (uint a, uint b, uint c,,,) = getData(msg.sender);
         uint amount = a + b + c;
         helper.stakeAndBurn(msg.sender);

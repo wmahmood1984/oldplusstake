@@ -9,6 +9,13 @@ smart contract changes.
 
 check the error of limit in auto trade
 
+3 new reports
+1 nft list report. 
+user list
+list should not open by adding the extension
+
+
+
 
 
 
