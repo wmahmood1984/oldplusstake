@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import "./Staking.css"
-import { hexaContractR, stakingAbi, stakingAddress, stakingContract, stakingContractR, USDTContractR } from '../config'
+import { HEXAContractR, priceOracleContractR, stakingV1Abi, stakingV1Add, stakingV1Contract, stakingV1ContractR, USDTContractR } from '../config'
 import { useAppKitAccount } from '@reown/appkit/react';
 import { executeContract, formatWithCommas, secondsToDHMSDiff, secondsToDMY } from '../utils/contractExecutor';
 import { formatEther } from 'ethers';
@@ -15,6 +15,7 @@ export default function Staking() {
   const [walletBalance, setWalletBalance] = useState(0)
   const [USDTBalance, setUSDTBalance] = useState(0)
   const [myStake, setMyStake] = useState()
+  const [price, setPrice] = useState(0)
   const [stakable, setStakable] = useState(0)
   const [loading, setLoading] = useState(false)
   const [show, setShow] = useState("history")
@@ -42,23 +43,24 @@ export default function Staking() {
       fetchMyClaims()
     }
     fetchStakesIndex()
+    fetchPrice()
 
   }, [address])
 
   const fetchStakesIndex = async () => {
-    const _data = await stakingContractR.methods.stakeIndex().call()
+    const _data = await stakingV1ContractR.methods.stakeIndex().call()
     setStakesIndex(_data)
   }
 
   const fetchWalletBalance = async () => {
-    const _data = await hexaContractR.methods.balanceOf(address).call()
+    const _data = await HEXAContractR.methods.balanceOf(address).call()
     setWalletBalance(formatWithCommas(formatEther(_data)))
 
   }
 
   const fetchMyStake = async () => {
         console.log("log")
-    const _data = await stakingContractR.methods.getTicketsByUser(address).call()
+    const _data = await stakingV1ContractR.methods.getTicketsByUser(address).call()
 
     setMyStake(_data)
 
@@ -71,13 +73,19 @@ export default function Staking() {
   }
 
   const fetchMyClaims = async () => {
-    const _data = await stakingContractR.methods.getClaims(address).call()
+    const _data = await stakingV1ContractR.methods.getClaims(address).call()
     setMyClaims(_data)
 
   }
 
+  const fetchPrice = async () => {
+    const _data = await priceOracleContractR.methods.price().call()
+    setPrice(formatEther(_data))
+
+  }
+
 const fetchStakeable = async () => {
-  const data = await stakingContractR.methods.getData(address).call();
+  const data = await stakingV1ContractR.methods.getData(address).call();
 
   const marketValue = Number(formatEther(data.marketTotal));
   const burntValue  = Number(formatEther(data.burnt));
@@ -121,7 +129,7 @@ const fetchStakeable = async () => {
 
 
 
-  const handleStake1 = async () => {
+  const handleStake = async () => {
     await executeContract({
       config,
       functionName: "stake",
@@ -136,7 +144,7 @@ const fetchStakeable = async () => {
         fetchStakesIndex();
         setLoading(false)
       },
-      contract: stakingContract,
+      contract: stakingV1Contract,
       onError: (err) => {
         setLoading(false)
 
@@ -146,8 +154,8 @@ const fetchStakeable = async () => {
   }
 
  const { data: simulation, error: simError } = useSimulateContract({
-  address: stakingAddress,
-  abi: stakingAbi,
+  address: stakingV1Add,
+  abi: stakingV1Abi,
   functionName: "stake",
   args: [],
 })
@@ -175,7 +183,7 @@ const extractRevertReason = (error) => {
 }
 
 
-const handleStake = async () => {
+const handleStake1 = async () => {
   if (!simulation) {
     
     console.log("staking", simError);
@@ -261,7 +269,7 @@ const handleStake = async () => {
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                       <div id="liveHexaPrice" style={{ fontSize: "clamp(18px, 4vw, 24px)", color: "#0f172a", fontWeight: 900 }}>
-                        $6500.00
+                        ${price}
                       </div>
                       <div id="priceChangeIndicator" style={{ fontSize: "clamp(16px, 3vw, 20px)", fontWeight: 900 }}>
                         →
@@ -340,7 +348,7 @@ const handleStake = async () => {
               <div style={{background: "#ffffff", padding: "12px", borderRadius: "12px", marginBottom: "16px"}}>
                 <div style={{display: "flex", justifyContent: "space-between", marginBottom: "8px"}}>
                   <span style={{fontSize: "12px", color: "#0f172a", opacity: "0.7"}}>Stake Amount:</span>
-                  <span style={{fontSize: "14px", color: "#0f172a", fontWeight: "700;"}}>3028 HEXA</span>
+                  <span style={{fontSize: "14px", color: "#0f172a", fontWeight: "700;"}}>{Number(assetStats.totalHexa) / price } HEXA</span>
                 </div>
                 <div style={{display: "flex", justifyContent: "space-between", marginBottom: "8px"}}>
                   <span style={{fontSize: "12px", color: "#0f172a", opacity: "0.7"}}>Duration:</span>
