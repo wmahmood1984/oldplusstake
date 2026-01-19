@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import "./Staking.css"
-import { HEXAContractR, priceOracleContractR, stakingV1Abi, stakingV1Add, stakingV1Contract, stakingV1ContractR, USDTContractR } from '../config'
+import { helperContract, helperContractR, helperContractV2, HEXAContractR, priceOracleContractR, stakingV1Abi, stakingV1Add, stakingV1Contract, stakingV1ContractR, USDTContractR } from '../config'
 import { useAppKitAccount } from '@reown/appkit/react';
 import { executeContract, formatWithCommas, secondsToDHMSDiff, secondsToDMY } from '../utils/contractExecutor';
 import { formatEther } from 'ethers';
@@ -59,12 +59,14 @@ export default function Staking() {
   }
 
   const fetchMyStake = async () => {
-        console.log("log")
+
     const _data = await stakingV1ContractR.methods.getTicketsByUser(address).call()
 
     setMyStake(_data)
 
   }
+
+          console.log("log",myClaims)
 
   const fetchUSDTbalance = async () => {
     const _data = await USDTContractR.methods.balanceOf(address).call()
@@ -130,6 +132,12 @@ const fetchStakeable = async () => {
 
 
   const handleStake = async () => {
+    const stakedone = await helperContractR.methods.stakeEligible(address).call()
+    if(!stakedone){
+      toast.error("Please trade on the new module first before staking")
+      return
+    }
+    
     await executeContract({
       config,
       functionName: "stake",
@@ -197,11 +205,12 @@ const handleStake1 = async () => {
 
 
 
-  const handleClaim = async () => {
+  const handleClaim = async (id) => {
+    console.log("id",id)
     await executeContract({
       config,
       functionName: "claim",
-      args: [],
+      args: [id],
       onSuccess: (txHash, receipt) => {
         console.log("🎉 Tx Hash:", txHash);
         console.log("🚀 Tx Receipt:", receipt);
@@ -213,7 +222,7 @@ const handleStake1 = async () => {
         setLoading(false)
         fetchMyClaims();
       },
-      contract: stakingContract,
+      contract: stakingV1Contract,
       onError: (err) => {
         setLoading(false)
 
@@ -524,7 +533,7 @@ const handleStake1 = async () => {
                     {/* Claim Button */}
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <button
-                        onClick={handleClaim}
+                        onClick={()=>handleClaim(myStake[0].id)}
                         disabled={myStake.length>0? Number(myStake[0].claimable) === 0:true}
                         style={{
                           width: "100%",
@@ -550,7 +559,7 @@ const handleStake1 = async () => {
 
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  {myClaims.map((v, e) =>
+                  {/* {myClaims.map((v, e) => */}
                     <div style={{ background: "#f8fafc", padding: "16px", borderRadius: "12px", borderLeft: "4px solid #06b6d4" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -560,13 +569,13 @@ const handleStake1 = async () => {
                               HEXA Staking
                             </div>
                             <div style={{ fontSize: "12px", color: "#0f172a", opacity: 0.7 }}>
-                              {formatWithCommas(formatEther(v.amount))} HEXA staked • 200 Days
+                              {formatWithCommas(formatEther(myClaims[0]?.amountClaimed))} HEXA staked • 200 Days
                             </div>
                           </div>
                         </div>
                         <div style={{ textAlign: "right", marginTop: "8px" }}>
                           <div style={{ fontSize: "18px", color: "#06b6d4", fontWeight: 900 }}>
-                            +{formatWithCommas(formatEther(v.claimable))} HEXA
+                            +{formatWithCommas(formatEther(myClaims[0]?.amountClaimed))} HEXA
                           </div>
                           <div style={{ fontSize: "12px", color: "#10b981", fontWeight: 700 }}>
                             Earning
@@ -574,12 +583,12 @@ const handleStake1 = async () => {
                         </div>
                       </div>
                       <div style={{ fontSize: "10px", color: "#0f172a", opacity: 0.6 }}>
-                        Started: {secondsToDMY(v.time)}• Est. Completion: {secondsToDMY(Number(v.time) + 200 * 24 * 60 * 60)}
+                        Started: {secondsToDMY(myClaims[0]?.time)}• Est. Completion: {secondsToDMY(Number(myClaims[0]?.time) + 200 * 24 * 60 * 60)}
                       </div>
                     </div>
-                  )
+                  {/* )
 
-                  }
+                  } */}
 
 
                 </div>

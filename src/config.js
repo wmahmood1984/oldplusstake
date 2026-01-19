@@ -7996,6 +7996,7 @@ export const priceOracleContractR = new web3.eth.Contract(priceOracleAbi,priceOr
 export const distributionContractR = new web3.eth.Contract(distributionAbi,distributionAdd)
 
 export const stakingV1ContractR = new web3.eth.Contract(stakingV1Abi,stakingV1Add)
+export const helperContractR = new web3.eth.Contract(helperv2Abi,helperv2)
 
 export const stakingV1Contract = {
 	address: stakingV1Add,
