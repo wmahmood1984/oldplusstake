@@ -66,7 +66,7 @@ export default function Staking() {
 
   }
 
-          console.log("log",myClaims)
+          console.log("log",myStake)
 
   const fetchUSDTbalance = async () => {
     const _data = await USDTContractR.methods.balanceOf(address).call()
@@ -519,7 +519,7 @@ const handleStake1 = async () => {
                         Claimable
                       </div>
                       <div style={{ fontSize: "22px", color: "#f59e0b", fontWeight: 900 }}>
-                        { myStake.length>0?formatWithCommas(formatEther(myStake[0].claimable)):0} HEXA
+                        { myStake.length>0?Number(Number(formatEther(myStake[0].claimable)) - Number(formatEther(myStake[0].amountClaimed))).toFixed(2):0} HEXA
                       </div>
                       <div style={{ fontSize: "11px", opacity: 0.6 }}>
                         ≈ $
@@ -568,9 +568,9 @@ const handleStake1 = async () => {
                             <div style={{ fontSize: "16px", color: "#0f172a", fontWeight: 900 }}>
                               HEXA Staking
                             </div>
-                            <div style={{ fontSize: "12px", color: "#0f172a", opacity: 0.7 }}>
+                            {/* <div style={{ fontSize: "12px", color: "#0f172a", opacity: 0.7 }}>
                               {formatWithCommas(formatEther(myClaims[0]?.amountClaimed))} HEXA staked • 200 Days
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                         <div style={{ textAlign: "right", marginTop: "8px" }}>
