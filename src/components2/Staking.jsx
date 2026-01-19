@@ -61,8 +61,12 @@ export default function Staking() {
   const fetchMyStake = async () => {
 
     const _data = await stakingV1ContractR.methods.getTicketsByUser(address).call()
-
+    if(_data.length>0){
     setMyStake(_data[0])
+    }else{
+      setMyStake({amount:0,id:"",time:0,lastClaimTime:0,claimable:0,amountClaimed:0})
+    }
+
 
   }
 
@@ -76,7 +80,11 @@ export default function Staking() {
 
   const fetchMyClaims = async () => {
     const _data = await stakingV1ContractR.methods.getClaims(address).call()
+      if(_data.length>0){
     setMyClaims(_data[0])
+    }else{
+      setMyClaims({time:0,user:"",amountClaimed:0})
+    }
 
   }
 
@@ -129,7 +137,7 @@ const fetchStakeable = async () => {
   const isLoading = !myStake || !myClaims
 
 
-          console.log("log",{myClaims,myStake})
+          console.log("log",{myStake,myClaims})
 
   const handleStake = async () => {
     const stakedone = await helperContractR.methods.stakeEligible(address).call()
@@ -330,7 +338,7 @@ const handleStake1 = async () => {
             </div>
 
 
-            {myStake.length==0 &&  
+            {myStake.amount==0 &&  
             
             <div style={{background: "#ffffff", padding: "16px", borderRadius: "20px", boxShadow: "0 10px 40px rgba(0,0,0,0.4)", marginBottom: "16px"}}>
           <h2 style={{fontSize: "clamp(18px, 4vw, 20px)", color: "#0f172a", fontWeight: "900", textAlign: "center", marginBottom: "16px"}}>
@@ -419,7 +427,7 @@ const handleStake1 = async () => {
             </div>
 
 
-            {show === "history" &&
+            {show === "history" && Number(formatEther(myStake.amount))>0 && 
 
               <div id="stakingHistory" style={{ background: "#ffffff", padding: "16px", borderRadius: "20px", boxShadow: "0 10px 40px rgba(0,0,0,0.4)", marginTop: "16px" }}>
                 <h2 style={{ fontSize: "clamp(18px, 4vw, 20px)", color: "#0f172a", fontWeight: 900, textAlign: "center", marginBottom: "16px" }}>
@@ -471,7 +479,9 @@ const handleStake1 = async () => {
             }
 
 
-            {show === "reward" && <div id="stakingRewards" style={{ background: "#ffffff", padding: "16px", borderRadius: "20px", boxShadow: "0 10px 40px rgba(0,0,0,0.4)", marginTop: "16px" }}>
+            {show === "reward" && Number(formatEther(myStake.amount))>0 &&
+            
+            <div id="stakingRewards" style={{ background: "#ffffff", padding: "16px", borderRadius: "20px", boxShadow: "0 10px 40px rgba(0,0,0,0.4)", marginTop: "16px" }}>
               <h2 style={{ fontSize: "clamp(18px, 4vw, 20px)", color: "#0f172a", fontWeight: 900, textAlign: "center", marginBottom: "16px" }}>
                 💰 Staking Received History
               </h2>
