@@ -15,6 +15,16 @@ user list
 list should not open by adding the extension
 
 
+1) remove asset
+2) remove trade 
+3) take all the files from remix to new folder
+4) bring back number of days in stakinv v1 to 24 hours from 1 minute. 
+5) why staking page is being whiten out. 
+6) allownace of feeder to staking v1 
+7) allowance of feeder to staking v2
+8) staking remove from new for the time being 
+
+
 
 
 

@@ -62,11 +62,11 @@ export default function Staking() {
 
     const _data = await stakingV1ContractR.methods.getTicketsByUser(address).call()
 
-    setMyStake(_data)
+    setMyStake(_data[0])
 
   }
 
-          console.log("log",myStake)
+
 
   const fetchUSDTbalance = async () => {
     const _data = await USDTContractR.methods.balanceOf(address).call()
@@ -76,7 +76,7 @@ export default function Staking() {
 
   const fetchMyClaims = async () => {
     const _data = await stakingV1ContractR.methods.getClaims(address).call()
-    setMyClaims(_data)
+    setMyClaims(_data[0])
 
   }
 
@@ -123,13 +123,13 @@ const fetchStakeable = async () => {
 };
 
 
-  const myTotalStaked = myStake && Number(myStake.reduce((sum, stake) => sum + Number(formatEther(stake.amount)).toFixed(2), 0));
-  const myTotalEarned = myStake && myStake.reduce((sum, stake) => sum + Number(formatEther(stake.claimable)), 0);
+  // const myTotalStaked = myStake && Number(myStake.reduce((sum, stake) => sum + Number(formatEther(stake.amount)).toFixed(2), 0));
+  // const myTotalEarned = myStake && myStake.reduce((sum, stake) => sum + Number(formatEther(stake.claimable)), 0);
 
   const isLoading = !myStake || !myClaims
 
 
-
+          console.log("log",{myClaims,myStake})
 
   const handleStake = async () => {
     const stakedone = await helperContractR.methods.stakeEligible(address).call()
@@ -306,7 +306,7 @@ const handleStake1 = async () => {
                   🔒 Total Staked
                 </div>
                 <div id="totalStakedDisplay" style={{ fontSize: "clamp(18px, 4vw, 24px)", color: "#8b5cf6", fontWeight: 900 }}>
-                  {myTotalStaked} HEXA
+                  {formatWithCommas(formatEther(myStake.amount))} HEXA
                 </div>
               </div>
 
@@ -315,7 +315,7 @@ const handleStake1 = async () => {
                   💰 Total Earned
                 </div>
                 <div id="totalEarnedDisplay" style={{ fontSize: "clamp(18px, 4vw, 24px)", color: "#06b6d4", fontWeight: 900 }}>
-                  {myTotalEarned} HEXA
+                  {formatWithCommas(formatEther(myStake.claimable))} HEXA
                 </div>
               </div>
 
@@ -428,7 +428,7 @@ const handleStake1 = async () => {
                 <div id="historyContent">
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    {myStake.map((v, e) =>
+                    
                       <div style={{ background: "#f8fafc", padding: "16px", borderRadius: "12px", borderLeft: "4px solid #8b5cf6" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -444,7 +444,7 @@ const handleStake1 = async () => {
                           </div>
                           <div style={{ textAlign: "right", marginTop: "8px" }}>
                             <div style={{ fontSize: "18px", color: "#8b5cf6", fontWeight: 900 }}>
-                              {formatWithCommas(formatEther(v.amount))} HEXA
+                              {formatWithCommas(formatEther(myStake.amount))} HEXA
                             </div>
                             <div style={{ fontSize: "12px", color: "#10b981", fontWeight: 700 }}>
                               Active
@@ -453,15 +453,15 @@ const handleStake1 = async () => {
                         </div>
                         <div style={{ background: "rgba(139, 92, 246, 0.2)", padding: "8px 12px", borderRadius: "8px", marginBottom: "8px" }}>
                           <div id="countdown-0" style={{ fontSize: "12px", color: "#8b5cf6", fontWeight: 700, textAlign: "center" }}>
-                            ⏱️ {secondsToDHMSDiff(Number(v.time) + 200 * 24 * 60 * 60 - new Date().getTime() / 1000)} remaining
+                            ⏱️ {secondsToDHMSDiff(Number(myStake.time) + 200 * 24 * 60 * 60 - new Date().getTime() / 1000)} remaining
                           </div>
                         </div>
                         <div style={{ fontSize: "10px", color: "#0f172a", opacity: 0.6 }}>
-                          Staked on: {secondsToDMY(v.time)}
+                          Staked on: {secondsToDMY(myStake.time)}
                         </div>
                       </div>
 
-                    )}
+                    
 
 
                   </div>
@@ -499,7 +499,7 @@ const handleStake1 = async () => {
                         Total Earned
                       </div>
                       <div style={{ fontSize: "22px", color: "#06b6d4", fontWeight: 900 }}>
-                        {myStake.length>0? formatWithCommas(formatEther( myStake[0]?.claimable)):0} HEXA
+                        {myStake.length>0? formatWithCommas(formatEther( myStake.claimable)):0} HEXA
                       </div>
                     </div>
 
@@ -509,7 +509,7 @@ const handleStake1 = async () => {
                         Total Claimed
                       </div>
                       <div style={{ fontSize: "22px", color: "#10b981", fontWeight: 900 }}>
-                        {myStake.length>0? formatWithCommas(formatEther(myStake[0].amountClaimed)):0} HEXA
+                        {myStake.length>0? formatWithCommas(formatEther(myStake.amountClaimed)):0} HEXA
                       </div>
                     </div>
 
@@ -519,12 +519,12 @@ const handleStake1 = async () => {
                         Claimable
                       </div>
                       <div style={{ fontSize: "22px", color: "#f59e0b", fontWeight: 900 }}>
-                        { myStake.length>0?Number(Number(formatEther(myStake[0].claimable)) - Number(formatEther(myStake[0].amountClaimed))).toFixed(2):0} HEXA
+                        { Number(Number(formatEther(myStake.claimable)) - Number(formatEther(myStake.amountClaimed))).toFixed(2)} HEXA
                       </div>
                       <div style={{ fontSize: "11px", opacity: 0.6 }}>
                         ≈ $
                         {myStake.length>0? formatWithCommas(
-                          Number(formatEther(myStake[0].claimable)) / hexaPrice
+                          Number(formatEther(myStake.claimable)) / hexaPrice
                         ):0}{" "}
                         USDT
                       </div>
@@ -533,16 +533,16 @@ const handleStake1 = async () => {
                     {/* Claim Button */}
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <button
-                        onClick={()=>handleClaim(myStake[0].id)}
-                        disabled={myStake.length>0? Number(myStake[0].claimable) === 0:true}
+                        onClick={()=>handleClaim(myStake.id)}
+                        disabled={Number(myStake.claimable) - Number(myStake.amountClaimed) <= 0}
                         style={{
                           width: "100%",
                           padding: "14px",
                           borderRadius: "10px",
-                          background: myStake.length>0? 
-                            Number(myStake[0].claimable) > 0
+                          background:  
+                            Number(myStake.claimable) - Number(myStake.amountClaimed) > 0
                               ? "linear-gradient(135deg, #06b6d4, #0ea5e9)"
-                              : "#94a3b8": "grey",
+                              : "grey",
                           color: "#ffffff",
                           fontWeight: 800,
                           border: "none",
@@ -575,7 +575,7 @@ const handleStake1 = async () => {
                         </div>
                         <div style={{ textAlign: "right", marginTop: "8px" }}>
                           <div style={{ fontSize: "18px", color: "#06b6d4", fontWeight: 900 }}>
-                            +{formatWithCommas(formatEther(myClaims[0]?.amountClaimed))} HEXA
+                            +{myClaims.length >0 ? formatWithCommas(formatEther(myClaims.amountClaimed)):0} HEXA
                           </div>
                           <div style={{ fontSize: "12px", color: "#10b981", fontWeight: 700 }}>
                             Earning
@@ -583,7 +583,7 @@ const handleStake1 = async () => {
                         </div>
                       </div>
                       <div style={{ fontSize: "10px", color: "#0f172a", opacity: 0.6 }}>
-                        Started: {secondsToDMY(myClaims[0]?.time)}• Est. Completion: {secondsToDMY(Number(myClaims[0]?.time) + 200 * 24 * 60 * 60)}
+                        Started: {secondsToDMY(myClaims.time)}• Est. Completion: {secondsToDMY(Number(myClaims.time) + 200 * 24 * 60 * 60)}
                       </div>
                     </div>
                   {/* )
