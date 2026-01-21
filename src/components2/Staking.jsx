@@ -3,7 +3,7 @@ import "./Staking.css"
 import { helperContract, helperContractR, helperContractV2, HEXAContractR, priceOracleContractR, stakingV1Abi, stakingV1Add, stakingV1Contract, stakingV1ContractR, USDTContractR } from '../config'
 import { useAppKitAccount } from '@reown/appkit/react';
 import { executeContract, formatWithCommas, secondsToDHMSDiff, secondsToDMY } from '../utils/contractExecutor';
-import { formatEther } from 'ethers';
+import { formatEther, parseEther } from 'ethers';
 import { useConfig, useSimulateContract, useWriteContract } from 'wagmi';
 import { useDispatch } from 'react-redux';
 import { readName } from '../slices/contractSlice';
@@ -149,7 +149,11 @@ const fetchStakeable = async () => {
     await executeContract({
       config,
       functionName: "stake",
-      args: [],
+      args: [
+        parseEther(assetStats.market.value),
+                parseEther(assetStats.burnt.value),
+                        parseEther(assetStats.queue.value)
+      ],
       gasLimit: 150_000_000,
       onSuccess: (txHash, receipt) => {
         console.log("🎉 Tx Hash:", txHash);

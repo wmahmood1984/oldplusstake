@@ -6770,6 +6770,19 @@ export const distributionAbi = [
 
 export const stakingV1Abi = [
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_feeder",
+				"type": "address"
+			}
+		],
+		"name": "addfeeder",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
@@ -6847,6 +6860,16 @@ export const stakingV1Abi = [
 			{
 				"internalType": "address",
 				"name": "_helperv2",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_priceOracle",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_feeder",
 				"type": "address"
 			}
 		],
@@ -6943,7 +6966,23 @@ export const stakingV1Abi = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "a",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "b",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "c",
+				"type": "uint256"
+			}
+		],
 		"name": "stake",
 		"outputs": [],
 		"stateMutability": "nonpayable",
@@ -7035,6 +7074,19 @@ export const stakingV1Abi = [
 				"internalType": "uint256",
 				"name": "amountClaimed",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "feeder",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -7240,6 +7292,19 @@ export const stakingV1Abi = [
 		"outputs": [
 			{
 				"internalType": "contract IERC20",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "priceOracle",
+		"outputs": [
+			{
+				"internalType": "contract IpriceOracle",
 				"name": "",
 				"type": "address"
 			}
