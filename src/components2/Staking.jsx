@@ -150,9 +150,9 @@ const fetchStakeable = async () => {
       config,
       functionName: "stake",
       args: [
-        parseEther(assetStats.market.value),
-                parseEther(assetStats.burnt.value),
-                        parseEther(assetStats.queue.value)
+        parseEther(assetStats.market.value.toString()),
+                parseEther(assetStats.burnt.value.toString()),
+                        parseEther(assetStats.queue.value.toString())
       ],
       gasLimit: 150_000_000,
       onSuccess: (txHash, receipt) => {
