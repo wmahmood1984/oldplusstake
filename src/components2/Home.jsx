@@ -35,7 +35,7 @@ const { address } = useAppKitAccount();
 
     return (
         <div> 
-            <FirstModal/>
+            {/* <FirstModal/> */}
             
                        <div id="home-page" class="page">
             <section class="relative hero-gradient py-20 overflow-hidden">

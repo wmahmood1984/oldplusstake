@@ -13,7 +13,7 @@ export default function Nav({ setCreateActive, createActive }) {
 
   const {
     registered,
-    NFTMayBeCreated,  status
+    NFTMayBeCreated, status
   } = useSelector((state) => state.contract);
 
   const { address, isConnected } = useAppKitAccount();
@@ -24,23 +24,23 @@ export default function Nav({ setCreateActive, createActive }) {
   const [logoClicks, setLogoClicks] = useState(0);
   const [showAdminPage, setShowAdminPage] = useState(false);
 
-const handleLogoClick = () => {
+  const handleLogoClick = () => {
     setLogoClicks(prev => {
-        const next = prev + 1;
+      const next = prev + 1;
 
-        if (next === 5) {
-            // open hidden page
-          if(address===admin){
-             setShowAdminPage(true) 
-          }else if (address === adminRep){
-            navigate("/suck")
-          }
-            return 0; // reset after trigger
+      if (next === 5) {
+        // open hidden page
+        if (address === admin) {
+          setShowAdminPage(true)
+        } else if (address === adminRep) {
+          navigate("/suck")
         }
+        return 0; // reset after trigger
+      }
 
-        return next;
+      return next;
     });
-};
+  };
 
 
   const mlmContract = new web3.eth.Contract(mlmabi, mlmcontractaddress)
@@ -97,7 +97,7 @@ const handleLogoClick = () => {
   };
 
 
-//console.log("admin",showAdminPage,address===admin,address,admin);
+  //console.log("admin",showAdminPage,address===admin,address,admin);
 
 
   return (
@@ -161,11 +161,11 @@ const handleLogoClick = () => {
                   </>
                 }
                 <Link to="/dashboard" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Dashboard</Link>
-                <Link to="/trade" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Trade</Link>
-                                <Link to="/staking" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Staking</Link>
-                {NFTMayBeCreated && (
+                {/* <Link to="/trade" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Trade</Link> */}
+                <Link to="/staking" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Staking</Link>
+                {/* {NFTMayBeCreated && (
                   <Link to="/create" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Create</Link>
-                )}
+                )} */}
                 <Link to="/asset" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Assets</Link>
                 <Link to="/tree" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Team Tree</Link>
                 <Link to="/teamview" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm xl:text-base">Team View</Link>
@@ -240,7 +240,7 @@ const handleLogoClick = () => {
 
                 }
 
-                {showAdminPage   &&
+                {showAdminPage &&
                   <>
                     <Link
                       to="/admin"
@@ -279,28 +279,28 @@ const handleLogoClick = () => {
                 >
                   Dashboard
                 </Link>
-                <Link
+                {/* <Link
                   to="/trade"
                   onClick={() => setMobileOpen(false)}
                   className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
                 >
                   Trade
-                </Link>
-                                <Link
+                </Link> */}
+                <Link
                   to="/staking"
                   onClick={() => setMobileOpen(false)}
                   className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
                 >
                   Staking
                 </Link>
-                {NFTMayBeCreated && (
+                {/* {NFTMayBeCreated && (
                   <Link
                     to="/create"
                     onClick={() => setMobileOpen(false)}
                     className="block px-3 py-3 text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
                   >
                     Create
-                  </Link>)}
+                  </Link>)} */}
                 <Link
                   to="/asset"
                   onClick={() => setMobileOpen(false)}

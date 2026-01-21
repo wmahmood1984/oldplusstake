@@ -1,7 +1,7 @@
 import Web3 from "web3";
 
-const rpc = 	"https://opbnb-testnet-rpc.publicnode.com"   //op bnb
-			//"https://opbnb-mainnet-rpc.bnbchain.org"	
+const rpc = //	"https://opbnb-testnet-rpc.publicnode.com"   //op bnb
+			"https://opbnb-mainnet-rpc.bnbchain.org"	
 			//"https://api-opbnb-testnet.n.dwellir.com/cd3616b6-aa41-42c2-a71a-6c87168622db" // opbnb testnet
 			//"https://api-opbnb-mainnet.n.dwellir.com/cd3616b6-aa41-42c2-a71a-6c87168622db"	// opbnb mainnet	
 
@@ -19,8 +19,8 @@ export const web3 = new Web3(
 );
 
 export const url = 
-			"https://opbnb-testnet.bscscan.com/tx"
-		//"https://opbnb.bscscan.com/tx"
+		//	"https://opbnb-testnet.bscscan.com/tx"
+		"https://opbnb.bscscan.com/tx"
 
 export const incomeKeys = [
 	{
@@ -7337,32 +7337,37 @@ export const stakingV1Abi = [
 	}
 ]
 
-export const helperAddress = //"0x7d8893388408923708493bAd6704F0e6BC62a69e"  // Implementation 0x6C41D5bDC97714d50332766F58dE42a243942264  2nd implementation 0xA84B727E7E37f5e5C7FEE90c709a0024c97AE926 3rd implementaiton 0xd6C4B6B2a176D5de81616Ab80Ab66fd7e3A7199A 4th Implementation 0xe074612D53953e12e369Bf77d6867e9bdb114Deb  5th implementation 0xA604897348F618f6935dFa62d6f6fac5727345B8// 6th Implementaiton 0x9d73bE241167Fc25875205a116644D169B408616  7th Implementation 0x955c2cda11d3c4c0315eA85A48cD881B10d9293A
-"0xF0c46668EaA1D36f61e66da0E8F23d7375cD838b"//
+export const helperAddress = "0x7d8893388408923708493bAd6704F0e6BC62a69e"  // Implementation 0x6C41D5bDC97714d50332766F58dE42a243942264  2nd implementation 0xA84B727E7E37f5e5C7FEE90c709a0024c97AE926 3rd implementaiton 0xd6C4B6B2a176D5de81616Ab80Ab66fd7e3A7199A 4th Implementation 0xe074612D53953e12e369Bf77d6867e9bdb114Deb  5th implementation 0xA604897348F618f6935dFa62d6f6fac5727345B8// 6th Implementaiton 0x9d73bE241167Fc25875205a116644D169B408616  7th Implementation 0x955c2cda11d3c4c0315eA85A48cD881B10d9293A  8th Implementaiton // 0x7aDFc221505d04635Bb5ec5774B6970404F5a8c1
+//"0xF0c46668EaA1D36f61e66da0E8F23d7375cD838b"//
 
-export const mlmcontractaddress = //"0x431322e00c4F877F4B58D3e20b791b27b2E1BEd8"; // Implementation 0x6337B82a7F7fdff5EDA67521d61827fc067E505F  2nd implementaiton 0x17c6151913f473ae284a0C8494A8aA5C4B481926
-"0x669573253701FdE18D399a1863e510f31Ac2F17c"//
+export const mlmcontractaddress = "0x431322e00c4F877F4B58D3e20b791b27b2E1BEd8"; // Implementation 0x6337B82a7F7fdff5EDA67521d61827fc067E505F  2nd implementaiton 0x17c6151913f473ae284a0C8494A8aA5C4B481926
+//"0x669573253701FdE18D399a1863e510f31Ac2F17c"//
 
 
-export const fetcherAddress = //"0x93e4A68CEDD7f7676C7e933eBE61F6416344D61E" // implementation 0xC128D74C895865890575e6cf347b66317DE58B22
-"0x586712e122fDbF55CF55e75267F95F6DadA8d662"
+export const fetcherAddress = "0x93e4A68CEDD7f7676C7e933eBE61F6416344D61E" // implementation 0xC128D74C895865890575e6cf347b66317DE58B22
+//"0x586712e122fDbF55CF55e75267F95F6DadA8d662"
 
-export const hexaTokenAdd = 
-"0x309D64381Ea67edbe9E09e719b398f0060AD4FCf"//"0x94698793068F41367720042B4792185742D9DaD0"
-export const helperv2 = "0xd3120EF4eFA25ABE521761D3aEC8c7D87bAc5d5f"
-export const P2PAdd = "0x746ce581429E66cd61E31cA90Fbc3e351C5443b2"
-export const fetcherHelperv2 = "0xF89D8125a94ed0eb30C837d978a8Af2a54e61F2a"
+export const hexaTokenAdd = "0x79aF458717fA5190fbE9b0bd852De5BFe5770BbA"// 1st Implementation "0x5A1cF626725A1Ba82ef7bf80f2a9c341BcF9533A"
+//"0x309D64381Ea67edbe9E09e719b398f0060AD4FCf"//"0x94698793068F41367720042B4792185742D9DaD0"
+export const helperv2 =  "0xD99b9EBA0D048C3335Ffb7DAc9369368dD9ae25F"//"0x275e18123BdA8d8e29c9195cf645eb43DC93f8D7" // implementation //"0x3B2AbD2Fb6A74412D7da4A96E38D912968ced191"
+//"0xd3120EF4eFA25ABE521761D3aEC8c7D87bAc5d5f"
+export const P2PAdd = "0x156321E10fe6152E17DbFF84efb653Ed3fcd74bb" //  implementation "0x6B9758BC615EBE5303d49774f7340B8588862934"
+"//0x4587931628CE2208296BE1a34847DF9b39471121"
+export const fetcherHelperv2 = "0x531275f6a03e0a8198066E00BF8Ec544AA1c057E"  //  implementation //0xb1Ed4fAF6c881273D83C7ab3F3bB1c535877E95f
+//"0xF89D8125a94ed0eb30C837d978a8Af2a54e61F2a"
 export const stakingV2Add = "0x3cAd49255dcD8933A309d771A0Abad9D07003601"
-export const priceOracleAdd = "0x6176417d8Ab5232175FFEa27b26b2dCeDf09376B"
-export const stakingV1Add = "0x0EeE249Da3Df668bb65b2FbDb5f44e6a75E906d7"
-export const distributionAdd = 
-"0x0872c88D2Ca157e4C6221c6B55BeAeba64848Df4"
+export const priceOracleAdd = "0x17e7631A0941ee79BaD11d85473E1FE169C98EA8" //  1st Implementation "0x319F6B6B38c2162C57052d5AD7317835A270E8Ee"
+//"0x6176417d8Ab5232175FFEa27b26b2dCeDf09376B"
+export const stakingV1Add =  "0x4Ce39a7F48490c9ad093AC36A13C3B7518F7B002"//"0xb8C6c7151de6933dc0b7DCCDaf1e562c85125e32" //implementaiton 0xdEDe08f1af52A53d40272174D329667811c44A2A 
+//"0x0EeE249Da3Df668bb65b2FbDb5f44e6a75E906d7"
+export const distributionAdd =  "0xaE2A9F5F5AB9f437826D2Ac6173EfB98f86E09da"  // 1st implementaiton "0xaFAa2CB712d3dFcacBaC10b46b2890ed160e59D8"
+//"0x0872c88D2Ca157e4C6221c6B55BeAeba64848Df4"
 
 export const mlmcontractaddressImplementation =
 	"0x6337B82a7F7fdff5EDA67521d61827fc067E505F";
 
 export const bulkContractAdd = "0x66fB9B9319dCB00721002F7a88E8411226F6E8d3"
-
+export const tokenFeeder = "0xF942224e5D97b78a0C32C7cB9A4Aae8fa602f75C"  //EOA => Doctor sb
 export const bulkAdd = "0x71F0ec0fFA38E3F715deF9c8b37ca46dfFa92326"
 export const erc20abi = [
 	{
@@ -7982,8 +7987,8 @@ export const bulkAddAbi = [
 
 //export const erc20Add = "0x2907DA57598e5dd349d768FbC0e6BC3D2CF66cB9"
 //export const erc20Add = "0x951f3Cc97326eB18D6d3F2dc869e0Ca504023BBB"; //97
-export const erc20Add = "0x2907DA57598e5dd349d768FbC0e6BC3D2CF66cB9"; //op bnb
-//export const erc20Add = "0x9e5AAC1Ba1a2e6aEd6b32689DFcF62A509Ca96f3"; //op bnb mainnet
+//export const erc20Add = "0x2907DA57598e5dd349d768FbC0e6BC3D2CF66cB9"; //op bnb
+export const erc20Add = "0x9e5AAC1Ba1a2e6aEd6b32689DFcF62A509Ca96f3"; //op bnb mainnet
 
 export const admin = "0xB066Ce4653576C310e9A8502e269fc54E32B28ab"  //bulk / lists / admin / suck 
 
@@ -7992,11 +7997,11 @@ export const stakinvV2ContractR = new web3.eth.Contract(stakingV2Abi,stakingV2Ad
 export const USDTContractR = new web3.eth.Contract(erc20abi,erc20Add)
 export const HEXAContractR = new web3.eth.Contract(erc20abi,hexaTokenAdd)
 export const priceOracleContractR = new web3.eth.Contract(priceOracleAbi,priceOracleAdd)
+export const helperContractR = new web3.eth.Contract(helperv2Abi,helperv2)
 
 export const distributionContractR = new web3.eth.Contract(distributionAbi,distributionAdd)
 
 export const stakingV1ContractR = new web3.eth.Contract(stakingV1Abi,stakingV1Add)
-export const helperContractR = new web3.eth.Contract(helperv2Abi,helperv2)
 
 export const stakingV1Contract = {
 	address: stakingV1Add,

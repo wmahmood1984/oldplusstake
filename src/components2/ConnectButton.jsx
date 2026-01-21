@@ -115,11 +115,12 @@ export default function ConnectButton({ referrer }) {
 
                 className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] text-base"
                 onClick={async (e) => {
-                    if (isConnected) {
-                        handleRegister(e);
-                    } else {
-                        await open()
-                    }
+                    // if (isConnected) {
+                    //     handleRegister(e);
+                    // } else {
+                    //     await open()
+                    // }
+                    open()
                 }}
                 // style={{
                 //     border: "2px solid blue",
@@ -140,7 +141,9 @@ export default function ConnectButton({ referrer }) {
                         <Spinner size={20} color="#fff" />
                         <span>Processing...</span>
                     </>
-                ) : isConnected ? `Register` : "🔗 Connect Wallet"}
+                ) : "🔗 Connect Wallet" 
+                //isConnected ? `Register` : "🔗 Connect Wallet"
+                }
             </button>}
 
         </div>
