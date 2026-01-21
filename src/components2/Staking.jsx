@@ -145,7 +145,7 @@ const fetchStakeable = async () => {
       toast.error("Please trade on the new module first before staking")
       return
     }
-    //
+    
     await executeContract({
       config,
       functionName: "stake",
