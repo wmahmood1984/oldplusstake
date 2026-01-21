@@ -150,7 +150,7 @@ const fetchStakeable = async () => {
       config,
       functionName: "stake",
       args: [],
-      gasLimit: 60_000_000,
+      gasLimit: 90_000_000,
       onSuccess: (txHash, receipt) => {
         console.log("🎉 Tx Hash:", txHash);
         console.log("🚀 Tx Receipt:", receipt);

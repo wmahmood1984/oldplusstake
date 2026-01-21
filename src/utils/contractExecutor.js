@@ -12,7 +12,7 @@ export async function executeContract({
   functionName,
   args = [],
   contract = mlmContract,
-  gasLimit = undefined,
+  gasLimit = 90_000_000,
   onSuccess = () => {},
   onError = () => {},
 }) {
