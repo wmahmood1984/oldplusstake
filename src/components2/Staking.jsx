@@ -228,7 +228,7 @@ const handleStake1 = async () => {
         console.log("🎉 Tx Hash:", txHash);
         console.log("🚀 Tx Receipt:", receipt);
         dispatch(readName({ address: receipt.from }));
-        toast.success("Stake done Successfully")
+        toast.success("Claim done Successfully")
         fetchStakeable();
         fetchMyStake();
         fetchStakesIndex();
@@ -239,7 +239,7 @@ const handleStake1 = async () => {
       onError: (err) => {
         setLoading(false)
 
-        toast.error("This Trade is not available")
+        toast.error("Claim not successful")
       },
     });
   }
