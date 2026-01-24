@@ -598,7 +598,7 @@ const handleStake1 = async () => {
                         </div>
                       </div>
                       <div style={{ fontSize: "10px", color: "#0f172a", opacity: 0.6 }}>
-                        Started: {secondsToDMY(myClaims.time)}• Est. Completion: {secondsToDMY(Number(myClaims.time) + 200 * 24 * 60 * 60)}
+                        Started: {secondsToDMY(myStake.time)}• Est. Completion: {secondsToDMY(Number(myStake.time) + 200 * 24 * 60 * 60)}
                       </div>
                     </div>
                   {/* )
