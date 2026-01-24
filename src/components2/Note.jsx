@@ -165,7 +165,7 @@ export default function NoteMarquee() {
               >
                 {" "}
                 {Array(9).fill(
-                  "We are pleased to introduce the novice and exciting trading plateform. You can transfer your assets to the new module by staking it. Important==> Need to trade first in the new module before staking !!"
+                  "We are pleased to introduce the novice and exciting trading plateform. You can utilize your assets to the new module by staking it. Important==> Need to trade first in the new module before staking !!"
                 )}
               </div>
             </div>

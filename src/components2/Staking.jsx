@@ -216,7 +216,7 @@ const handleStake1 = async () => {
   writeContract(simulation.request)
 }
 
-
+//
 
   const handleClaim = async (id) => {
     console.log("id",id)
