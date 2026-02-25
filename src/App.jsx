@@ -22,7 +22,7 @@ import NoteMarquee from './components2/Note'
 import MyForm from './components2/Admin'
 import Lists from './components2/Lists'
 import Staking from './components2/Staking'
-
+//
 export default function App() {
 
     const dispatch = useDispatch()
