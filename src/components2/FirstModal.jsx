@@ -28,7 +28,7 @@ export default function FirstModal() {
                         ×
                     </button>
                     <div class="announcement-image-container">
-                        <img src="image1.png" alt="Important Announcement" />
+                        <img src="Image2.jpeg" alt="Important Announcement" />
                     </div>
                 </div>
             </div>
